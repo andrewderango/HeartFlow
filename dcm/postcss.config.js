@@ -4,13 +4,13 @@ module.exports = {
     require('postcss-preset-env')({
       stage: 0,
       features: {
-        'nesting-rules': true
-      }
+        'nesting-rules': true,
+      },
     }),
     require('postcss-mixins'),
     require('postcss-simple-vars'),
     require('postcss-nested'),
     require('postcss-color-function'),
-    require('autoprefixer')
-  ]
+    require('autoprefixer'),
+  ],
 }
