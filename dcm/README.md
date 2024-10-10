@@ -11,13 +11,13 @@ An Electron application with React and TypeScript
 ### Install
 
 ```bash
-$ pnpm install
+$ npm install
 ```
 
 ### Development
 
 ```bash
-$ pnpm dev
+$ npm run dev
 ```
 
 ### Build

@@ -7,23 +7,21 @@ function App(): JSX.Element {
   return (
     <>
       <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
       <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
+        Welcome to <span className="react">Heartflow</span>
       </div>
       <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
+        Empowering confidence and precision in pacemaker management.
       </p>
       <div className="actions">
         <div className="action">
           <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
+            Log In Existing User
           </a>
         </div>
         <div className="action">
           <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
+            Sign Up New User
           </a>
         </div>
       </div>
