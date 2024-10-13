@@ -69,11 +69,6 @@ input:focus + label {
   font-family: inherit;
 }
 
-.actions {
-  display: flex;
-  justify-content: space-between;
-}
-
 .back-button {
   position: absolute;
   top: 10px;
@@ -94,6 +89,32 @@ input:focus + label {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
 }
+
+.register-button {
+    flex-shrink: 0;
+    padding: 6px;
+  }
+  
+  .register-button a {
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid white;
+    text-align: center;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: 20px;
+    padding: 0 25px;
+    line-height: 38px;
+    font-size: 16px;
+    border-color: var(--ev-button-alt-border);
+    color: var(--ev-button-alt-text);
+    background-color: rgba(27, 27, 31, 0.8);
+  }
+  
+  .register-button a:hover {
+    background-color: rgba(27, 27, 31, 1.0);
+  }
 
 .text {
   margin-top: 0px;

@@ -83,7 +83,7 @@ function Register(): JSX.Element {
           />
           <label>Pacemaker Serial Number</label>
         </div>
-        <div className="action">
+        <div className="register-button">
           <Link
             to="#"
             onClick={(e) => {
