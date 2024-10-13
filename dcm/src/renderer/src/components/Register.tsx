@@ -20,7 +20,7 @@ function Register(): JSX.Element {
     <div className="register-container">
       {/* <img alt="logo" className="logo" src={electronLogo} /> */}
       <div className="text">Register New User</div>
-      <div style={{ height: '25px' }} />
+      <div style={{ height: '15px' }} />
       <form onSubmit={handleSubmit}>
         <div className="floating-label-group">
           <input
