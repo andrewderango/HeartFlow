@@ -10,7 +10,17 @@
   text-align: center;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   position: relative;
-  margin-top: calc(100vh * (8/100));
+  top: calc(100vh * (5/100));
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeIn 0.75s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 form {
@@ -94,30 +104,30 @@ input:focus + label {
 }
 
 .register-button {
-    flex-shrink: 0;
-    padding: 6px;
-  }
-  
-  .register-button a {
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    border: 1px solid white;
-    text-align: center;
-    font-weight: 600;
-    white-space: nowrap;
-    border-radius: 20px;
-    padding: 0 25px;
-    line-height: 38px;
-    font-size: 16px;
-    border-color: var(--ev-button-alt-border);
-    color: var(--ev-button-alt-text);
-    background-color: rgba(27, 27, 31, 0.8);
-  }
-  
-  .register-button a:hover {
-    background-color: rgba(27, 27, 31, 1.0);
-  }
+  flex-shrink: 0;
+  padding: 6px;
+}
+
+.register-button a {
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  border: 1px solid white;
+  text-align: center;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 20px;
+  padding: 0 25px;
+  line-height: 38px;
+  font-size: 16px;
+  border-color: var(--ev-button-alt-border);
+  color: var(--ev-button-alt-text);
+  background-color: rgba(27, 27, 31, 0.8);
+}
+
+.register-button a:hover {
+  background-color: rgba(27, 27, 31, 1.0);
+}
 
 .text {
   margin-top: 0px;
