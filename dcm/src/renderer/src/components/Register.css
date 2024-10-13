@@ -25,10 +25,11 @@ form {
 input {
   width: 100%;
   padding: 12px;
-  font-size: 16px;
-  border: 2px solid transparent;
+  font-size: 14px;
+  border: 3px solid transparent;
   border-radius: 8px;
-  outline: none;
+  outline: 2px solid transparent;
+  outline-offset: 3px;
   background-color: rgba(217, 217, 217, 0.2);
   color: rgba(255, 255, 255, 0.9);
   font-family: inherit;
@@ -36,24 +37,33 @@ input {
 }
 
 input:focus {
-  border-color: rgba(255, 255, 255, 1.0);
   background-color: rgba(255, 255, 255, 0.1);
+  border: 3px solid transparent;
+  outline: 2px solid white;
+  outline-offset: 3px;
 }
 
 label {
   position: absolute;
   left: 12px;
   top: 11px;
-  font-size: 16px;
+  font-size: 14px;
   pointer-events: none;
   transition: all 0.2s ease-out;
 }
 
-input:focus + label,
-.filled + label {
-  top: -18px;
+input.filled + label {
+  top: -21px;
   left: 8px;
-  font-size: 12px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 1.0);
+  font-family: inherit;
+}
+
+input:focus + label {
+  top: -23px;
+  left: 8px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 1.0);
   font-family: inherit;
 }
@@ -81,5 +91,5 @@ input:focus + label,
 }
 
 .text {
-    margin-top: -20px;
+  margin-top: -20px;
 }
