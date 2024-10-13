@@ -1,10 +1,9 @@
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'
 import electronLogo from './assets/electron.svg'
 import Register from './components/Register'
+import Login from './components/Login'
 
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
-
   return (
     <Router>
       <Routes>
@@ -21,12 +20,12 @@ function App(): JSX.Element {
               </p>
               <div className="actions">
                 <div className="action">
-                  <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-                    Log In Existing User
-                  </a>
+                  <Link to="/login">
+                    Log In New User
+                  </Link>
                 </div>
                 <div className="action">
-                  <Link to="/register" onClick={ipcHandle}>
+                  <Link to="/register">
                     Register New User
                   </Link>
                 </div>
@@ -38,6 +37,7 @@ function App(): JSX.Element {
           }
         />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   )
