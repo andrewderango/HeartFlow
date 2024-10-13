@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+// import electronLogo from '../assets/electron.svg'
 import './Register.css'
 
 function Register(): JSX.Element {
@@ -17,65 +18,63 @@ function Register(): JSX.Element {
 
   return (
     <div className="register-container">
-      <button className="back-button" type="button" onClick={() => navigate('/')}>
-        Back
-      </button>
+      {/* <img alt="logo" className="logo" src={electronLogo} /> */}
       <div className="text">Register New User</div>
+      <div style={{ height: '25px' }} />
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Username:
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </label>
+        <div className="floating-label-group">
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <label className={username ? 'filled' : ''}>Username</label>
         </div>
-        <div>
-          <label>
-            Password:
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
+        <div className="floating-label-group">
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <label className={password ? 'filled' : ''}>Password</label>
         </div>
-        <div>
-          <label>
-            Confirm Password:
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </label>
+        <div className="floating-label-group">
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <label className={confirmPassword ? 'filled' : ''}>Confirm Password</label>
         </div>
-        <div>
-          <label>
-            Pacemaker Serial Number:
-            <input
-              type="text"
-              value={serialNumber}
-              onChange={(e) => setSerialNumber(e.target.value)}
-              required
-            />
-          </label>
+        <div className="floating-label-group">
+          <input
+            type="text"
+            value={serialNumber}
+            onChange={(e) => setSerialNumber(e.target.value)}
+            required
+          />
+          <label className={serialNumber ? 'filled' : ''}>Pacemaker Serial Number</label>
         </div>
-        <div className="action">
-          <Link
-            to="#"
-            onClick={(e) => {
-              e.preventDefault()
-              handleSubmit(e as unknown as React.FormEvent)
-            }}
-          >
-            Register
-          </Link>
+        <div className="actions">
+          <div className="action">
+            <Link
+              to="#"
+              onClick={(e) => {
+                e.preventDefault()
+                handleSubmit(e as unknown as React.FormEvent)
+              }}
+            >
+              Register
+            </Link>
+          </div>
+          <div className="action">
+            <button className="back-button" type="button" onClick={() => navigate('/')}>
+              Back
+            </button>
+          </div>
         </div>
       </form>
     </div>

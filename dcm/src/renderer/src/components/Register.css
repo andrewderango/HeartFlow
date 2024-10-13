@@ -1,56 +1,81 @@
+@import '../assets/main.css';
+
 .register-container {
-    position: relative;
-    padding: 20px;
-  }
-  
-  .back-button {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .back-button:hover {
-    background-color: #0056b3;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  label {
-    display: flex;
-    flex-direction: column;
-    font-size: 16px;
-  }
-  
-  input {
-    padding: 8px;
-    font-size: 14px;
-    border: 2px transparent;
-    border-radius: 5px;
-    outline: 2px solid rgba(255, 255, 255, 1.0);
-    outline-offset: 3px;
-    background-color: rgba(217, 217, 217, 0.2);
-    color: rgba(255, 255, 255, 1.0);
-    font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
-  }
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 150%;
+  text-align: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.floating-label-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: rgba(217, 217, 217, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  font-family: inherit;
+  transition: border 0.3s, background-color 0.3s;
+}
+
+input:focus {
+  border-color: #007bff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+label {
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+}
+
+input:focus + label,
+.filled + label {
+  top: -16px;
+  left: 8px;
+  font-size: 12px;
+  color: #007bff;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.back-button {
+  background-color: transparent;
+  border: 2px solid var(--ev-button-alt-border);
+  color: var(--ev-button-alt-text);
+  padding: 0 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 38px;
+}
+
+.back-button:hover {
+  background-color: var(--ev-button-alt-hover-bg);
+  border-color: var(--ev-button-alt-hover-border);
+  color: var(--ev-button-alt-hover-text);
+}
