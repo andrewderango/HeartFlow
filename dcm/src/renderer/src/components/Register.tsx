@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 // import electronLogo from '../assets/electron.svg'
 import './Register.css'
@@ -10,15 +10,40 @@ function Register(): JSX.Element {
   const [serialNumber, setSerialNumber] = useState('')
   const navigate = useNavigate()
 
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setter(event.target.value)
+  }
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
     console.log('Register button clicked')
     // here we want to interact with the local db (store password, unique serial number and username, max 10 usrs, etc.)
   }
 
+  useEffect(() => {
+    const inputs = document.querySelectorAll('.floating-label-group input')
+    inputs.forEach((input) => {
+      if (input.value) {
+        input.classList.add('filled')
+      }
+      input.addEventListener('input', () => {
+        if (input.value) {
+          input.classList.add('filled')
+        } else {
+          input.classList.remove('filled')
+        }
+      })
+    })
+  }, [])
+
   return (
     <div className="register-container">
       {/* <img alt="logo" className="logo" src={electronLogo} /> */}
+      <button className="back-button" type="button" onClick={() => navigate('/')}>
+        ←
+      </button>
       <div className="text">Register New User</div>
       <div style={{ height: '15px' }} />
       <form onSubmit={handleSubmit}>
@@ -26,55 +51,48 @@ function Register(): JSX.Element {
           <input
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleInputChange(setUsername)}
             required
           />
-          <label className={username ? 'filled' : ''}>Username</label>
+          <label>Username</label>
         </div>
         <div className="floating-label-group">
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleInputChange(setPassword)}
             required
           />
-          <label className={password ? 'filled' : ''}>Password</label>
+          <label>Password</label>
         </div>
         <div className="floating-label-group">
           <input
             type="password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={handleInputChange(setConfirmPassword)}
             required
           />
-          <label className={confirmPassword ? 'filled' : ''}>Confirm Password</label>
+          <label>Confirm Password</label>
         </div>
         <div className="floating-label-group">
           <input
             type="text"
             value={serialNumber}
-            onChange={(e) => setSerialNumber(e.target.value)}
+            onChange={handleInputChange(setSerialNumber)}
             required
           />
-          <label className={serialNumber ? 'filled' : ''}>Pacemaker Serial Number</label>
+          <label>Pacemaker Serial Number</label>
         </div>
-        <div className="actions">
-          <div className="action">
-            <Link
-              to="#"
-              onClick={(e) => {
-                e.preventDefault()
-                handleSubmit(e as unknown as React.FormEvent)
-              }}
-            >
-              Register
-            </Link>
-          </div>
-          <div className="action">
-            <button className="back-button" type="button" onClick={() => navigate('/')}>
-              Back
-            </button>
-          </div>
+        <div className="action">
+          <Link
+            to="#"
+            onClick={(e) => {
+              e.preventDefault()
+              handleSubmit(e as unknown as React.FormEvent)
+            }}
+          >
+            Register
+          </Link>
         </div>
       </form>
     </div>
