@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import './Register.css'
 
 function Register(): JSX.Element {
   const [username, setUsername] = useState('')
@@ -10,6 +11,7 @@ function Register(): JSX.Element {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
+    console.log('Register button clicked')
     // here we want to interact with the local db (store password, unique serial number and username, max 10 usrs, etc.)
   }
 
@@ -18,6 +20,7 @@ function Register(): JSX.Element {
       <button className="back-button" type="button" onClick={() => navigate('/')}>
         Back
       </button>
+      <div className="text">Register New User</div>
       <form onSubmit={handleSubmit}>
         <div>
           <label>
@@ -63,7 +66,17 @@ function Register(): JSX.Element {
             />
           </label>
         </div>
-        <button type="submit">Register</button>
+        <div className="action">
+          <Link
+            to="#"
+            onClick={(e) => {
+              e.preventDefault()
+              handleSubmit(e as unknown as React.FormEvent)
+            }}
+          >
+            Register
+          </Link>
+        </div>
       </form>
     </div>
   )
