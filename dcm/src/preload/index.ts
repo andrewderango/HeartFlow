@@ -1,8 +1,24 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
+interface RegisterUserResponse {
+  success: boolean
+  message?: string
+}
+
 // Custom APIs for renderer
-const api = {}
+const api = {
+  registerUser: async (
+    username: string,
+    password: string,
+    serialNumber: string,
+  ): Promise<RegisterUserResponse> => {
+    console.log(`API registerUser called with: ${username}, ${password}, ${serialNumber}`)
+    const result = await ipcRenderer.invoke('register-user', username, password, serialNumber)
+    console.log(`API registerUser result: ${JSON.stringify(result)}`)
+    return result
+  },
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

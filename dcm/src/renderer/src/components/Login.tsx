@@ -8,13 +8,13 @@ function Login(): JSX.Element {
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
 
-  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setter(event.target.value)
-  }
+  const handleInputChange =
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setter(event.target.value)
+    }
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent): void => {
     event.preventDefault()
     console.log('Login button clicked')
     // here we want to interact with the local db (check password correctness, ensure user exists, etc.)
@@ -23,11 +23,11 @@ function Login(): JSX.Element {
   useEffect(() => {
     const inputs = document.querySelectorAll('.floating-label-group input')
     inputs.forEach((input) => {
-      if (input.value) {
+      if ((input as HTMLInputElement).value) {
         input.classList.add('filled')
       }
       input.addEventListener('input', () => {
-        if (input.value) {
+        if ((input as HTMLInputElement).value) {
           input.classList.add('filled')
         } else {
           input.classList.remove('filled')
@@ -46,12 +46,7 @@ function Login(): JSX.Element {
       <div style={{ height: '15px' }} />
       <form onSubmit={handleSubmit}>
         <div className="floating-label-group">
-          <input
-            type="text"
-            value={username}
-            onChange={handleInputChange(setUsername)}
-            required
-          />
+          <input type="text" value={username} onChange={handleInputChange(setUsername)} required />
           <label>Username</label>
         </div>
         <div className="floating-label-group">

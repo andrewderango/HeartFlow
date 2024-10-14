@@ -15,19 +15,13 @@ function App(): JSX.Element {
               <div className="text">
                 Welcome to <span className="react">HeartFlow</span>
               </div>
-              <p className="tip">
-                Empowering confidence and precision in pacemaker management
-              </p>
+              <p className="tip">Empowering confidence and precision in pacemaker management</p>
               <div className="actions">
                 <div className="action">
-                  <Link to="/login">
-                    Log In User
-                  </Link>
+                  <Link to="/login">Log In User</Link>
                 </div>
                 <div className="action">
-                  <Link to="/register">
-                    Register New User
-                  </Link>
+                  <Link to="/register">Register New User</Link>
                 </div>
               </div>
               <ul className="versions">
