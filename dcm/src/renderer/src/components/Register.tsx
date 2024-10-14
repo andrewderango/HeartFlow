@@ -32,7 +32,7 @@ function Register(): JSX.Element {
     console.log(`handleSubmit result: ${JSON.stringify(result)}`)
     if (result.success) {
       alert('Registration successful')
-      navigate('/dashboard')
+      navigate('/login')
     } else {
       setError(result.message ?? 'An unknown error occurred')
     }
