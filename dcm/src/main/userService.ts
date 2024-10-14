@@ -1,15 +1,7 @@
-import { join } from 'path'
 import { promises as fs } from 'fs'
 import * as argon2 from 'argon2'
-import { app } from 'electron'
-
-const usersFilePath = join(app.getPath('userData'), 'users.json')
-
-interface User {
-  username: string
-  passwordHash: string
-  serialNumber: string
-}
+import { usersFilePath } from '../common/constants'
+import type { PublicUser, User } from '../common/types'
 
 export async function ensureUsersFile(filePath: string): Promise<void> {
   try {
@@ -51,4 +43,19 @@ export async function registerUser(
   users.push(newUser)
   await saveUser(users)
   console.log(`User registered: ${username}`)
+}
+
+export async function loginUser(username: string, password: string): Promise<PublicUser> {
+  console.log(`loginUser called with: ${username}, ${password}`)
+  const users = await getUsers(usersFilePath)
+  const user = users.find((u) => u.username === username)
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  if (!(await argon2.verify(user.passwordHash, password))) {
+    throw new Error('Incorrect password')
+  }
+
+  return { username, serialNumber: user.serialNumber }
 }

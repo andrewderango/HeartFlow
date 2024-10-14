@@ -32,7 +32,7 @@ function Register(): JSX.Element {
     console.log(`handleSubmit result: ${JSON.stringify(result)}`)
     if (result.success) {
       alert('Registration successful')
-      navigate('/login')
+      navigate('/dashboard')
     } else {
       setError(result.message ?? 'An unknown error occurred')
     }
@@ -52,6 +52,12 @@ function Register(): JSX.Element {
         }
       })
     })
+
+    return (): void => {
+      inputs.forEach((input) => {
+        input.removeEventListener('input', () => {})
+      })
+    }
   }, [])
 
   return (

@@ -1,9 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-
-interface RegisterUserResponse {
-  success: boolean
-  message?: string
-}
+import type { RegisterUserResponse, LoginUserResponse } from '../common/types'
 
 declare global {
   interface Window {
@@ -14,6 +10,7 @@ declare global {
         password: string,
         serialNumber: string,
       ) => Promise<RegisterUserResponse>
+      loginUser: (username: string, password: string) => Promise<LoginUserResponse>
     }
   }
 }

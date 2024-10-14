@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-// import electronLogo from '../assets/electron.svg'
 import './Login.css'
 
 function Login(): JSX.Element {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
   const handleInputChange =
@@ -14,10 +14,19 @@ function Login(): JSX.Element {
       setter(event.target.value)
     }
 
-  const handleSubmit = (event: React.FormEvent): void => {
+  const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
-    console.log('Login button clicked')
-    // here we want to interact with the local db (check password correctness, ensure user exists, etc.)
+    setError(null)
+    console.log(`handleSubmit called with: ${username}, ${password}`)
+
+    const result = await window.api.loginUser(username, password)
+    console.log(`handleSubmit result: ${JSON.stringify(result)}`)
+    if (result.success) {
+      alert('Login successful')
+      navigate('/dashboard')
+    } else {
+      setError(result.message ?? 'An unknown error occurred')
+    }
   }
 
   useEffect(() => {
@@ -34,6 +43,12 @@ function Login(): JSX.Element {
         }
       })
     })
+
+    return (): void => {
+      inputs.forEach((input) => {
+        input.removeEventListener('input', () => {})
+      })
+    }
   }, [])
 
   return (
@@ -58,6 +73,7 @@ function Login(): JSX.Element {
           />
           <label>Password</label>
         </div>
+        {error && <div className="error">{error}</div>}
         <div className="login-button">
           <Link
             to="#"
