@@ -73,7 +73,8 @@ code {
 }
 
 .react {
-  background: -webkit-linear-gradient(315deg, #087ea4 55%, #7c93ee);
+  /* background: -webkit-linear-gradient(315deg, #087ea4 55%, #7c93ee); */
+  background: -webkit-linear-gradient(315deg, #1a74ba 45%, #ab1d61);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

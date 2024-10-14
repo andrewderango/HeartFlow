@@ -17,7 +17,7 @@ function Login(): JSX.Element {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
     console.log('Login button clicked')
-    // here we want to interact with the local db (store password, unique serial number and username, max 10 usrs, etc.)
+    // here we want to interact with the local db (check password correctness, ensure user exists, etc.)
   }
 
   useEffect(() => {
@@ -42,7 +42,7 @@ function Login(): JSX.Element {
       <button className="back-button" type="button" onClick={() => navigate('/')}>
         ←
       </button>
-      <div className="text">Log In New User</div>
+      <div className="text">Log In User</div>
       <div style={{ height: '15px' }} />
       <form onSubmit={handleSubmit}>
         <div className="floating-label-group">

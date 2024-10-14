@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'
-import electronLogo from './assets/electron.svg'
+import heartflowLogo from './assets/heartflow.png'
 import Register from './components/Register'
 import Login from './components/Login'
 
@@ -11,7 +11,7 @@ function App(): JSX.Element {
           path="/"
           element={
             <>
-              <img alt="logo" className="logo" src={electronLogo} />
+              <img alt="logo" className="logo" src={heartflowLogo} />
               <div className="text">
                 Welcome to <span className="react">HeartFlow</span>
               </div>
@@ -21,7 +21,7 @@ function App(): JSX.Element {
               <div className="actions">
                 <div className="action">
                   <Link to="/login">
-                    Log In New User
+                    Log In User
                   </Link>
                 </div>
                 <div className="action">
