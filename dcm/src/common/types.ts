@@ -19,3 +19,10 @@ export interface LoginUserResponse {
   user?: PublicUser
   message?: string
 }
+
+export interface Toast {
+  id: number
+  message: string
+  type: 'success' | 'error' | 'info'
+  removing?: boolean
+}

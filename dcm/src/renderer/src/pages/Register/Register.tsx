@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useToast } from '../../context/ToastContext'
 import './Register.css'
 
 function Register(): JSX.Element {
@@ -7,7 +8,7 @@ function Register(): JSX.Element {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [serialNumber, setSerialNumber] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const { addToast } = useToast()
   const navigate = useNavigate()
 
   const handleInputChange =
@@ -18,18 +19,18 @@ function Register(): JSX.Element {
 
   const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
-    setError(null)
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      addToast('Passwords do not match', 'error')
       return
     }
 
     const result = await window.api.registerUser(username, password, serialNumber)
     if (result.success) {
+      addToast('User registered successfully', 'success')
       navigate('/login')
     } else {
-      setError(result.message ?? 'An unknown error occurred')
+      addToast(result.message ?? 'An unknown error occurred', 'error')
     }
   }
 
@@ -94,7 +95,6 @@ function Register(): JSX.Element {
           />
           <label>Pacemaker Serial Number</label>
         </div>
-        {error && <div className="error-message">{error}</div>}
         <div className="register-button">
           <Link
             to="#"

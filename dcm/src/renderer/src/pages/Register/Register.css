@@ -134,9 +134,3 @@ input:focus + label {
 .text {
   margin-top: 0px;
 }
-
-.error-message {
-  color: red;
-  font-size: 12px;
-  margin-top: 0;
-}

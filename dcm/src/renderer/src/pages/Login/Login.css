@@ -134,9 +134,3 @@ input:focus + label {
 .text {
   margin-top: 0px;
 }
-
-.error-message {
-  color: var(--ev-error);
-  font-size: 14px;
-  margin-top: 10px;
-}
