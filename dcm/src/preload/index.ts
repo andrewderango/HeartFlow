@@ -9,15 +9,11 @@ const api = {
     password: string,
     serialNumber: string,
   ): Promise<RegisterUserResponse> => {
-    console.log(`API registerUser called with: ${username}, ${password}, ${serialNumber}`)
     const result = await ipcRenderer.invoke('register-user', username, password, serialNumber)
-    console.log(`API registerUser result: ${JSON.stringify(result)}`)
     return result
   },
   loginUser: async (username: string, password: string): Promise<LoginUserResponse> => {
-    console.log(`API loginUser called with: ${username}, ${password}`)
     const result = await ipcRenderer.invoke('login-user', username, password)
-    console.log(`API loginUser result: ${JSON.stringify(result)}`)
     return result
   },
 }

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useUser } from '../../context/UserContext'
 import './Login.css'
 
 function Login(): JSX.Element {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const { setUser } = useUser()
   const navigate = useNavigate()
 
   const handleInputChange =
@@ -17,11 +19,10 @@ function Login(): JSX.Element {
   const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
     setError(null)
-    console.log(`handleSubmit called with: ${username}, ${password}`)
 
     const result = await window.api.loginUser(username, password)
-    console.log(`handleSubmit result: ${JSON.stringify(result)}`)
     if (result.success) {
+      setUser(result.user)
       navigate('/dashboard')
     } else {
       setError(result.message ?? 'An unknown error occurred')

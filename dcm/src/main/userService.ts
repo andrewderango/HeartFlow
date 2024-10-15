@@ -6,11 +6,9 @@ import type { PublicUser, User } from '../common/types'
 export async function ensureUsersFile(filePath: string): Promise<void> {
   try {
     await fs.access(filePath)
-    console.log(`Users file exists at: ${filePath}`)
   } catch (error) {
     if ((error as { code: string }).code === 'ENOENT') {
       await fs.writeFile(filePath, JSON.stringify([]))
-      console.log(`Created users file at: ${filePath}`)
     } else {
       throw error
     }
@@ -31,7 +29,6 @@ export async function registerUser(
   password: string,
   serialNumber: string,
 ): Promise<void> {
-  console.log(`registerUser called with: ${username}, ${password}, ${serialNumber}`)
   const users = await getUsers(usersFilePath)
   if (users.some((user) => user.username === username)) {
     throw new Error('User already exists')
@@ -42,11 +39,9 @@ export async function registerUser(
 
   users.push(newUser)
   await saveUser(users)
-  console.log(`User registered: ${username}`)
 }
 
 export async function loginUser(username: string, password: string): Promise<PublicUser> {
-  console.log(`loginUser called with: ${username}, ${password}`)
   const users = await getUsers(usersFilePath)
   const user = users.find((u) => u.username === username)
   if (!user) {

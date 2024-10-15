@@ -19,9 +19,6 @@ function Register(): JSX.Element {
   const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
     setError(null)
-    console.log(
-      `handleSubmit called with: ${username}, ${password}, ${confirmPassword}, ${serialNumber}`,
-    )
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
@@ -29,7 +26,6 @@ function Register(): JSX.Element {
     }
 
     const result = await window.api.registerUser(username, password, serialNumber)
-    console.log(`handleSubmit result: ${JSON.stringify(result)}`)
     if (result.success) {
       navigate('/login')
     } else {

@@ -1,6 +1,6 @@
-@import '../assets/main.css';
+@import '../../assets/main.css';
 
-.login-container {
+.register-container {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   padding: 40px;
@@ -105,12 +105,12 @@ input:focus + label {
   transition: ease-in-out 0.3s;
 }
 
-.login-button {
+.register-button {
   flex-shrink: 0;
   padding: 6px;
 }
 
-.login-button a {
+.register-button a {
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
@@ -127,7 +127,7 @@ input:focus + label {
   background-color: rgba(27, 27, 31, 0.8);
 }
 
-.login-button a:hover {
+.register-button a:hover {
   background-color: rgba(27, 27, 31, 1);
 }
 
@@ -136,7 +136,7 @@ input:focus + label {
 }
 
 .error-message {
-  color: var(--ev-error);
-  font-size: 14px;
-  margin-top: 10px;
+  color: red;
+  font-size: 12px;
+  margin-top: 0;
 }
