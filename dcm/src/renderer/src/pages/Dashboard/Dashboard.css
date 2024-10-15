@@ -11,4 +11,10 @@
   opacity: 0;
   transform: translateY(-10px);
   animation: fadeIn 0.75s ease-out forwards;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 5px;
 }

@@ -1,0 +1,15 @@
+@import '../../assets/main.css';
+
+.logout-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    color: #f44336;
+}
