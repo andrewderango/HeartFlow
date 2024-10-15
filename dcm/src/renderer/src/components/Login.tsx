@@ -22,7 +22,6 @@ function Login(): JSX.Element {
     const result = await window.api.loginUser(username, password)
     console.log(`handleSubmit result: ${JSON.stringify(result)}`)
     if (result.success) {
-      alert('Login successful')
       navigate('/dashboard')
     } else {
       setError(result.message ?? 'An unknown error occurred')

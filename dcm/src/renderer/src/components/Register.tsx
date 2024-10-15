@@ -31,7 +31,6 @@ function Register(): JSX.Element {
     const result = await window.api.registerUser(username, password, serialNumber)
     console.log(`handleSubmit result: ${JSON.stringify(result)}`)
     if (result.success) {
-      alert('Registration successful')
       navigate('/login')
     } else {
       setError(result.message ?? 'An unknown error occurred')
