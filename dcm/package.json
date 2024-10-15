@@ -25,6 +25,7 @@
     "@electron-toolkit/utils": "^3.0.0",
     "argon2": "^0.41.1",
     "electron-updater": "^6.3.9",
+    "lucide-react": "^0.453.0",
     "react-router-dom": "^6.27.0"
   },
   "devDependencies": {
