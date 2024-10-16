@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import LogoutButton from '../../components/LogOut/LogOut'
 import TerminateButton from '../../components/Terminate/Terminate'
 import { useUser } from '../../context/UserContext'
-import { Activity, HardDriveUpload, ClipboardX } from 'lucide-react'
+import { Activity, HardDriveUpload, ClipboardX, Info } from 'lucide-react'
 import heartflowLogo from '../../assets/heartflow.png'
 import './Dashboard.css'
 
@@ -10,6 +10,7 @@ function Dashboard(): JSX.Element {
   const { user } = useUser()
   const [currentTime, setCurrentTime] = useState(new Date())
   const [communicationStatus, setCommunicationStatus] = useState('CONNECTED')
+  const [showHelp, setShowHelp] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -24,6 +25,10 @@ function Dashboard(): JSX.Element {
     } else {
       e.target.classList.remove('filled')
     }
+  }
+
+  const toggleHelp = (): void => {
+    setShowHelp(!showHelp)
   }
 
   return (
@@ -77,6 +82,25 @@ function Dashboard(): JSX.Element {
         {user && <p>Your serial number is {user.serialNumber}</p>}
       </div>
       <div className="right-sidebar">
+        <div className="help-button-container">
+          <button className="help-button" onClick={toggleHelp}>
+            <Info size={16} />
+          </button>
+        </div>
+        {showHelp && (
+          <div className="help-popup">
+            <h3>Pulse Parameters</h3>
+            <ul>
+              <li><strong>Atrium Amp:</strong> Amplitude of the atrial pulse (mV)</li>
+              <li><strong>Ventricle Amp:</strong> Amplitude of the ventricular pulse (mV)</li>
+              <li><strong>Atrial PW:</strong> Pulse width of the atrial pulse (ms)</li>
+              <li><strong>Ventricle PW:</strong> Pulse width of the ventricular pulse (ms)</li>
+              <li><strong>Atrial RP:</strong> Refractory period of the atrial pulse (ms)</li>
+              <li><strong>Ventricular RP:</strong> Refractory period of the ventricular pulse (ms)</li>
+              <li><strong>Lower Rate Limit:</strong> Minimum heart rate (bpm)</li>
+            </ul>
+          </div>
+        )}
         <h2>Pacemaker Parameters</h2>
         <h3>Mode Selection</h3>
         <div className="button-row">

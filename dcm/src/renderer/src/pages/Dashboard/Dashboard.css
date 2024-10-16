@@ -52,6 +52,58 @@
   border-radius: 12px;
 }
 
+.help-button-container {
+  position: absolute;
+  top: 15px;
+  right: 12px;
+}
+
+.help-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.help-button:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.help-popup {
+  position: absolute;
+  top: 35px;
+  right: 15px;
+  width: 550px;
+  background-color: rgba(12, 12, 16, 0.95);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.help-popup h3 {
+  margin-top: 0;
+}
+
+.help-popup ul {
+  padding-left: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.help-popup li {
+  margin-bottom: 5px;
+}
+
+.help-popup strong {
+  color: rgba(255, 255, 255, 1.0);
+}
+
+.help-popup h3 {
+  margin-bottom: 5px;
+}
+
 .logo-sidebar {
   width: 70%;
   height: auto;
@@ -90,7 +142,6 @@
   align-items: center;
   background-color: rgba(0, 255, 0, 0.3);
   padding: 5px;
-  /* border-radius: 5px; */
   width: 60%;
   margin-left: 20%;
 }
