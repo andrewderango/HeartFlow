@@ -16,6 +16,7 @@ const LogoutButton: React.FC = () => {
   return (
     <button className="logout-button" type="button" onClick={handleLogout}>
       <LogOut size={24} />
+      <span>Sign Out</span>
     </button>
   )
 }

@@ -1,10 +1,10 @@
 @import '../../assets/main.css';
 
-.logout-button {
+.terminate-button {
+  color: rgb(238, 65, 65);
   background: rgba(255, 255, 255, 0.075);
   border-radius: 5px;
   border: none;
-  color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -14,11 +14,11 @@
   transition: ease-in-out 0.3s;
 }
 
-.logout-button:hover {
+.terminate-button:hover {
   background: rgba(255, 255, 255, 0.10);
   transition: ease-in-out 0.3s;
 }
 
-.logout-button svg {
+.terminate-button svg {
   margin-right: 8px;
 }
