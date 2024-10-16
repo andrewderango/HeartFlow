@@ -40,8 +40,9 @@ function Dashboard(): JSX.Element {
               day: 'numeric',
               year: 'numeric',
             })}
-            </p>
-          <p className="current-time">{currentTime.toLocaleTimeString('en-US', {
+          </p>
+          <p className="current-time">
+            {currentTime.toLocaleTimeString('en-US', {
               hour: 'numeric',
               minute: 'numeric',
               // second: 'numeric',
@@ -76,7 +77,29 @@ function Dashboard(): JSX.Element {
           <button className="mode-button">AAI</button>
           <button className="mode-button">VII</button>
         </div>
-        <p>Additional content can go here.</p>
+        <h3>Pulse Amplitude</h3>
+        <div className="input-row">
+          <input type="text" className="input-field" placeholder="Input 1" />
+          <input type="text" className="input-field" placeholder="Input 2" />
+        </div>
+        <h3>Pulse Width</h3>
+        <div className="input-row">
+          <input type="text" className="input-field" placeholder="Input 1" />
+          <input type="text" className="input-field" placeholder="Input 2" />
+        </div>
+        <h3>Refractory Period</h3>
+        <div className="input-row">
+          <input type="text" className="input-field" placeholder="Input 1" />
+          <input type="text" className="input-field" placeholder="Input 2" />
+        </div>
+        <h3>Lower Rate Limit</h3>
+        <div className="input-row">
+          <input type="text" className="input-field" placeholder="Input 1" />
+          <input type="text" className="input-field" placeholder="Input 2" />
+        </div>
+        <div className="submit-button-container">
+          <button className="submit-button" type="button">Submit</button>
+        </div>
       </div>
     </div>
   )
