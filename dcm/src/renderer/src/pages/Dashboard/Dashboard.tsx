@@ -79,23 +79,23 @@ function Dashboard(): JSX.Element {
         </div>
         <h3>Pulse Amplitude</h3>
         <div className="input-row">
-          <input type="text" className="input-field" placeholder="Input 1" />
-          <input type="text" className="input-field" placeholder="Input 2" />
+          <input type="text" className="input-field" placeholder="Atrium" />
+          <input type="text" className="input-field" placeholder="Ventricle" />
         </div>
         <h3>Pulse Width</h3>
         <div className="input-row">
-          <input type="text" className="input-field" placeholder="Input 1" />
-          <input type="text" className="input-field" placeholder="Input 2" />
+          <input type="text" className="input-field" placeholder="Atrium" />
+          <input type="text" className="input-field" placeholder="Ventricle" />
         </div>
         <h3>Refractory Period</h3>
         <div className="input-row">
-          <input type="text" className="input-field" placeholder="Input 1" />
-          <input type="text" className="input-field" placeholder="Input 2" />
+          <input type="text" className="input-field" placeholder="Atrium" />
+          <input type="text" className="input-field" placeholder="Ventricle" />
         </div>
         <h3>Lower Rate Limit</h3>
         <div className="input-row">
-          <input type="text" className="input-field" placeholder="Input 1" />
-          <input type="text" className="input-field" placeholder="Input 2" />
+          <input type="text" className="input-field" placeholder="Atrium" />
+          <input type="text" className="input-field" placeholder="Ventricle" />
         </div>
         <div className="button-container">
           <button className="submit-button" type="button">
