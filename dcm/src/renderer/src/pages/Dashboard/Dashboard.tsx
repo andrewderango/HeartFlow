@@ -13,6 +13,9 @@ function Dashboard(): JSX.Element {
   const [communicationStatus, setCommunicationStatus] = useState('CONNECTED')
   const [showHelp, setShowHelp] = useState(false)
   const [selectedMode, setSelectedMode] = useState<string | null>(null)
+  const [naturalHeartBPM, setNaturalHeartBPM] = useState<number>(42)
+  const [pacemakerBPM, setPacemakerBPM] = useState<number>(19)
+  const [combinedBPM, setCombinedBPM] = useState<number>(61)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -84,7 +87,20 @@ function Dashboard(): JSX.Element {
       </div>
       <div className="main-content">
         <img alt="pacemaker heart" className="pacemaker-heart" src={pacemakerHeart} />
-        <h1>Dashboard</h1>
+        <div className="bpm-container">
+          <div className="bpm-box">
+            <h3>Natural BPM</h3>
+            <p>{naturalHeartBPM}</p>
+          </div>
+          <div className="bpm-box">
+            <h3>Pacemaker BPM</h3>
+            <p>{pacemakerBPM}</p>
+          </div>
+          <div className="bpm-box">
+            <h3>Combined BPM</h3>
+            <p>{combinedBPM}</p>
+          </div>
+        </div>
       </div>
       <div className="right-sidebar">
         <div className="help-button-container">
