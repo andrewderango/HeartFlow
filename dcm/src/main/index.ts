@@ -2,9 +2,20 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { ensureUsersFile, registerUser, loginUser } from './userService'
+import {
+  ensureUsersFile,
+  registerUser,
+  setUser,
+  loginUser,
+  getSettingsForMode,
+} from './userService'
 import { usersFilePath } from '../common/constants'
-import type { RegisterUserResponse, LoginUserResponse } from '../common/types'
+import type {
+  RegisterUserResponse,
+  SetUserResponse,
+  LoginUserResponse,
+  ModeSettingResponse,
+} from '../common/types'
 
 function createWindow(): void {
   // Create the browser window.
@@ -83,12 +94,33 @@ ipcMain.handle(
   },
 )
 
+ipcMain.handle(
+  'set-user',
+  async (_, username: string, mode: string, settings: Record<string, number>) => {
+    try {
+      await setUser(username, mode, settings)
+      return { success: true } as SetUserResponse
+    } catch (error) {
+      return { success: false, message: (error as Error).message } as SetUserResponse
+    }
+  },
+)
+
 ipcMain.handle('login-user', async (_, username: string, password: string) => {
   try {
     const user = await loginUser(username, password)
     return { success: true, user } as LoginUserResponse
   } catch (error) {
     return { success: false, message: (error as Error).message } as LoginUserResponse
+  }
+})
+
+ipcMain.handle('get-settings-for-mode', async (_, username: string, mode: string) => {
+  try {
+    const settings = await getSettingsForMode(username, mode)
+    return { success: true, settings } as ModeSettingResponse
+  } catch (error) {
+    return { success: false, message: (error as Error).message } as ModeSettingResponse
   }
 })
 
