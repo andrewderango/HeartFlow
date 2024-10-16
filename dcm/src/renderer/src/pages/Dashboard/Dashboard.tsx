@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import LogoutButton from '../../components/LogOut/LogOut'
 import TerminateButton from '../../components/Terminate/Terminate'
 import { useUser } from '../../context/UserContext'
-import { Activity } from 'lucide-react'
+import { Activity, HardDriveUpload, ClipboardX } from 'lucide-react'
 import heartflowLogo from '../../assets/heartflow.png'
 import './Dashboard.css'
 
@@ -97,8 +97,15 @@ function Dashboard(): JSX.Element {
           <input type="text" className="input-field" placeholder="Input 1" />
           <input type="text" className="input-field" placeholder="Input 2" />
         </div>
-        <div className="submit-button-container">
-          <button className="submit-button" type="button">Submit</button>
+        <div className="button-container">
+          <button className="submit-button" type="button">
+            <HardDriveUpload size={16} />
+            <span>Submit</span>
+          </button>
+          <button className="discard-button" type="button">
+            <ClipboardX size={16} />
+            <span>Discard</span>
+          </button>
         </div>
       </div>
     </div>
