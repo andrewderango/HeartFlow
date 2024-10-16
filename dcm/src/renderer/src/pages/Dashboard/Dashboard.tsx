@@ -68,7 +68,14 @@ function Dashboard(): JSX.Element {
         {user && <p>Your serial number is {user.serialNumber}</p>}
       </div>
       <div className="right-sidebar">
-        <h2>Right Sidebar</h2>
+        <h2>Pacemaker Parameters</h2>
+        <h3>Mode Selection</h3>
+        <div className="button-row">
+          <button className="mode-button">AOO</button>
+          <button className="mode-button">VOO</button>
+          <button className="mode-button">AAI</button>
+          <button className="mode-button">VII</button>
+        </div>
         <p>Additional content can go here.</p>
       </div>
     </div>

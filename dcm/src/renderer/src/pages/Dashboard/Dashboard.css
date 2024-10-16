@@ -43,7 +43,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
   justify-content: space-between;
   position: fixed;
   right: 15px;
@@ -157,4 +157,38 @@
   width: 50%;
   padding: 20px;
   box-sizing: border-box;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.mode-button {
+  background: rgba(27, 27, 31, 0.75);
+  border-radius: 5px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 15px 0px;
+  transition: ease-in-out 0.3s;
+  font-size: 16px;
+  width: 22.5%;
+}
+
+.mode-button:hover {
+  background: rgba(27, 27, 31, 1.0);
+  transition: ease-in-out 0.3s;
+}
+
+h2 {
+  font-weight: 900;
+  text-align: center;
+}
+
+h3 {
+  font-weight: bold;
+  text-align: left;
 }
