@@ -84,7 +84,7 @@ function Dashboard(): JSX.Element {
       <div className="right-sidebar">
         <div className="help-button-container">
           <button className="help-button" onClick={toggleHelp}>
-            <Info size={16} />
+            <Info size={14} />
           </button>
         </div>
         {showHelp && (
@@ -101,49 +101,56 @@ function Dashboard(): JSX.Element {
             </ul>
           </div>
         )}
-        <h2>Pacemaker Parameters</h2>
-        <h3>Mode Selection</h3>
-        <div className="button-row">
-          <button className="mode-button">AOO</button>
-          <button className="mode-button">VOO</button>
-          <button className="mode-button">AAI</button>
-          <button className="mode-button">VII</button>
+        <div className="header-container">
+          <h2>Pacemaker Parameters</h2>
+          <hr></hr>
         </div>
-        <h3>Continuous Parameters</h3>
-        <div className="input-row">
-          <div className="input-container-long">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Lower Rate Limit</label>
+        <div className="mode-container">
+          <h3>Mode Selection</h3>
+          <div className="button-row">
+            <button className="mode-button">AOO</button>
+            <button className="mode-button">VOO</button>
+            <button className="mode-button">AAI</button>
+            <button className="mode-button">VII</button>
           </div>
         </div>
-        <div className="input-row">
-          <div className="input-container">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Atrium Amp</label>
+        <div className="parameter-container">
+          <h3>Continuous Parameters</h3>
+          <div className="input-row">
+            <div className="input-container">
+              <input type="text" className="input-field" onChange={handleInputChange} />
+              <label>Atrium AMP</label>
+            </div>
+            <div className="input-container">
+              <input type="text" className="input-field" onChange={handleInputChange} />
+              <label>Ventricle AMP</label>
+            </div>
           </div>
-          <div className="input-container">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Ventricle Amp</label>
+          <div className="input-row">
+            <div className="input-container">
+              <input type="text" className="input-field" onChange={handleInputChange} />
+              <label>Atrial PW</label>
+            </div>
+            <div className="input-container">
+              <input type="text" className="input-field" onChange={handleInputChange} />
+              <label>Ventricle PW</label>
+            </div>
           </div>
-        </div>
-        <div className="input-row">
-          <div className="input-container">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Atrial PW</label>
+          <div className="input-row">
+            <div className="input-container">
+              <input type="text" className="input-field" onChange={handleInputChange} />
+              <label>Atrial RP</label>
+            </div>
+            <div className="input-container">
+              <input type="text" className="input-field" onChange={handleInputChange} />
+              <label>Ventricular RP</label>
+            </div>
           </div>
-          <div className="input-container">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Ventricle PW</label>
-          </div>
-        </div>
-        <div className="input-row">
-          <div className="input-container">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Atrial RP</label>
-          </div>
-          <div className="input-container">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Ventricular RP</label>
+          <div className="input-row">
+            <div className="input-container-long">
+              <input type="text" className="input-field" onChange={handleInputChange} />
+              <label>Lower Rate Limit</label>
+            </div>
           </div>
         </div>
         <div className="button-container">
