@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs'
 import * as argon2 from 'argon2'
 import { usersFilePath } from '../common/constants'
+import { createUser } from '../common/types'
 import type { PublicUser, User } from '../common/types'
 
 export async function ensureUsersFile(filePath: string): Promise<void> {
@@ -35,9 +36,24 @@ export async function registerUser(
   }
 
   const passwordHash = await argon2.hash(password)
-  const newUser: User = { username, passwordHash, serialNumber }
+  const newUser: User = createUser({ username, passwordHash, serialNumber })
 
   users.push(newUser)
+  await saveUser(users)
+}
+
+export async function setUser(
+  username: string,
+  mode: string,
+  settings: Record<string, number>,
+): Promise<void> {
+  const users = await getUsers(usersFilePath)
+  const user = users.find((u) => u.username === username)
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  user.modes[mode] = settings
   await saveUser(users)
 }
 
@@ -53,4 +69,14 @@ export async function loginUser(username: string, password: string): Promise<Pub
   }
 
   return { username, serialNumber: user.serialNumber }
+}
+
+export async function getSettingsForMode(username: string, mode: string): Promise<Partial<User>> {
+  const users = await getUsers(usersFilePath)
+  const user = users.find((u) => u.username === username)
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  return user.modes[mode]
 }

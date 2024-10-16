@@ -1,6 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import type { RegisterUserResponse, LoginUserResponse } from '../common/types'
+import type {
+  RegisterUserResponse,
+  SetUserResponse,
+  LoginUserResponse,
+  ModeSettingResponse,
+} from '../common/types'
 
 // Custom APIs for renderer
 const api = {
@@ -12,8 +17,20 @@ const api = {
     const result = await ipcRenderer.invoke('register-user', username, password, serialNumber)
     return result
   },
+  setUser: async (
+    username: string,
+    mode: string,
+    settings: Record<string, number>,
+  ): Promise<SetUserResponse> => {
+    const result = await ipcRenderer.invoke('set-user', username, mode, settings)
+    return result
+  },
   loginUser: async (username: string, password: string): Promise<LoginUserResponse> => {
     const result = await ipcRenderer.invoke('login-user', username, password)
+    return result
+  },
+  getSettingsForMode: async (username: string, mode: string): Promise<ModeSettingResponse> => {
+    const result = await ipcRenderer.invoke('get-settings-for-mode', username, mode)
     return result
   },
 }

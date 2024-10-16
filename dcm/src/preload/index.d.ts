@@ -1,5 +1,10 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import type { RegisterUserResponse, LoginUserResponse } from '../common/types'
+import type {
+  RegisterUserResponse,
+  SetUserResponse,
+  LoginUserResponse,
+  ModeSettingResponse,
+} from '../common/types'
 
 declare global {
   interface Window {
@@ -10,7 +15,13 @@ declare global {
         password: string,
         serialNumber: string,
       ) => Promise<RegisterUserResponse>
+      setUser: (
+        username: string,
+        mode: string,
+        settings: Record<string, number>,
+      ) => Promise<SetUserResponse>
       loginUser: (username: string, password: string) => Promise<LoginUserResponse>
+      getSettingsForMode: (username: string, mode: string) => Promise<ModeSettingResponse>
     }
   }
 }
