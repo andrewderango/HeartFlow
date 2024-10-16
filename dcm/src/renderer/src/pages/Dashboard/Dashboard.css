@@ -58,14 +58,36 @@
   margin-top: -5px;
 }
 
-.current-time {
+.current-date {
   font-size: 14px;
+}
+
+.current-time {
+  font-size: 26px;
   margin-bottom: 20px;
 }
 
 .communication-status {
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 255, 0, 0.3);
+  padding: 5px;
+  /* border-radius: 5px; */
+  width: 60%;
+  margin-left: 20%;
+}
+
+.communication-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   font-size: 14px;
-  margin-bottom: 10px;
+}
+
+.activity-icon {
+  margin-right: 5px;
+  margin-left: -2.5px;
 }
 
 .sidebar-section {
@@ -83,13 +105,13 @@
 }
 
 .communication-status-header {
-  font-size: 14px;
+  font-size: 12px;
   margin-bottom: 5px;
 }
 
-.communication-status {
-  background-color: rgba(0, 255, 0, 0.3);
-  padding: 5px;
+.sidebar-time {
+  width: 100%;
+  text-align: center;
 }
 
 .bottom-sidebar-components {
