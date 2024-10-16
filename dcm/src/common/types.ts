@@ -28,6 +28,7 @@ export interface User {
       lowerRateLimit: number
     }
   }
+  lastUsedMode?: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'
 }
 
 export const createUser = (overrides: Partial<User> = {}): User =>
@@ -61,12 +62,14 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         lowerRateLimit: 0,
       },
     },
+    lastUsedMode: 'OFF',
     ...overrides,
   }) as User
 
 export interface PublicUser {
   username: string
   serialNumber: string
+  lastUsedMode?: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'
 }
 
 export interface RegisterUserResponse {

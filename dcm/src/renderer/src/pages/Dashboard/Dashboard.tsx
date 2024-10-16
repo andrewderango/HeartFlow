@@ -11,6 +11,7 @@ function Dashboard(): JSX.Element {
       <h1>Dashboard</h1>
       {user && <p>Welcome, {user.username}!</p>}
       {user && <p>Your serial number is {user.serialNumber}</p>}
+      {user && <p>Your last used mode is {user.lastUsedMode}</p>}
     </div>
   )
 }

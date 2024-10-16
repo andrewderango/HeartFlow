@@ -68,7 +68,7 @@ export async function loginUser(username: string, password: string): Promise<Pub
     throw new Error('Incorrect password')
   }
 
-  return { username, serialNumber: user.serialNumber }
+  return { username, serialNumber: user.serialNumber, lastUsedMode: user.lastUsedMode }
 }
 
 export async function getSettingsForMode(username: string, mode: string): Promise<Partial<User>> {
