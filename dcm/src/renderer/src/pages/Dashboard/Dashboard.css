@@ -19,6 +19,42 @@
   animation: fadeIn 0.75s ease-out forwards;
 }
 
+@keyframes beat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes realisticBeat {
+  0%, 5% {
+    transform: scale(1);
+  }
+  10%, 15% {
+    transform: scale(1.05);
+  }
+  20%, 25% {
+    transform: scale(1);
+  }
+  30%, 35% {
+    transform: scale(1.05);
+  }
+  40%, 100% {
+    transform: scale(1);
+  }
+}
+
+.pacemaker-heart {
+  display: block;
+  margin: 0 auto;
+  width: 400px;
+  height: auto;
+  padding: 10px;
+  animation: realisticBeat 2s infinite
+}
+
 .sidebar {
   width: 20%;
   background-color: rgba(12, 12, 16, 0.8);
@@ -304,6 +340,7 @@ input:focus + label {
   padding: 15px 0px;
   font-size: 14px;
   width: 22.5%;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
   transition: ease-in-out 0.3s;
 }
 
@@ -313,8 +350,9 @@ input:focus + label {
 }
 
 .mode-button.selected {
-  background: linear-gradient(135deg, rgba(31, 138, 219, 0.50), rgba(244, 42, 140, 0.50));
+  background: linear-gradient(135deg, rgba(31, 138, 219, 0.60), rgba(244, 42, 140, 0.60));
   font-weight: bold;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
   transition: ease-in-out 0.3s;
 }
 

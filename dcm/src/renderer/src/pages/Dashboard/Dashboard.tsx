@@ -4,6 +4,7 @@ import TerminateButton from '../../components/Terminate/Terminate'
 import { useUser } from '../../context/UserContext'
 import { Activity, HardDriveUpload, ClipboardX, Info } from 'lucide-react'
 import heartflowLogo from '../../assets/heartflow.png'
+import pacemakerHeart from '../../assets/pacemaker-heart.png'
 import './Dashboard.css'
 
 function Dashboard(): JSX.Element {
@@ -82,9 +83,8 @@ function Dashboard(): JSX.Element {
         </div>
       </div>
       <div className="main-content">
+        <img alt="pacemaker heart" className="pacemaker-heart" src={pacemakerHeart} />
         <h1>Dashboard</h1>
-        {user && <p>Welcome, {user.username}!</p>}
-        {user && <p>Your serial number is {user.serialNumber}</p>}
       </div>
       <div className="right-sidebar">
         <div className="help-button-container">
