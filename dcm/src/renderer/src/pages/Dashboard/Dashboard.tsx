@@ -11,6 +11,7 @@ function Dashboard(): JSX.Element {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [communicationStatus, setCommunicationStatus] = useState('CONNECTED')
   const [showHelp, setShowHelp] = useState(false)
+  const [selectedMode, setSelectedMode] = useState<string | null>(null)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -29,6 +30,10 @@ function Dashboard(): JSX.Element {
 
   const toggleHelp = (): void => {
     setShowHelp(!showHelp)
+  }
+
+  const handleModeSelect = (mode: string): void => {
+    setSelectedMode(mode)
   }
 
   return (
@@ -108,10 +113,15 @@ function Dashboard(): JSX.Element {
         <div className="mode-container">
           <h3>Mode Selection</h3>
           <div className="button-row">
-            <button className="mode-button">AOO</button>
-            <button className="mode-button">VOO</button>
-            <button className="mode-button">AAI</button>
-            <button className="mode-button">VII</button>
+            {['AOO', 'VOO', 'AAI', 'VII'].map((mode) => (
+              <button
+                key={mode}
+                className={`mode-button ${selectedMode === mode ? 'selected' : ''}`}
+                onClick={() => handleModeSelect(mode)}
+              >
+                {mode}
+              </button>
+            ))}
           </div>
         </div>
         <div className="parameter-container">
