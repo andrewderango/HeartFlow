@@ -15,7 +15,6 @@ function Dashboard(): JSX.Element {
   const [selectedMode, setSelectedMode] = useState<string | null>(null)
   const [naturalHeartBPM, setNaturalHeartBPM] = useState<number>(42)
   const [pacemakerBPM, setPacemakerBPM] = useState<number>(19)
-  const [combinedBPM, setCombinedBPM] = useState<number>(61)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,6 +38,9 @@ function Dashboard(): JSX.Element {
   const handleModeSelect = (mode: string): void => {
     setSelectedMode(mode)
   }
+
+  const isAtriumDisabled = selectedMode === 'VOO' || selectedMode === 'VII'
+  const isVentricleDisabled = selectedMode === 'AOO' || selectedMode === 'AAI'
 
   return (
     <div className="dashboard-container">
@@ -96,10 +98,6 @@ function Dashboard(): JSX.Element {
             <h3>Pacemaker BPM</h3>
             <p>{pacemakerBPM}</p>
           </div>
-          <div className="bpm-box">
-            <h3>Combined BPM</h3>
-            <p>{combinedBPM}</p>
-          </div>
         </div>
       </div>
       <div className="right-sidebar">
@@ -144,32 +142,32 @@ function Dashboard(): JSX.Element {
           <h3>Continuous Parameters</h3>
           <div className="input-row">
             <div className="input-container">
-              <input type="text" className="input-field" onChange={handleInputChange} />
-              <label>Atrium AMP</label>
+              <input type="text" className="input-field" onChange={handleInputChange} disabled={isAtriumDisabled} />
+              <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium AMP</label>
             </div>
             <div className="input-container">
-              <input type="text" className="input-field" onChange={handleInputChange} />
-              <label>Ventricle AMP</label>
-            </div>
-          </div>
-          <div className="input-row">
-            <div className="input-container">
-              <input type="text" className="input-field" onChange={handleInputChange} />
-              <label>Atrial PW</label>
-            </div>
-            <div className="input-container">
-              <input type="text" className="input-field" onChange={handleInputChange} />
-              <label>Ventricle PW</label>
+              <input type="text" className="input-field" onChange={handleInputChange} disabled={isVentricleDisabled} />
+              <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle AMP</label>
             </div>
           </div>
           <div className="input-row">
             <div className="input-container">
-              <input type="text" className="input-field" onChange={handleInputChange} />
-              <label>Atrial RP</label>
+              <input type="text" className="input-field" onChange={handleInputChange} disabled={isAtriumDisabled} />
+              <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium PW</label>
             </div>
             <div className="input-container">
-              <input type="text" className="input-field" onChange={handleInputChange} />
-              <label>Ventricular RP</label>
+              <input type="text" className="input-field" onChange={handleInputChange} disabled={isVentricleDisabled} />
+              <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle PW</label>
+            </div>
+          </div>
+          <div className="input-row">
+            <div className="input-container">
+              <input type="text" className="input-field" onChange={handleInputChange} disabled={isAtriumDisabled} />
+              <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrial RP</label>
+            </div>
+            <div className="input-container">
+              <input type="text" className="input-field" onChange={handleInputChange} disabled={isVentricleDisabled} />
+              <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricular RP</label>
             </div>
           </div>
           <div className="input-row">

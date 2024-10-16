@@ -299,6 +299,15 @@ hr {
   transition: ease-in-out 0.2s;
 }
 
+.input-field:disabled {
+  background: rgba(255, 255, 255, 0.025);
+  cursor: not-allowed;
+}
+
+.input-field:disabled::placeholder {
+  color: rgba(255, 255, 255, 0.125);
+}
+
 label {
   position: absolute;
   left: 12px;
@@ -308,6 +317,10 @@ label {
   transition: all 0.2s ease-out;
   color: rgba(255, 255, 255, 0.7);
   text-align: center;
+}
+
+.disabled-label {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 input.filled + label {
