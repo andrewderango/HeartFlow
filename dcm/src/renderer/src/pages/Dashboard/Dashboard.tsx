@@ -111,6 +111,12 @@ function Dashboard(): JSX.Element {
         </div>
         <h3>Continuous Parameters</h3>
         <div className="input-row">
+          <div className="input-container-long">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Lower Rate Limit</label>
+          </div>
+        </div>
+        <div className="input-row">
           <div className="input-container">
             <input type="text" className="input-field" onChange={handleInputChange} />
             <label>Atrium Amp</label>
@@ -138,16 +144,6 @@ function Dashboard(): JSX.Element {
           <div className="input-container">
             <input type="text" className="input-field" onChange={handleInputChange} />
             <label>Ventricular RP</label>
-          </div>
-        </div>
-        <div className="input-row">
-          <div className="input-container">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Lower Rate Limit</label>
-          </div>
-          <div className="input-container">
-            <input type="text" className="input-field" onChange={handleInputChange} />
-            <label>Lower Rate Limit</label>
           </div>
         </div>
         <div className="button-container">

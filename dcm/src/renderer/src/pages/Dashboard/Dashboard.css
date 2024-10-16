@@ -222,6 +222,11 @@
   width: 48%;
 }
 
+.input-container-long {
+  position: relative;
+  width: 100%;
+}
+
 .input-field {
   background: rgba(255, 255, 255, 0.10);
   border-radius: 5px;
