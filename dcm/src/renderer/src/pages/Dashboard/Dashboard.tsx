@@ -18,6 +18,14 @@ function Dashboard(): JSX.Element {
     return () => clearInterval(timer)
   }, [])
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.value !== '') {
+      e.target.classList.add('filled')
+    } else {
+      e.target.classList.remove('filled')
+    }
+  }
+
   return (
     <div className="dashboard-container">
       <div className="sidebar">
@@ -77,25 +85,46 @@ function Dashboard(): JSX.Element {
           <button className="mode-button">AAI</button>
           <button className="mode-button">VII</button>
         </div>
-        <h3>Pulse Amplitude</h3>
+        <h3>Continuous Parameters</h3>
         <div className="input-row">
-          <input type="text" className="input-field" placeholder="Atrium" />
-          <input type="text" className="input-field" placeholder="Ventricle" />
+          <div className="input-container">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Atrium Amp</label>
+          </div>
+          <div className="input-container">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Ventricle Amp</label>
+          </div>
         </div>
-        <h3>Pulse Width</h3>
         <div className="input-row">
-          <input type="text" className="input-field" placeholder="Atrium" />
-          <input type="text" className="input-field" placeholder="Ventricle" />
+          <div className="input-container">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Atrial PW</label>
+          </div>
+          <div className="input-container">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Ventricle PW</label>
+          </div>
         </div>
-        <h3>Refractory Period</h3>
         <div className="input-row">
-          <input type="text" className="input-field" placeholder="Atrium" />
-          <input type="text" className="input-field" placeholder="Ventricle" />
+          <div className="input-container">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Atrial RP</label>
+          </div>
+          <div className="input-container">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Ventricular RP</label>
+          </div>
         </div>
-        <h3>Lower Rate Limit</h3>
         <div className="input-row">
-          <input type="text" className="input-field" placeholder="Atrium" />
-          <input type="text" className="input-field" placeholder="Ventricle" />
+          <div className="input-container">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Lower Rate Limit</label>
+          </div>
+          <div className="input-container">
+            <input type="text" className="input-field" onChange={handleInputChange} />
+            <label>Lower Rate Limit</label>
+          </div>
         </div>
         <div className="button-container">
           <button className="submit-button" type="button">
