@@ -67,6 +67,10 @@ function Dashboard(): JSX.Element {
         {user && <p>Welcome, {user.username}!</p>}
         {user && <p>Your serial number is {user.serialNumber}</p>}
       </div>
+      <div className="right-sidebar">
+        <h2>Right Sidebar</h2>
+        <p>Additional content can go here.</p>
+      </div>
     </div>
   )
 }
