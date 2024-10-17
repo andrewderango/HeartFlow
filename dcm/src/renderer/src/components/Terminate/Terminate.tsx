@@ -20,7 +20,12 @@ const TerminateButton: React.FC<TerminateButtonProps> = ({ onTerminate, disabled
   }
 
   return (
-    <button className="terminate-button" type="button" onClick={handleTermination} disabled={disabled}>
+    <button
+      className="terminate-button"
+      type="button"
+      onClick={handleTermination}
+      disabled={disabled}
+    >
       <PowerOff size={24} />
       <span>Terminate Telemetry</span>
     </button>

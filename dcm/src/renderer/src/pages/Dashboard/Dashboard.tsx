@@ -14,8 +14,12 @@ function Dashboard(): JSX.Element {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [communicationStatus, _setCommunicationStatus] = useState('CONNECTED')
   const [showHelp, setShowHelp] = useState(false)
-  const [selectedMode, setSelectedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(null)
-  const [submittedMode, setSubmittedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(null)
+  const [selectedMode, setSelectedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(
+    null,
+  )
+  const [submittedMode, setSubmittedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(
+    null,
+  )
   const [isTerminateDisabled, setIsTerminateDisabled] = useState(false)
   const [isTelemetryTerminated, setIsTelemetryTerminated] = useState(false)
   const [naturalHeartBPM, _setNaturalHeartBPM] = useState<number>(42)
@@ -65,11 +69,17 @@ function Dashboard(): JSX.Element {
   }
 
   const getStatusIcon = (): JSX.Element => {
-    return communicationStatus === 'CONNECTED' ? <Activity size={16} className="activity-icon" /> : <XCircle size={16} className="disconnected-icon" />;
+    return communicationStatus === 'CONNECTED' ? (
+      <Activity size={16} className="activity-icon" />
+    ) : (
+      <XCircle size={16} className="disconnected-icon" />
+    )
   }
-  
+
   const getStatusClass = (): string => {
-    return communicationStatus === 'CONNECTED' ? 'communication-status' : 'communication-status disconnected';
+    return communicationStatus === 'CONNECTED'
+      ? 'communication-status'
+      : 'communication-status disconnected'
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -102,7 +112,7 @@ function Dashboard(): JSX.Element {
     }
   }
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleSubmit = (_e: React.MouseEvent<HTMLButtonElement>): void => {
     if (!selectedMode) {
       return
     }
@@ -280,7 +290,8 @@ function Dashboard(): JSX.Element {
   }
 
   const isAtriumDisabled = selectedMode === 'VOO' || selectedMode === 'VVI' || isTelemetryTerminated
-  const isVentricleDisabled = selectedMode === 'AOO' || selectedMode === 'AAI' || isTelemetryTerminated
+  const isVentricleDisabled =
+    selectedMode === 'AOO' || selectedMode === 'AAI' || isTelemetryTerminated
 
   return (
     <div className="dashboard-container">
@@ -328,17 +339,17 @@ function Dashboard(): JSX.Element {
         </div>
       </div>
       <div className="main-content">
-        <img 
-          alt="pacemaker heart" 
-          className={submittedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'} 
-          src={pacemakerHeart} 
+        <img
+          alt="pacemaker heart"
+          className={submittedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'}
+          src={pacemakerHeart}
         />
         <div className="stats-container">
           <div className="bpm-container">
             <div className="bpm-box">
-                <h3>Current Mode</h3>
-                <p>{submittedMode}</p>
-              </div>
+              <h3>Current Mode</h3>
+              <p>{submittedMode}</p>
+            </div>
             <div className="bpm-box">
               <h3>Natural BPM</h3>
               <p>{naturalHeartBPM}</p>
