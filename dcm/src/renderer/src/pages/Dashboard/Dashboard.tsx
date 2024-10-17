@@ -14,9 +14,8 @@ function Dashboard(): JSX.Element {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [communicationStatus, _setCommunicationStatus] = useState('CONNECTED')
   const [showHelp, setShowHelp] = useState(false)
-  const [selectedMode, setSelectedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(
-    null,
-  )
+  const [selectedMode, setSelectedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(null)
+  const [isTerminateDisabled, setIsTerminateDisabled] = useState(false)
   const [naturalHeartBPM, _setNaturalHeartBPM] = useState<number>(42)
   const [pacemakerBPM, _setPacemakerBPM] = useState<number>(19)
 
@@ -35,6 +34,18 @@ function Dashboard(): JSX.Element {
     }, 1000)
     return (): void => clearInterval(timer)
   }, [])
+
+  const handleTerminate = (): void => {
+    setSelectedMode('OFF')
+    _setCommunicationStatus('DISCONNECTED')
+    setIsTerminateDisabled(true)
+  }
+
+  const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
+    setSelectedMode(mode)
+    _setCommunicationStatus('CONNECTED')
+    setIsTerminateDisabled(false)
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
@@ -245,10 +256,6 @@ function Dashboard(): JSX.Element {
     setShowHelp(!showHelp)
   }
 
-  const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
-    setSelectedMode(mode)
-  }
-
   const isAtriumDisabled = selectedMode === 'VOO' || selectedMode === 'VVI'
   const isVentricleDisabled = selectedMode === 'AOO' || selectedMode === 'AAI'
 
@@ -293,7 +300,7 @@ function Dashboard(): JSX.Element {
             <LogoutButton />
           </div>
           <div className="terminate-button-container">
-            <TerminateButton />
+            <TerminateButton onTerminate={handleTerminate} disabled={isTerminateDisabled} />
           </div>
         </div>
       </div>
