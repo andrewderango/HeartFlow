@@ -15,6 +15,7 @@ function Dashboard(): JSX.Element {
   const [communicationStatus, _setCommunicationStatus] = useState('CONNECTED')
   const [showHelp, setShowHelp] = useState(false)
   const [selectedMode, setSelectedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(null)
+  const [submittedMode, setSubmittedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(null)
   const [isTerminateDisabled, setIsTerminateDisabled] = useState(false)
   const [isTelemetryTerminated, setIsTelemetryTerminated] = useState(false)
   const [naturalHeartBPM, _setNaturalHeartBPM] = useState<number>(42)
@@ -38,6 +39,7 @@ function Dashboard(): JSX.Element {
 
   const handleTerminate = (): void => {
     setSelectedMode('OFF')
+    setSubmittedMode('OFF')
     _setCommunicationStatus('DISCONNECTED')
     setIsTerminateDisabled(true)
     setIsTelemetryTerminated(true)
@@ -96,59 +98,55 @@ function Dashboard(): JSX.Element {
       return
     }
 
-    e.preventDefault()
+    // e.preventDefault()
     switch (selectedMode) {
       case 'AOO':
-        if (atriumAmp && atrialPW && atrialRP && lowerRateLimit) {
-          window.api.setUser(user.username, 'AOO', {
-            atrialAmplitude: atriumAmp,
-            atrialPulseWidth: atrialPW,
-            atrialRefractoryPeriod: atrialRP,
-            lowerRateLimit,
-          })
-          console.log(
-            `User: ${user.username}, Mode: AOO, Settings: ${atriumAmp}, ${atrialPW}, ${atrialRP}, ${lowerRateLimit}`,
-          )
-        }
+        window.api.setUser(user.username, 'AOO', {
+          atrialAmplitude: atriumAmp,
+          atrialPulseWidth: atrialPW,
+          atrialRefractoryPeriod: atrialRP,
+          lowerRateLimit,
+        })
+        console.log(
+          `User: ${user.username}, Mode: AOO, Settings: ${atriumAmp}, ${atrialPW}, ${atrialRP}, ${lowerRateLimit}`,
+        )
+        setSubmittedMode('AOO')
         break
       case 'VOO':
-        if (ventricleAmp && ventriclePW && ventricleRP && lowerRateLimit) {
-          window.api.setUser(user.username, 'VOO', {
-            ventricularAmplitude: ventricleAmp,
-            ventricularPulseWidth: ventriclePW,
-            ventricularRefractoryPeriod: ventricleRP,
-            lowerRateLimit,
-          })
-          console.log(
-            `User: ${user.username}, Mode: VOO, Settings: ${ventricleAmp}, ${ventriclePW}, ${ventricleRP}, ${lowerRateLimit}`,
-          )
-        }
+        window.api.setUser(user.username, 'VOO', {
+          ventricularAmplitude: ventricleAmp,
+          ventricularPulseWidth: ventriclePW,
+          ventricularRefractoryPeriod: ventricleRP,
+          lowerRateLimit,
+        })
+        console.log(
+          `User: ${user.username}, Mode: VOO, Settings: ${ventricleAmp}, ${ventriclePW}, ${ventricleRP}, ${lowerRateLimit}`,
+        )
+        setSubmittedMode('VOO')
         break
       case 'AAI':
-        if (atriumAmp && atrialPW && atrialRP && lowerRateLimit) {
-          window.api.setUser(user.username, 'AAI', {
-            atrialAmplitude: atriumAmp,
-            atrialPulseWidth: atrialPW,
-            atrialRefractoryPeriod: atrialRP,
-            lowerRateLimit,
-          })
-          console.log(
-            `User: ${user.username}, Mode: AAI, Settings: ${atriumAmp}, ${atrialPW}, ${atrialRP}, ${lowerRateLimit}`,
-          )
-        }
+        window.api.setUser(user.username, 'AAI', {
+          atrialAmplitude: atriumAmp,
+          atrialPulseWidth: atrialPW,
+          atrialRefractoryPeriod: atrialRP,
+          lowerRateLimit,
+        })
+        console.log(
+          `User: ${user.username}, Mode: AAI, Settings: ${atriumAmp}, ${atrialPW}, ${atrialRP}, ${lowerRateLimit}`,
+        )
+        setSubmittedMode('AAI')
         break
       case 'VVI':
-        if (ventricleAmp && ventriclePW && ventricleRP && lowerRateLimit) {
-          window.api.setUser(user.username, 'VVI', {
-            ventricularAmplitude: ventricleAmp,
-            ventricularPulseWidth: ventriclePW,
-            ventricularRefractoryPeriod: ventricleRP,
-            lowerRateLimit,
-          })
-          console.log(
-            `User: ${user.username}, Mode: VVI, Settings: ${ventricleAmp}, ${ventriclePW}, ${ventricleRP}, ${lowerRateLimit}`,
-          )
-        }
+        window.api.setUser(user.username, 'VVI', {
+          ventricularAmplitude: ventricleAmp,
+          ventricularPulseWidth: ventriclePW,
+          ventricularRefractoryPeriod: ventricleRP,
+          lowerRateLimit,
+        })
+        console.log(
+          `User: ${user.username}, Mode: VVI, Settings: ${ventricleAmp}, ${ventriclePW}, ${ventricleRP}, ${lowerRateLimit}`,
+        )
+        setSubmittedMode('VVI')
         break
       default:
         console.log('Invalid mode')
@@ -318,7 +316,7 @@ function Dashboard(): JSX.Element {
       <div className="main-content">
         <img 
           alt="pacemaker heart" 
-          className={selectedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'} 
+          className={submittedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'} 
           src={pacemakerHeart} 
         />
         <div className="stats-container">
