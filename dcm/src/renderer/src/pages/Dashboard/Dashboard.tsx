@@ -3,7 +3,7 @@ import LogoutButton from '../../components/LogOut/LogOut'
 import TerminateButton from '../../components/Terminate/Terminate'
 import { useUser } from '../../context/UserContext'
 import { useToast } from '../../context/ToastContext'
-import { Activity, HardDriveUpload, ClipboardX, Info } from 'lucide-react'
+import { Activity, HardDriveUpload, ClipboardX, Info, XCircle } from 'lucide-react'
 import heartflowLogo from '../../assets/heartflow.png'
 import pacemakerHeart from '../../assets/pacemaker-heart.png'
 import './Dashboard.css'
@@ -48,6 +48,14 @@ function Dashboard(): JSX.Element {
     _setCommunicationStatus('CONNECTED')
     setIsTerminateDisabled(false)
     setIsTelemetryTerminated(false)
+  }
+
+  const getStatusIcon = (): JSX.Element => {
+    return communicationStatus === 'CONNECTED' ? <Activity size={16} className="activity-icon" /> : <XCircle size={16} className="disconnected-icon" />;
+  }
+  
+  const getStatusClass = (): string => {
+    return communicationStatus === 'CONNECTED' ? 'communication-status' : 'communication-status disconnected';
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -272,8 +280,8 @@ function Dashboard(): JSX.Element {
         </div>
         <div className="sidebar-section">
           <p className="communication-status-header">Telemetry Status</p>
-          <p className="communication-status">
-            <Activity size={16} className="activity-icon" />
+          <p className={getStatusClass()}>
+            {getStatusIcon()}
             {communicationStatus}
           </p>
         </div>
@@ -457,7 +465,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isTelemetryTerminated}
-                value={lowerRateLimit?.toString()}
+                value={isTelemetryTerminated ? '--' : lowerRateLimit?.toString()}
                 name="lowerRateLimit"
               />
               <label>Lower Rate Limit</label>
