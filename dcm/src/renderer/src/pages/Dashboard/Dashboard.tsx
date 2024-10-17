@@ -172,9 +172,10 @@ function Dashboard(): JSX.Element {
 
   const handleDiscard = async (): Promise<void> => {
     // just set the values back to previous values
-    switch (selectedMode) {
+    switch (submittedMode) {
       case 'AOO': {
         const aooSettings = await window.api.getSettingsForMode(user?.username ?? '', 'AOO')
+        setSelectedMode('AOO')
         setAtriumAmp(aooSettings.settings?.atrialAmplitude ?? 0)
         setAtrialPW(aooSettings.settings?.atrialPulseWidth ?? 0)
         setAtrialRP(aooSettings.settings?.atrialRefractoryPeriod ?? 0)
@@ -183,6 +184,7 @@ function Dashboard(): JSX.Element {
       }
       case 'VOO': {
         const vooSettings = await window.api.getSettingsForMode(user?.username ?? '', 'VOO')
+        setSelectedMode('VOO')
         setVentricleAmp(vooSettings.settings?.ventricularAmplitude ?? 0)
         setVentriclePW(vooSettings.settings?.ventricularPulseWidth ?? 0)
         setVentricleRP(vooSettings.settings?.ventricularRefractoryPeriod ?? 0)
@@ -191,6 +193,7 @@ function Dashboard(): JSX.Element {
       }
       case 'AAI': {
         const aaiSettings = await window.api.getSettingsForMode(user?.username ?? '', 'AAI')
+        setSelectedMode('AAI')
         setAtriumAmp(aaiSettings.settings?.atrialAmplitude ?? 0)
         setAtrialPW(aaiSettings.settings?.atrialPulseWidth ?? 0)
         setAtrialRP(aaiSettings.settings?.atrialRefractoryPeriod ?? 0)
@@ -199,12 +202,19 @@ function Dashboard(): JSX.Element {
       }
       case 'VVI': {
         const vviSettings = await window.api.getSettingsForMode(user?.username ?? '', 'VVI')
+        setSelectedMode('VVI')
         setVentricleAmp(vviSettings.settings?.ventricularAmplitude ?? 0)
         setVentriclePW(vviSettings.settings?.ventricularPulseWidth ?? 0)
         setVentricleRP(vviSettings.settings?.ventricularRefractoryPeriod ?? 0)
         setLowerRateLimit(vviSettings.settings?.lowerRateLimit ?? 0)
         break
       }
+      case 'OFF':
+        setSelectedMode('OFF')
+        setIsTerminateDisabled(true)
+        setIsTelemetryTerminated(true)
+        _setCommunicationStatus('DISCONNECTED')
+        break
       default:
         break
     }
