@@ -1,5 +1,6 @@
 import React from 'react'
 import { PowerOff } from 'lucide-react'
+import { useUser } from '../../context/UserContext'
 import './Terminate.css'
 
 interface TerminateButtonProps {
@@ -8,8 +9,13 @@ interface TerminateButtonProps {
 }
 
 const TerminateButton: React.FC<TerminateButtonProps> = ({ onTerminate, disabled }) => {
-  const handleTermination = (): void => {
+  const { user } = useUser()
+
+  const handleTermination = async (): Promise<void> => {
     console.log('TELEMETRY TERMINATION TO BE IMPLEMENTED HERE')
+    if (user) {
+      await window.api.setUser(user.username, 'OFF', {})
+    }
     onTerminate()
   }
 
