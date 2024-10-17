@@ -321,14 +321,16 @@ function Dashboard(): JSX.Element {
           className={selectedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'} 
           src={pacemakerHeart} 
         />
-        <div className="bpm-container">
-          <div className="bpm-box">
-            <h3>Natural BPM</h3>
-            <p>{naturalHeartBPM}</p>
-          </div>
-          <div className="bpm-box">
-            <h3>Pacemaker BPM</h3>
-            <p>{pacemakerBPM}</p>
+        <div className="stats-container">
+          <div className="bpm-container">
+            <div className="bpm-box">
+              <h3>Natural BPM</h3>
+              <p>{naturalHeartBPM}</p>
+            </div>
+            <div className="bpm-box">
+              <h3>Pacemaker BPM</h3>
+              <p>{pacemakerBPM}</p>
+            </div>
           </div>
         </div>
       </div>

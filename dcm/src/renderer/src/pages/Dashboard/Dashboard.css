@@ -483,3 +483,7 @@ h3 {
   font-size: 24px;
   font-weight: bold;
 }
+
+.stats-container {
+  margin-top: calc(100vh*0.32 - 195px);
+}
