@@ -371,7 +371,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isAtriumDisabled}
-                value={atriumAmp?.toString()}
+                value={isAtriumDisabled ? '--' : atriumAmp?.toString()}
                 name="atriumAmp"
               />
               <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium AMP</label>
@@ -382,7 +382,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isVentricleDisabled}
-                value={ventricleAmp?.toString()}
+                value={isVentricleDisabled ? '--' : ventricleAmp?.toString()}
                 name="ventricleAmp"
               />
               <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle AMP</label>
@@ -395,7 +395,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isAtriumDisabled}
-                value={atrialPW?.toString()}
+                value={isAtriumDisabled ? '--' : atrialPW?.toString()}
                 name="atrialPW"
               />
               <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium PW</label>
@@ -406,7 +406,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isVentricleDisabled}
-                value={ventriclePW?.toString()}
+                value={isVentricleDisabled ? '--' : ventriclePW?.toString()}
                 name="ventriclePW"
               />
               <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle PW</label>
@@ -419,7 +419,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isAtriumDisabled}
-                value={atrialRP?.toString()}
+                value={isAtriumDisabled ? '--' : atrialRP?.toString()}
                 name="atrialRP"
               />
               <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrial RP</label>
@@ -430,7 +430,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isVentricleDisabled}
-                value={ventricleRP?.toString()}
+                value={isVentricleDisabled ? '--' : ventricleRP?.toString()}
                 name="ventricleRP"
               />
               <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricular RP</label>
