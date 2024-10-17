@@ -20,7 +20,8 @@
 }
 
 @keyframes beat {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -29,19 +30,24 @@
 }
 
 @keyframes realisticBeat {
-  0%, 5% {
+  0%,
+  5% {
     transform: scale(1);
   }
-  10%, 15% {
+  10%,
+  15% {
     transform: scale(1.05);
   }
-  17.5%, 20% {
+  17.5%,
+  20% {
     transform: scale(1);
   }
-  25%, 27.5% {
+  25%,
+  27.5% {
     transform: scale(1.05);
   }
-  30%, 100% {
+  30%,
+  100% {
     transform: scale(1);
   }
 }
@@ -52,7 +58,7 @@
   width: 500px;
   height: auto;
   padding: 10px;
-  animation: realisticBeat 2s infinite
+  animation: realisticBeat 2s infinite;
 }
 
 .sidebar {
@@ -142,7 +148,7 @@ hr {
 }
 
 .help-popup strong {
-  color: rgba(255, 255, 255, 1.0);
+  color: rgba(255, 255, 255, 1);
 }
 
 .help-popup h3 {
@@ -273,7 +279,7 @@ hr {
 }
 
 .input-field {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   border: 1px solid transparent;
   outline: 1px solid transparent;
@@ -345,7 +351,7 @@ input:focus + label {
 }
 
 .mode-button {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
   border: none;
   color: white;
@@ -363,7 +369,7 @@ input:focus + label {
 }
 
 .mode-button.selected {
-  background: linear-gradient(135deg, rgba(31, 138, 219, 0.60), rgba(244, 42, 140, 0.60));
+  background: linear-gradient(135deg, rgba(31, 138, 219, 0.6), rgba(244, 42, 140, 0.6));
   font-weight: bold;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
   transition: ease-in-out 0.3s;
@@ -408,7 +414,7 @@ input:focus + label {
 
 .submit-button:hover,
 .discard-button:hover {
-  background: rgba(27, 27, 31, 1.0);
+  background: rgba(27, 27, 31, 1);
   transition: ease-in-out 0.3s;
 }
 
@@ -436,7 +442,7 @@ h3 {
 }
 
 .bpm-box {
-  background: rgba(44, 44, 50, 0.60);
+  background: rgba(44, 44, 50, 0.6);
   border-radius: 5px;
   padding: 20px;
   text-align: center;

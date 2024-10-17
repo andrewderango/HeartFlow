@@ -4,7 +4,7 @@ import './Terminate.css'
 
 const TerminateButton: React.FC = () => {
   const handleTermination = (): void => {
-    console.log("TELEMETRY TERMINATION TO BE IMPLEMENTED HERE");
+    console.log('TELEMETRY TERMINATION TO BE IMPLEMENTED HERE')
   }
 
   return (

@@ -96,7 +96,12 @@ ipcMain.handle(
 
 ipcMain.handle(
   'set-user',
-  async (_, username: string, mode: string, settings: Record<string, number>) => {
+  async (
+    _,
+    username: string,
+    mode: 'AOO' | 'VOO' | 'AAI' | 'VVI' | 'OFF',
+    settings: Record<string, number>,
+  ) => {
     try {
       await setUser(username, mode, settings)
       return { success: true } as SetUserResponse

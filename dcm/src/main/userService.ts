@@ -44,7 +44,7 @@ export async function registerUser(
 
 export async function setUser(
   username: string,
-  mode: string,
+  mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF',
   settings: Record<string, number>,
 ): Promise<void> {
   const users = await getUsers(usersFilePath)
@@ -54,6 +54,7 @@ export async function setUser(
   }
 
   user.modes[mode] = settings
+  user.lastUsedMode = mode
   await saveUser(users)
 }
 
