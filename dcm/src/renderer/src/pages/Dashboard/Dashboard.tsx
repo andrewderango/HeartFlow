@@ -176,7 +176,7 @@ function Dashboard(): JSX.Element {
         break
     }
 
-    addToast('Settings discarded', 'success')
+    addToast('Settings discarded', 'info')
   }
 
   useEffect(() => {
