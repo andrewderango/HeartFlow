@@ -16,6 +16,7 @@ function Dashboard(): JSX.Element {
   const [showHelp, setShowHelp] = useState(false)
   const [selectedMode, setSelectedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(null)
   const [isTerminateDisabled, setIsTerminateDisabled] = useState(false)
+  const [isTelemetryTerminated, setIsTelemetryTerminated] = useState(false)
   const [naturalHeartBPM, _setNaturalHeartBPM] = useState<number>(42)
   const [pacemakerBPM, _setPacemakerBPM] = useState<number>(19)
 
@@ -39,12 +40,14 @@ function Dashboard(): JSX.Element {
     setSelectedMode('OFF')
     _setCommunicationStatus('DISCONNECTED')
     setIsTerminateDisabled(true)
+    setIsTelemetryTerminated(true)
   }
 
   const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
     setSelectedMode(mode)
     _setCommunicationStatus('CONNECTED')
     setIsTerminateDisabled(false)
+    setIsTelemetryTerminated(false)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -256,8 +259,8 @@ function Dashboard(): JSX.Element {
     setShowHelp(!showHelp)
   }
 
-  const isAtriumDisabled = selectedMode === 'VOO' || selectedMode === 'VVI'
-  const isVentricleDisabled = selectedMode === 'AOO' || selectedMode === 'AAI'
+  const isAtriumDisabled = selectedMode === 'VOO' || selectedMode === 'VVI' || isTelemetryTerminated
+  const isVentricleDisabled = selectedMode === 'AOO' || selectedMode === 'AAI' || isTelemetryTerminated
 
   return (
     <div className="dashboard-container">
@@ -453,6 +456,7 @@ function Dashboard(): JSX.Element {
                 type="text"
                 className="input-field"
                 onChange={handleInputChange}
+                disabled={isTelemetryTerminated}
                 value={lowerRateLimit?.toString()}
                 name="lowerRateLimit"
               />
