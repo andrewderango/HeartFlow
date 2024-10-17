@@ -22,3 +22,8 @@
 .terminate-button svg {
   margin-right: 8px;
 }
+
+.terminate-button:disabled {
+  background: rgba(27, 27, 31, 0.5);
+  cursor: not-allowed;
+}
