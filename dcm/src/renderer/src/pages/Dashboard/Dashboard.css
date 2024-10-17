@@ -61,6 +61,14 @@
   animation: realisticBeat 2s infinite;
 }
 
+.pacemaker-heart-stop {
+  display: block;
+  margin: 0 auto;
+  width: 500px;
+  height: auto;
+  padding: 10px;
+}
+
 .sidebar {
   width: 20%;
   background-color: rgba(12, 12, 16, 0.8);

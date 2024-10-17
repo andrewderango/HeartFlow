@@ -305,7 +305,11 @@ function Dashboard(): JSX.Element {
         </div>
       </div>
       <div className="main-content">
-        <img alt="pacemaker heart" className="pacemaker-heart" src={pacemakerHeart} />
+        <img 
+          alt="pacemaker heart" 
+          className={selectedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'} 
+          src={pacemakerHeart} 
+        />
         <div className="bpm-container">
           <div className="bpm-box">
             <h3>Natural BPM</h3>
