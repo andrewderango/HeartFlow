@@ -45,7 +45,6 @@ function Dashboard(): JSX.Element {
 
   const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
     setSelectedMode(mode)
-    _setCommunicationStatus('CONNECTED')
     setIsTerminateDisabled(false)
     setIsTelemetryTerminated(false)
   }
@@ -157,6 +156,7 @@ function Dashboard(): JSX.Element {
     }
 
     addToast('Settings sent and saved', 'success')
+    _setCommunicationStatus('CONNECTED')
   }
 
   const handleDiscard = async (): Promise<void> => {
