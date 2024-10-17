@@ -37,6 +37,19 @@ function Dashboard(): JSX.Element {
     return (): void => clearInterval(timer)
   }, [])
 
+  useEffect(() => {
+    if (user && user.lastUsedMode) {
+      setSelectedMode(user.lastUsedMode)
+      setSubmittedMode(user.lastUsedMode)
+    }
+
+    if (user && user.lastUsedMode === 'OFF') {
+      setIsTerminateDisabled(true)
+      setIsTelemetryTerminated(true)
+      _setCommunicationStatus('DISCONNECTED')
+    }
+  }, [user])
+
   const handleTerminate = (): void => {
     setSelectedMode('OFF')
     setSubmittedMode('OFF')
@@ -211,15 +224,6 @@ function Dashboard(): JSX.Element {
     })
   }, [atriumAmp, ventricleAmp, atrialPW, ventriclePW, atrialRP, ventricleRP, lowerRateLimit])
 
-  // useEffect for last-used mode
-  useEffect(() => {
-    if (!user) {
-      return
-    }
-
-    setSelectedMode(user.lastUsedMode ?? null)
-  }, [user, setSelectedMode])
-
   // populate settings for selected mode
   useEffect(() => {
     if (!user || !selectedMode) {
@@ -321,6 +325,10 @@ function Dashboard(): JSX.Element {
         />
         <div className="stats-container">
           <div className="bpm-container">
+            <div className="bpm-box">
+                <h3>Current Mode</h3>
+                <p>{submittedMode}</p>
+              </div>
             <div className="bpm-box">
               <h3>Natural BPM</h3>
               <p>{naturalHeartBPM}</p>
