@@ -101,6 +101,10 @@ function Dashboard(): JSX.Element {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
+    // check if only numbers and decimals are entered
+    if (!/^\d*\.?\d*$/.test(value)) {
+      return
+    }
     switch (name) {
       case 'atriumAmp':
         setAtriumAmp(value)
