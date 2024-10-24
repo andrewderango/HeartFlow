@@ -42,6 +42,11 @@ function Register(): JSX.Element {
       return
     }
 
+    if (!serialNumber) {
+      addToast('Serial number cannot be null', 'error')
+      return
+    }
+
     const result = await window.api.registerUser(username, password, serialNumber)
     if (result.success) {
       addToast('User registered successfully', 'success')
