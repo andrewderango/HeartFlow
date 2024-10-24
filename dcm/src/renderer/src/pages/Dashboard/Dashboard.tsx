@@ -215,9 +215,9 @@ function Dashboard(): JSX.Element {
     let isValid = true
 
     if (selectedMode === 'AOO' || selectedMode === 'AAI') {
-      if (parseFloat(atrialRP) <= 150 || parseFloat(atrialRP) >= 500) {
-        addToast('Atrial Refractory Period must be between 150 and 500 ms', 'error')
-        setAtrialRPError(true)
+      if (parseFloat(atriumAmp) <= 0 || parseFloat(atriumAmp) >= 5) {
+        addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
+        setAtriumAmpError(true)
         isValid = false
       }
       if (parseFloat(atrialPW) <= 0.05 || parseFloat(atrialPW) >= 1.9) {
@@ -225,15 +225,15 @@ function Dashboard(): JSX.Element {
         setAtrialPWError(true)
         isValid = false
       }
-      if (parseFloat(atriumAmp) <= 0 || parseFloat(atriumAmp) >= 5) {
-        addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
-        setAtriumAmpError(true)
+      if (parseFloat(atrialRP) <= 150 || parseFloat(atrialRP) >= 500) {
+        addToast('Atrial Refractory Period must be between 150 and 500 ms', 'error')
+        setAtrialRPError(true)
         isValid = false
       }
     } else if (selectedMode === 'VOO' || selectedMode === 'VVI') {
-      if (parseFloat(ventricleRP) <= 150 || parseFloat(ventricleRP) >= 500) {
-        addToast('Ventricular Refractory Period must be between 150 and 500 ms', 'error')
-        setVentricleRPError(true)
+      if (parseFloat(ventricleAmp) <= 0 || parseFloat(ventricleAmp) >= 5) {
+        addToast('Ventricle Amplitude must be between 0.5 and 5 mV', 'error')
+        setVentricleAmpError(true)
         isValid = false
       }
       if (parseFloat(ventriclePW) <= 0.05 || parseFloat(ventriclePW) >= 1.9) {
@@ -241,9 +241,9 @@ function Dashboard(): JSX.Element {
         setVentriclePWError(true)
         isValid = false
       }
-      if (parseFloat(ventricleAmp) <= 0 || parseFloat(ventricleAmp) >= 5) {
-        addToast('Ventricle Amplitude must be between 0.5 and 5 mV', 'error')
-        setVentricleAmpError(true)
+      if (parseFloat(ventricleRP) <= 150 || parseFloat(ventricleRP) >= 500) {
+        addToast('Ventricular Refractory Period must be between 150 and 500 ms', 'error')
+        setVentricleRPError(true)
         isValid = false
       }
     }
