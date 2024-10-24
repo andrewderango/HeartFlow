@@ -22,6 +22,11 @@ function Register(): JSX.Element {
 
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/
 
+    if (username.length < 3) {
+      addToast('Username must be at least 3 characters long', 'error')
+      return
+    }
+
     if (password.length < 8) {
       addToast('Password must be at least 8 characters long', 'error')
       return
