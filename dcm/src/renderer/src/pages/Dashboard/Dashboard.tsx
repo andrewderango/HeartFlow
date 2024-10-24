@@ -634,7 +634,7 @@ function Dashboard(): JSX.Element {
                 value={isTelemetryTerminated ? '' : lowerRateLimit}
                 name="lowerRateLimit"
               />
-              <label>Lower Rate Limit</label>
+              <label className={(isVentricleDisabled && isAtriumDisabled) ? 'disabled-label' : ''}>Ventricular RP</label>
             </div>
           </div>
         </div>
