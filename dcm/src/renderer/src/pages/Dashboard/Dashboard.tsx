@@ -74,6 +74,15 @@ function Dashboard(): JSX.Element {
     setSelectedMode(mode)
     setIsTerminateDisabled(false)
     setIsTelemetryTerminated(false)
+
+    // reset error states
+    setAtriumAmpError(false)
+    setVentricleAmpError(false)
+    setAtrialPWError(false)
+    setVentriclePWError(false)
+    setAtrialRPError(false)
+    setVentricleRPError(false)
+    setLowerRateLimitError(false)
   }
 
   const getStatusIcon = (): JSX.Element => {
