@@ -35,6 +35,10 @@ export async function registerUser(
     throw new Error('User already exists')
   }
 
+  if (users.length === 10) {
+    throw new Error('Maximum number of users reached')
+  }
+
   const passwordHash = await argon2.hash(password)
   const newUser: User = createUser({ username, passwordHash, serialNumber })
 
