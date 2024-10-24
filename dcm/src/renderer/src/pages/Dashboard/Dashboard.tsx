@@ -219,24 +219,21 @@ function Dashboard(): JSX.Element {
         addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
         setAtriumAmpError(true)
         isValid = false
-      }
-      else {
+      } else {
         setAtriumAmpError(false)
       }
       if (parseFloat(atrialPW) <= 0.05 || parseFloat(atrialPW) >= 1.9) {
         addToast('Atrial Pulse Width must be between 0.05 and 1.9 ms', 'error')
         setAtrialPWError(true)
         isValid = false
-      }
-      else {
+      } else {
         setAtrialPWError(false)
       }
       if (parseFloat(atrialRP) <= 150 || parseFloat(atrialRP) >= 500) {
         addToast('Atrial Refractory Period must be between 150 and 500 ms', 'error')
         setAtrialRPError(true)
         isValid = false
-      }
-      else {
+      } else {
         setAtrialRPError(false)
       }
     } else if (selectedMode === 'VOO' || selectedMode === 'VVI') {
@@ -244,24 +241,21 @@ function Dashboard(): JSX.Element {
         addToast('Ventricle Amplitude must be between 0.5 and 5 mV', 'error')
         setVentricleAmpError(true)
         isValid = false
-      }
-      else {
+      } else {
         setVentricleAmpError(false)
       }
       if (parseFloat(ventriclePW) <= 0.05 || parseFloat(ventriclePW) >= 1.9) {
         addToast('Ventricular Pulse Width must be between 0.05 and 1.9 ms', 'error')
         setVentriclePWError(true)
         isValid = false
-      }
-      else {
+      } else {
         setVentriclePWError(false)
       }
       if (parseFloat(ventricleRP) <= 150 || parseFloat(ventricleRP) >= 500) {
         addToast('Ventricular Refractory Period must be between 150 and 500 ms', 'error')
         setVentricleRPError(true)
         isValid = false
-      }
-      else {
+      } else {
         setVentricleRPError(false)
       }
     }
@@ -652,7 +646,9 @@ function Dashboard(): JSX.Element {
                 value={isTelemetryTerminated ? '' : lowerRateLimit}
                 name="lowerRateLimit"
               />
-              <label className={(isVentricleDisabled && isAtriumDisabled) ? 'disabled-label' : ''}>Lower Rate Limit</label>
+              <label className={isVentricleDisabled && isAtriumDisabled ? 'disabled-label' : ''}>
+                Lower Rate Limit
+              </label>
             </div>
           </div>
         </div>

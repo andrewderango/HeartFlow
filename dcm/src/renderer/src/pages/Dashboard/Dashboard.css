@@ -440,7 +440,7 @@ input:focus + label {
   background: rgba(27, 27, 31, 0.85);
   border-radius: 5px;
   border: none;
-  color: rgba(238, 65, 65, 1.00);
+  color: rgba(238, 65, 65, 1);
   cursor: pointer;
   display: flex;
   align-items: center;
