@@ -14,6 +14,7 @@ const ToastContainer: React.FC = () => {
           message={toast.message}
           type={toast.type}
           onClose={() => removeToast(toast.id)}
+          removing={toast.removing}
         />
       ))}
     </div>

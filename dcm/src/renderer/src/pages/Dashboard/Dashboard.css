@@ -294,9 +294,25 @@ hr {
   width: 48%;
 }
 
+.input-container.validation-error .input-field {
+  border: #f44336 1px solid;
+}
+
+.input-container.validation-error label {
+  color: #f44336;
+}
+
 .input-container-long {
   position: relative;
   width: 100%;
+}
+
+.input-container-long.validation-error .input-field {
+  border: #f44336 1px solid;
+}
+
+.input-container-long.validation-error label {
+  color: #f44336;
 }
 
 .input-field {
