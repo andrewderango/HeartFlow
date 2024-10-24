@@ -20,6 +20,11 @@ function Register(): JSX.Element {
   const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
 
+    if (password.length < 8) {
+      addToast('Password must be at least 8 characters long', 'error')
+      return
+    }
+
     if (password !== confirmPassword) {
       addToast('Passwords do not match', 'error')
       return
