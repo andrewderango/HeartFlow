@@ -77,6 +77,15 @@ function Dashboard(): JSX.Element {
     setAtrialRPError(false)
     setVentricleRPError(false)
     setLowerRateLimitError(false)
+
+    // reset input field values
+    setAtriumAmp('')
+    setVentricleAmp('')
+    setAtrialPW('')
+    setVentriclePW('')
+    setAtrialRP('')
+    setVentricleRP('')
+    setLowerRateLimit('')
   }
 
   const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
