@@ -20,8 +20,30 @@ function Register(): JSX.Element {
   const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
 
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/
+
+    if (username.length < 3) {
+      addToast('Username must be at least 3 characters long', 'error')
+      return
+    }
+
+    if (password.length < 8) {
+      addToast('Password must be at least 8 characters long', 'error')
+      return
+    }
+
+    if (!specialCharRegex.test(password)) {
+      addToast('Password must contain at least one special character', 'error')
+      return
+    }
+
     if (password !== confirmPassword) {
       addToast('Passwords do not match', 'error')
+      return
+    }
+
+    if (!serialNumber) {
+      addToast('Serial number cannot be null', 'error')
       return
     }
 

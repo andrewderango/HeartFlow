@@ -95,7 +95,7 @@ export interface ModeSettingResponse {
 }
 
 export interface Toast {
-  id: number
+  id: string
   message: string
   type: 'success' | 'error' | 'info'
   removing?: boolean

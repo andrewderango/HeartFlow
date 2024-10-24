@@ -294,9 +294,25 @@ hr {
   width: 48%;
 }
 
+.input-container.validation-error .input-field {
+  outline: #f44336 1px solid;
+}
+
+.input-container.validation-error label {
+  color: #f44336;
+}
+
 .input-container-long {
   position: relative;
   width: 100%;
+}
+
+.input-container-long.validation-error .input-field {
+  outline: #f44336 1px solid;
+}
+
+.input-container-long.validation-error label {
+  color: #f44336;
 }
 
 .input-field {
@@ -424,7 +440,7 @@ input:focus + label {
   background: rgba(27, 27, 31, 0.85);
   border-radius: 5px;
   border: none;
-  color: rgb(238, 65, 65);
+  color: rgba(238, 65, 65, 1);
   cursor: pointer;
   display: flex;
   align-items: center;
