@@ -220,15 +220,24 @@ function Dashboard(): JSX.Element {
         setAtriumAmpError(true)
         isValid = false
       }
+      else {
+        setAtriumAmpError(false)
+      }
       if (parseFloat(atrialPW) <= 0.05 || parseFloat(atrialPW) >= 1.9) {
         addToast('Atrial Pulse Width must be between 0.05 and 1.9 ms', 'error')
         setAtrialPWError(true)
         isValid = false
       }
+      else {
+        setAtrialPWError(false)
+      }
       if (parseFloat(atrialRP) <= 150 || parseFloat(atrialRP) >= 500) {
         addToast('Atrial Refractory Period must be between 150 and 500 ms', 'error')
         setAtrialRPError(true)
         isValid = false
+      }
+      else {
+        setAtrialRPError(false)
       }
     } else if (selectedMode === 'VOO' || selectedMode === 'VVI') {
       if (parseFloat(ventricleAmp) <= 0 || parseFloat(ventricleAmp) >= 5) {
@@ -236,15 +245,24 @@ function Dashboard(): JSX.Element {
         setVentricleAmpError(true)
         isValid = false
       }
+      else {
+        setVentricleAmpError(false)
+      }
       if (parseFloat(ventriclePW) <= 0.05 || parseFloat(ventriclePW) >= 1.9) {
         addToast('Ventricular Pulse Width must be between 0.05 and 1.9 ms', 'error')
         setVentriclePWError(true)
         isValid = false
       }
+      else {
+        setVentriclePWError(false)
+      }
       if (parseFloat(ventricleRP) <= 150 || parseFloat(ventricleRP) >= 500) {
         addToast('Ventricular Refractory Period must be between 150 and 500 ms', 'error')
         setVentricleRPError(true)
         isValid = false
+      }
+      else {
+        setVentricleRPError(false)
       }
     }
 
