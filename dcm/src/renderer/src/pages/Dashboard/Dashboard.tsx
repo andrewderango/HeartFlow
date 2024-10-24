@@ -22,8 +22,8 @@ function Dashboard(): JSX.Element {
   )
   const [isTerminateDisabled, setIsTerminateDisabled] = useState(false)
   const [isTelemetryTerminated, setIsTelemetryTerminated] = useState(false)
-  const [naturalHeartBPM, _setNaturalHeartBPM] = useState<number>(42)
-  const [pacemakerBPM, _setPacemakerBPM] = useState<number>(19)
+  const [naturalHeartBPM, _setNaturalHeartBPM] = useState<number>(68)
+  const [pacemakerBPM, _setPacemakerBPM] = useState<number>(0)
 
   // todo: we might need a better state solution for these values
   const [atriumAmp, setAtriumAmp] = useState<number>(0)
