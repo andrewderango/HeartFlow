@@ -26,13 +26,13 @@ function Dashboard(): JSX.Element {
   const [pacemakerBPM, _setPacemakerBPM] = useState<number>(0)
 
   // todo: we might need a better state solution for these values
-  const [atriumAmp, setAtriumAmp] = useState<string>('')
-  const [ventricleAmp, setVentricleAmp] = useState<string>('')
-  const [atrialPW, setAtrialPW] = useState<string>('')
-  const [ventriclePW, setVentriclePW] = useState<string>('')
-  const [atrialRP, setAtrialRP] = useState<string>('')
-  const [ventricleRP, setVentricleRP] = useState<string>('')
-  const [lowerRateLimit, setLowerRateLimit] = useState<string>('')
+  const [atriumAmp, setAtriumAmp] = useState<string>('0')
+  const [ventricleAmp, setVentricleAmp] = useState<string>('0')
+  const [atrialPW, setAtrialPW] = useState<string>('0')
+  const [ventriclePW, setVentriclePW] = useState<string>('0')
+  const [atrialRP, setAtrialRP] = useState<string>('0')
+  const [ventricleRP, setVentricleRP] = useState<string>('0')
+  const [lowerRateLimit, setLowerRateLimit] = useState<string>('0')
 
   const [atriumAmpError, setAtriumAmpError] = useState<boolean>(false)
   const [ventricleAmpError, setVentricleAmpError] = useState<boolean>(false)
@@ -79,13 +79,13 @@ function Dashboard(): JSX.Element {
     setLowerRateLimitError(false)
 
     // reset input field values
-    setAtriumAmp('')
-    setVentricleAmp('')
-    setAtrialPW('')
-    setVentriclePW('')
-    setAtrialRP('')
-    setVentricleRP('')
-    setLowerRateLimit('')
+    setAtriumAmp('0')
+    setVentricleAmp('0')
+    setAtrialPW('0')
+    setVentriclePW('0')
+    setAtrialRP('0')
+    setVentricleRP('0')
+    setLowerRateLimit('0')
   }
 
   const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
@@ -368,7 +368,16 @@ function Dashboard(): JSX.Element {
         input.classList.remove('filled')
       }
     })
-  }, [atriumAmp, ventricleAmp, atrialPW, ventriclePW, atrialRP, ventricleRP, lowerRateLimit])
+  }, [
+    atriumAmp,
+    ventricleAmp,
+    atrialPW,
+    ventriclePW,
+    atrialRP,
+    ventricleRP,
+    lowerRateLimit,
+    selectedMode,
+  ])
 
   // populate settings for selected mode
   useEffect(() => {
