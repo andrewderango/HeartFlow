@@ -68,6 +68,15 @@ function Dashboard(): JSX.Element {
     _setCommunicationStatus('DISCONNECTED')
     setIsTerminateDisabled(true)
     setIsTelemetryTerminated(true)
+
+    // reset error states
+    setAtriumAmpError(false)
+    setVentricleAmpError(false)
+    setAtrialPWError(false)
+    setVentriclePWError(false)
+    setAtrialRPError(false)
+    setVentricleRPError(false)
+    setLowerRateLimitError(false)
   }
 
   const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
