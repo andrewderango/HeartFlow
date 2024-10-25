@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import iconIco from '../../resources/icon.ico?asset'
 import iconPng from '../../resources/icon.png?asset'
+import iconIcns from '../../resources/icon.icns?asset'
 import {
   ensureUsersFile,
   registerUser,
@@ -19,6 +20,17 @@ import type {
 } from '../common/types'
 
 // default electron boilerplate
+function returnIcon(): string {
+  switch (process.platform) {
+    case 'win32':
+      return iconIco
+    case 'darwin':
+      return iconIcns
+    default:
+      return iconPng
+  }
+}
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -28,7 +40,7 @@ function createWindow(): void {
     minHeight: 720,
     show: false,
     autoHideMenuBar: true,
-    icon: process.platform === 'win32' ? iconIco : iconPng,
+    icon: returnIcon(),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
