@@ -100,3 +100,8 @@ export interface Toast {
   type: 'success' | 'error' | 'info'
   removing?: boolean
 }
+
+export interface ChartPoint {
+  x: number
+  y: number
+}
