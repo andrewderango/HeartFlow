@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: dcm
+appId: com.heartflow.heartflow-dcm
+productName: 'HeartFlow DCM'
 directories:
   buildResources: build
 files:
@@ -12,8 +12,10 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: dcm
+  executableName: heartflow-dcm
   icon: resources/icon.ico
+  target:
+    - { target: nsis }
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -21,6 +23,10 @@ nsis:
   createDesktopShortcut: always
 mac:
   icon: resources/icon.icns
+  category: public.app-category.utilities
+  darkModeSupport: false
+  target:
+    - { target: dmg }
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -36,7 +42,7 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: HeartFlow
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
