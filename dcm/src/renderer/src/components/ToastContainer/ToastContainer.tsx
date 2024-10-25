@@ -3,9 +3,14 @@ import { useToast } from '../../context/ToastContext'
 import Toast from '../Toast/Toast'
 import './ToastContainer.css'
 
+// container to hold all the toasts
+
 const ToastContainer: React.FC = () => {
+  // get the toasts and removeToast function from the ToastProvider context
   const { toasts, removeToast } = useToast()
 
+  // return the component
+  // component maps over the toasts and renders a Toast component for each
   return (
     <div className="toast-container">
       {toasts.map((toast) => (

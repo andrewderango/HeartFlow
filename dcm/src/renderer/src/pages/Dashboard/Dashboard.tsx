@@ -9,6 +9,18 @@ import pacemakerHeart from '../../assets/pacemaker-heart.png'
 import './Dashboard.css'
 
 function Dashboard(): JSX.Element {
+  // set up states for the following:
+  // - the current user via the UserContext
+  // - function to add toasts via the ToastContext
+  // - current time
+  // - telemetry status
+  // - whether the help popup is shown
+  // - the selected mode
+  // - the mode that was submitted
+  // - whether the terminate button is disabled
+  // - whether telemetry is terminated
+  // - the natural heart rate
+  // - the pacemaker heart rate
   const { user } = useUser()
   const { addToast } = useToast()
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -26,6 +38,8 @@ function Dashboard(): JSX.Element {
   const [pacemakerBPM, _setPacemakerBPM] = useState<number>(0)
 
   // todo: we might need a better state solution for these values
+  // these states are for the input fields
+  // treat them as strings and convert to floats when needed
   const [atriumAmp, setAtriumAmp] = useState<string>('0')
   const [ventricleAmp, setVentricleAmp] = useState<string>('0')
   const [atrialPW, setAtrialPW] = useState<string>('0')
@@ -34,6 +48,8 @@ function Dashboard(): JSX.Element {
   const [ventricleRP, setVentricleRP] = useState<string>('0')
   const [lowerRateLimit, setLowerRateLimit] = useState<string>('0')
 
+  // these states are for the error handling of the input fields
+  // if an error is true, the input field will have a red border
   const [atriumAmpError, setAtriumAmpError] = useState<boolean>(false)
   const [ventricleAmpError, setVentricleAmpError] = useState<boolean>(false)
   const [atrialPWError, setAtrialPWError] = useState<boolean>(false)
@@ -42,6 +58,7 @@ function Dashboard(): JSX.Element {
   const [ventricleRPError, setVentricleRPError] = useState<boolean>(false)
   const [lowerRateLimitError, setLowerRateLimitError] = useState<boolean>(false)
 
+  // set up a timer to update the current time every second
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date())
@@ -49,6 +66,8 @@ function Dashboard(): JSX.Element {
     return (): void => clearInterval(timer)
   }, [])
 
+  // effect hook runs when user changes
+  // sets the selected mode and submitted mode to the last used mode
   useEffect(() => {
     if (user && user.lastUsedMode) {
       setSelectedMode(user.lastUsedMode)
@@ -62,7 +81,9 @@ function Dashboard(): JSX.Element {
     }
   }, [user])
 
+  // handles the terminate button click
   const handleTerminate = (): void => {
+    // set the mode to OFF, disable terminate button, and set telemetry terminated
     setSelectedMode('OFF')
     setSubmittedMode('OFF')
     _setCommunicationStatus('DISCONNECTED')
@@ -88,7 +109,9 @@ function Dashboard(): JSX.Element {
     setLowerRateLimit('0')
   }
 
+  // handles the mode selection
   const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
+    // set the selected mode, enable terminate button, and set telemetry not terminated
     setSelectedMode(mode)
     setIsTerminateDisabled(false)
     setIsTelemetryTerminated(false)
@@ -103,6 +126,7 @@ function Dashboard(): JSX.Element {
     setLowerRateLimitError(false)
   }
 
+  // helper function to get appropriate icon based on communication status
   const getStatusIcon = (): JSX.Element => {
     return communicationStatus === 'CONNECTED' ? (
       <Activity size={16} className="activity-icon" />
@@ -111,18 +135,23 @@ function Dashboard(): JSX.Element {
     )
   }
 
+  // helper function to get appropriate class based on communication status
   const getStatusClass = (): string => {
     return communicationStatus === 'CONNECTED'
       ? 'communication-status'
       : 'communication-status disconnected'
   }
 
+  // handles the input change for the input fields
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    // get the name and value from the event
     const { name, value } = e.target
-    // check if only numbers and decimals are entered
+    // check if only numbers and decimals are entered w/ regex
     if (!/^\d*\.?\d*$/.test(value)) {
       return
     }
+    // set the appropriate state variable based on the input field name from
+    // the event
     switch (name) {
       case 'atriumAmp':
         setAtriumAmp(value)
@@ -150,6 +179,7 @@ function Dashboard(): JSX.Element {
     }
   }
 
+  // handles the discard button click
   const handleDiscard = async (): Promise<void> => {
     // reset error states
     setAtriumAmpError(false)
@@ -160,10 +190,12 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
 
-    // just set the values back to previous values
+    // just set the values back to previous values based on the submitted mode
     switch (submittedMode) {
       case 'AOO': {
+        // get the settings for the mode via ipc
         const aooSettings = await window.api.getSettingsForMode(user?.username ?? '', 'AOO')
+        // then update appropriate state variables, converted to strings
         setSelectedMode('AOO')
         setAtriumAmp((aooSettings.settings?.atrialAmplitude ?? 0).toString())
         setAtrialPW((aooSettings.settings?.atrialPulseWidth ?? 0).toString())
@@ -211,9 +243,13 @@ function Dashboard(): JSX.Element {
     addToast('Settings discarded', 'info')
   }
 
+  // helper function to validate the input fields
   const validateInput = (): boolean => {
     let isValid = true
 
+    // make sure the values are within the acceptable ranges
+    // if not, set the error state to true and display a toast
+    // otherwise, set the error state to false
     if (selectedMode === 'AOO' || selectedMode === 'AAI') {
       if (parseFloat(atriumAmp) < 0 || parseFloat(atriumAmp) > 5) {
         addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
@@ -269,15 +305,17 @@ function Dashboard(): JSX.Element {
     return isValid
   }
 
+  // handles the submit button click
   const handleSubmit = async (_e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    // quit early if the mode is OFF or there is no user
     if (selectedMode === 'OFF') {
       return
     }
-
     if (!user) {
       return
     }
 
+    // quit early if the input is not valid
     const isValid = validateInput()
     if (!isValid) {
       return
@@ -293,9 +331,12 @@ function Dashboard(): JSX.Element {
     setLowerRateLimitError(false)
 
     // e.preventDefault()
+    // based on selected mode, call the appropriate ipc channel with
+    // right settings
     switch (selectedMode) {
       case 'AOO':
         if (atriumAmp !== '' && atrialPW !== '' && atrialRP !== '' && lowerRateLimit !== '') {
+          // ipc channel sets the values for the mode for given user
           window.api.setUser(user.username, 'AOO', {
             atrialAmplitude: parseFloat(atriumAmp),
             atrialPulseWidth: parseFloat(atrialPW),
@@ -370,6 +411,8 @@ function Dashboard(): JSX.Element {
     _setCommunicationStatus('CONNECTED')
   }
 
+  // effect hook to check if the input fields are filled
+  // if they are, update the CSS class to filled for nice animations
   useEffect(() => {
     const inputs = document.querySelectorAll('.input-field')
     inputs.forEach((input) => {
@@ -391,15 +434,18 @@ function Dashboard(): JSX.Element {
     selectedMode,
   ])
 
-  // populate settings for selected mode
+  // populate settings for selected mode on initial mount and when mode changes
   useEffect(() => {
+    // quit early if there is no user or mode selected
     if (!user || !selectedMode) {
       return
     }
 
+    // now get the settings for the selected mode via ipc
     window.api.getSettingsForMode(user.username, selectedMode).then((response) => {
       if (response.success) {
         const settings = response.settings
+        // and set the appropriate state variables based on the mode
         switch (selectedMode) {
           case 'AOO':
             setAtriumAmp((settings?.atrialAmplitude ?? 0).toString())
@@ -432,14 +478,17 @@ function Dashboard(): JSX.Element {
     })
   }, [user, selectedMode])
 
+  // toggle help popup
   const toggleHelp = (): void => {
     setShowHelp(!showHelp)
   }
 
+  // variables to disable input fields based on selected mode
   const isAtriumDisabled = selectedMode === 'VOO' || selectedMode === 'VVI' || isTelemetryTerminated
   const isVentricleDisabled =
     selectedMode === 'AOO' || selectedMode === 'AAI' || isTelemetryTerminated
 
+  // return the actual JSX component
   return (
     <div className="dashboard-container">
       <div className="sidebar">

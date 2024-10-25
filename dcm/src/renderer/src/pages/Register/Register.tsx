@@ -4,6 +4,13 @@ import { useToast } from '../../context/ToastContext'
 import './Register.css'
 
 function Register(): JSX.Element {
+  // set state variables for the following
+  // - username
+  // - password
+  // - password again for confirmation
+  // - pacemaker serial number
+  // - addToast function from the ToastProvider context
+  // - navigate function from react router (for page navigation)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -11,17 +18,27 @@ function Register(): JSX.Element {
   const { addToast } = useToast()
   const navigate = useNavigate()
 
+  // function to handle input changes, takes a setter function
+  // and calls it with the new value of the input
   const handleInputChange =
     (setter: React.Dispatch<React.SetStateAction<string>>) =>
     (event: React.ChangeEvent<HTMLInputElement>): void => {
       setter(event.target.value)
     }
 
+  // function to handle form submission
   const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault()
 
+    // regex to check for special characters
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/
 
+    // validate inputs. must pass all these checks to proceed:
+    // - username must be at least 3 characters long
+    // - password must be at least 8 characters long
+    // - password must contain at least one special character
+    // - passwords must match
+    // - serial number cannot be null
     if (username.length < 3) {
       addToast('Username must be at least 3 characters long', 'error')
       return
@@ -47,15 +64,19 @@ function Register(): JSX.Element {
       return
     }
 
+    // if checks passed, send all data to main process via ipc to register user
     const result = await window.api.registerUser(username, password, serialNumber)
     if (result.success) {
+      // route to login on successful registration
       addToast('User registered successfully', 'success')
       navigate('/login')
     } else {
+      // display an error toast on failed registration
       addToast(result.message ?? 'An unknown error occurred', 'error')
     }
   }
 
+  // effect to add/remove the filled CSS class from the input fields for nice animations
   useEffect(() => {
     const inputs = document.querySelectorAll('.floating-label-group input')
     inputs.forEach((input) => {
@@ -78,6 +99,7 @@ function Register(): JSX.Element {
     }
   }, [])
 
+  // return the component
   return (
     <div className="register-container">
       <button className="back-button" type="button" onClick={() => navigate('/')}>

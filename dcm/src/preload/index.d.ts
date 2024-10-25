@@ -1,3 +1,7 @@
+// type definitions for preload script
+// - defines the electron api and the api object
+// - also exposes our custom api functions
+
 import { ElectronAPI } from '@electron-toolkit/preload'
 import type {
   RegisterUserResponse,

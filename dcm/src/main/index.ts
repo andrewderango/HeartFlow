@@ -17,6 +17,7 @@ import type {
   ModeSettingResponse,
 } from '../common/types'
 
+// default electron boilerplate
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -57,6 +58,7 @@ function createWindow(): void {
 app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
+  // when the app is ready, ensure the users file exists
   await ensureUsersFile(usersFilePath)
 
   // Default open or close DevTools by F12 in development
@@ -84,6 +86,13 @@ app.on('window-all-closed', () => {
   }
 })
 
+// registering ipc handlers for relevant functions
+
+// ipc channel for registering a user
+// - expects a username, password, and serial number
+// - returns a success message if the user was registered successfully
+// - returns an error message if the user was not registered successfully
+// - frontend must handle the response and display a relevant toast
 ipcMain.handle(
   'register-user',
   async (_, username: string, password: string, serialNumber: string) => {
@@ -96,6 +105,11 @@ ipcMain.handle(
   },
 )
 
+// ipc channel for setting a user
+// - expects a username, mode, and settings
+// - returns a success message if the user was set successfully
+// - returns an error message if the user was not set successfully
+// - frontend must handle the response and display a relevant toast
 ipcMain.handle(
   'set-user',
   async (
@@ -113,6 +127,11 @@ ipcMain.handle(
   },
 )
 
+// ipc channel for logging in a user
+// - expects a username and password
+// - returns a success message and the user if the user was logged in successfully
+// - returns an error message if the user was not logged in successfully
+// - frontend must handle the response and display a relevant toast
 ipcMain.handle('login-user', async (_, username: string, password: string) => {
   try {
     const user = await loginUser(username, password)
@@ -122,6 +141,11 @@ ipcMain.handle('login-user', async (_, username: string, password: string) => {
   }
 })
 
+// ipc channel for getting settings for a mode
+// - expects a username and mode
+// - returns a success message and the settings if the settings were retrieved successfully
+// - returns an error message if the settings were not retrieved successfully
+// - frontend must handle the response and display a relevant toast
 ipcMain.handle('get-settings-for-mode', async (_, username: string, mode: string) => {
   try {
     const settings = await getSettingsForMode(username, mode)
@@ -130,6 +154,3 @@ ipcMain.handle('get-settings-for-mode', async (_, username: string, mode: string
     return { success: false, message: (error as Error).message } as ModeSettingResponse
   }
 })
-
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.

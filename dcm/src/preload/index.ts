@@ -1,3 +1,5 @@
+// expose electron APIs to renderer process
+
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import type {
@@ -7,7 +9,9 @@ import type {
   ModeSettingResponse,
 } from '../common/types'
 
-// Custom APIs for renderer
+// custom api functions
+// - handled using ipc channels so renderer process
+//   never directly interacts with the functions
 const api = {
   registerUser: async (
     username: string,
@@ -35,9 +39,8 @@ const api = {
   },
 }
 
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
+// electron boilerplate for exposing APIs based on context isolation
+// not relevant here, but kept for functionality
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
