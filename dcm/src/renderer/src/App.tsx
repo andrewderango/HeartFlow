@@ -7,12 +7,18 @@ import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Dashboard from './pages/Dashboard/Dashboard'
 
+// the main app component that sets up the router and routes
+
 function App(): JSX.Element {
   return (
+    // wrap the app in the user and toast providers
     <UserProvider>
       <ToastProvider>
+        {/* wrap components in router for navigation */}
         <Router>
+          {/* define the routes */}
           <Routes>
+            {/* home route */}
             <Route
               path="/"
               element={
@@ -40,6 +46,7 @@ function App(): JSX.Element {
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
+          {/* toast container to hold all the toasts, always included on all pages */}
           <ToastContainer />
         </Router>
       </ToastProvider>
