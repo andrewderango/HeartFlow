@@ -204,6 +204,7 @@ function Dashboard(): JSX.Element {
         break
       }
       case 'VOO': {
+        // get the settings for the mode via ipc
         const vooSettings = await window.api.getSettingsForMode(user?.username ?? '', 'VOO')
         setSelectedMode('VOO')
         setVentricleAmp((vooSettings.settings?.ventricularAmplitude ?? 0).toString())
@@ -213,6 +214,7 @@ function Dashboard(): JSX.Element {
         break
       }
       case 'AAI': {
+        // get the settings for the mode via ipc
         const aaiSettings = await window.api.getSettingsForMode(user?.username ?? '', 'AAI')
         setSelectedMode('AAI')
         setAtriumAmp((aaiSettings.settings?.atrialAmplitude ?? 0).toString())
@@ -222,6 +224,7 @@ function Dashboard(): JSX.Element {
         break
       }
       case 'VVI': {
+        // get the settings for the mode via ipc
         const vviSettings = await window.api.getSettingsForMode(user?.username ?? '', 'VVI')
         setSelectedMode('VVI')
         setVentricleAmp((vviSettings.settings?.ventricularAmplitude ?? 0).toString())
@@ -231,6 +234,7 @@ function Dashboard(): JSX.Element {
         break
       }
       case 'OFF':
+        // if the mode is OFF, set the mode to OFF, disable terminate button,
         setSelectedMode('OFF')
         setIsTerminateDisabled(true)
         setIsTelemetryTerminated(true)
@@ -350,6 +354,7 @@ function Dashboard(): JSX.Element {
         }
         break
       case 'VOO':
+        // same as above, but for VOO
         if (
           ventricleAmp !== '' &&
           ventriclePW !== '' &&
@@ -370,6 +375,7 @@ function Dashboard(): JSX.Element {
         setSubmittedMode('VOO')
         break
       case 'AAI':
+        // same as above, but for AAI
         if (atriumAmp !== '' && atrialPW !== '' && atrialRP !== '' && lowerRateLimit !== '') {
           window.api.setUser(user.username, 'AAI', {
             atrialAmplitude: parseFloat(atriumAmp),
@@ -384,6 +390,7 @@ function Dashboard(): JSX.Element {
         setSubmittedMode('AAI')
         break
       case 'VVI':
+        // same as above, but for VVI
         if (
           ventricleAmp !== '' &&
           ventriclePW !== '' &&
@@ -488,15 +495,21 @@ function Dashboard(): JSX.Element {
   const isVentricleDisabled =
     selectedMode === 'AOO' || selectedMode === 'AAI' || isTelemetryTerminated
 
-  // return the actual JSX component
+// Return the actual JSX component
   return (
     <div className="dashboard-container">
+      {/* Sidebar */}
       <div className="sidebar">
+        {/* Logo */}
         <img alt="logo" className="logo-sidebar" src={heartflowLogo} />
+        
+        {/* Welcome Section */}
         <div className="welcome-section">
           <p className="welcome-header">Welcome</p>
           {user && <p className="username">{user.username}</p>}
         </div>
+        
+        {/* Telemetry Status */}
         <div className="sidebar-section">
           <p className="communication-status-header">Telemetry Status</p>
           <p className={getStatusClass()}>
@@ -504,6 +517,8 @@ function Dashboard(): JSX.Element {
             {communicationStatus}
           </p>
         </div>
+        
+        {/* Current Date and Time */}
         <div className="sidebar-time">
           <p className="current-date">
             {currentTime.toLocaleDateString('en-US', {
@@ -521,6 +536,8 @@ function Dashboard(): JSX.Element {
             })}
           </p>
         </div>
+        
+        {/* Bottom Sidebar Components */}
         <div className="bottom-sidebar-components">
           <div className="sidebar-versions">
             <p>HeartFlow Release: v1.0.0</p>
@@ -534,12 +551,17 @@ function Dashboard(): JSX.Element {
           </div>
         </div>
       </div>
+      
+      {/* Main Content */}
       <div className="main-content">
+        {/* Pacemaker Heart Image */}
         <img
           alt="pacemaker heart"
           className={submittedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'}
           src={pacemakerHeart}
         />
+        
+        {/* BPM Statistics */}
         <div className="stats-container">
           <div className="bpm-container">
             <div className="bpm-box">
@@ -557,12 +579,17 @@ function Dashboard(): JSX.Element {
           </div>
         </div>
       </div>
+      
+      {/* Right Sidebar */}
       <div className="right-sidebar">
+        {/* Help Button */}
         <div className="help-button-container">
           <button className="help-button" onClick={toggleHelp}>
             <Info size={14} />
           </button>
         </div>
+        
+        {/* Help Popup */}
         {showHelp && (
           <div className="help-popup">
             <h3>Pulse Parameters</h3>
@@ -591,10 +618,14 @@ function Dashboard(): JSX.Element {
             </ul>
           </div>
         )}
+        
+        {/* Pacemaker Parameters Header */}
         <div className="header-container">
           <h2>Pacemaker Parameters</h2>
           <hr></hr>
         </div>
+        
+        {/* Mode Selection */}
         <div className="mode-container">
           <h3>Mode Selection</h3>
           <div className="button-row">
@@ -609,6 +640,8 @@ function Dashboard(): JSX.Element {
             ))}
           </div>
         </div>
+        
+        {/* Continuous Parameters */}
         <div className="parameter-container">
           <h3>Continuous Parameters</h3>
           <div className="input-row">
@@ -701,6 +734,8 @@ function Dashboard(): JSX.Element {
             </div>
           </div>
         </div>
+        
+        {/* Submit and Discard Buttons */}
         <div className="button-container">
           <button className="submit-button" type="button" onClick={handleSubmit}>
             <HardDriveUpload size={16} />

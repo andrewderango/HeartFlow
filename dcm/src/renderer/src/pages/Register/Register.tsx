@@ -102,16 +102,26 @@ function Register(): JSX.Element {
   // return the component
   return (
     <div className="register-container">
+      {/* Back button to navigate to the home page */}
       <button className="back-button" type="button" onClick={() => navigate('/')}>
         ←
       </button>
+      
+      {/* Header text for the registration form */}
       <div className="text">Register New User</div>
+      
+      {/* Spacer for layout purposes */}
       <div style={{ height: '15px' }} />
+      
+      {/* Registration form */}
       <form onSubmit={handleSubmit}>
+        {/* Username input field */}
         <div className="floating-label-group">
           <input type="text" value={username} onChange={handleInputChange(setUsername)} required />
           <label>Username</label>
         </div>
+        
+        {/* Password input field */}
         <div className="floating-label-group">
           <input
             type="password"
@@ -121,6 +131,8 @@ function Register(): JSX.Element {
           />
           <label>Password</label>
         </div>
+        
+        {/* Confirm Password input field */}
         <div className="floating-label-group">
           <input
             type="password"
@@ -130,6 +142,8 @@ function Register(): JSX.Element {
           />
           <label>Confirm Password</label>
         </div>
+        
+        {/* Pacemaker Serial Number input field */}
         <div className="floating-label-group">
           <input
             type="text"
@@ -139,6 +153,8 @@ function Register(): JSX.Element {
           />
           <label>Pacemaker Serial Number</label>
         </div>
+        
+        {/* Register button */}
         <div className="register-button">
           <Link
             to="#"
