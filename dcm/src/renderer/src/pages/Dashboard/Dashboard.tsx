@@ -495,20 +495,20 @@ function Dashboard(): JSX.Element {
   const isVentricleDisabled =
     selectedMode === 'AOO' || selectedMode === 'AAI' || isTelemetryTerminated
 
-// Return the actual JSX component
+  // Return the actual JSX component
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
       <div className="sidebar">
         {/* Logo */}
         <img alt="logo" className="logo-sidebar" src={heartflowLogo} />
-        
+
         {/* Welcome Section */}
         <div className="welcome-section">
           <p className="welcome-header">Welcome</p>
           {user && <p className="username">{user.username}</p>}
         </div>
-        
+
         {/* Telemetry Status */}
         <div className="sidebar-section">
           <p className="communication-status-header">Telemetry Status</p>
@@ -517,7 +517,7 @@ function Dashboard(): JSX.Element {
             {communicationStatus}
           </p>
         </div>
-        
+
         {/* Current Date and Time */}
         <div className="sidebar-time">
           <p className="current-date">
@@ -536,7 +536,7 @@ function Dashboard(): JSX.Element {
             })}
           </p>
         </div>
-        
+
         {/* Bottom Sidebar Components */}
         <div className="bottom-sidebar-components">
           <div className="sidebar-versions">
@@ -551,7 +551,7 @@ function Dashboard(): JSX.Element {
           </div>
         </div>
       </div>
-      
+
       {/* Main Content */}
       <div className="main-content">
         {/* Pacemaker Heart Image */}
@@ -560,7 +560,7 @@ function Dashboard(): JSX.Element {
           className={submittedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'}
           src={pacemakerHeart}
         />
-        
+
         {/* BPM Statistics */}
         <div className="stats-container">
           <div className="bpm-container">
@@ -579,7 +579,7 @@ function Dashboard(): JSX.Element {
           </div>
         </div>
       </div>
-      
+
       {/* Right Sidebar */}
       <div className="right-sidebar">
         {/* Help Button */}
@@ -588,7 +588,7 @@ function Dashboard(): JSX.Element {
             <Info size={14} />
           </button>
         </div>
-        
+
         {/* Help Popup */}
         {showHelp && (
           <div className="help-popup">
@@ -618,13 +618,13 @@ function Dashboard(): JSX.Element {
             </ul>
           </div>
         )}
-        
+
         {/* Pacemaker Parameters Header */}
         <div className="header-container">
           <h2>Pacemaker Parameters</h2>
           <hr></hr>
         </div>
-        
+
         {/* Mode Selection */}
         <div className="mode-container">
           <h3>Mode Selection</h3>
@@ -640,7 +640,7 @@ function Dashboard(): JSX.Element {
             ))}
           </div>
         </div>
-        
+
         {/* Continuous Parameters */}
         <div className="parameter-container">
           <h3>Continuous Parameters</h3>
@@ -734,7 +734,7 @@ function Dashboard(): JSX.Element {
             </div>
           </div>
         </div>
-        
+
         {/* Submit and Discard Buttons */}
         <div className="button-container">
           <button className="submit-button" type="button" onClick={handleSubmit}>

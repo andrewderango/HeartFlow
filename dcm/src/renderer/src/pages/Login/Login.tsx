@@ -72,13 +72,13 @@ function Login(): JSX.Element {
       <button className="back-button" type="button" onClick={() => navigate('/')}>
         ←
       </button>
-    
+
       {/* Header text for the login form */}
       <div className="text">Log In User</div>
-      
+
       {/* Spacer for layout purposes */}
       <div style={{ height: '15px' }} />
-      
+
       {/* Login form */}
       <form onSubmit={handleSubmit}>
         {/* Username input field */}
@@ -86,7 +86,7 @@ function Login(): JSX.Element {
           <input type="text" value={username} onChange={handleInputChange(setUsername)} required />
           <label>Username</label>
         </div>
-        
+
         {/* Password input field */}
         <div className="floating-label-group">
           <input
@@ -97,7 +97,7 @@ function Login(): JSX.Element {
           />
           <label>Password</label>
         </div>
-        
+
         {/* Login button */}
         <div className="login-button">
           <Link
