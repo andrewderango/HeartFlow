@@ -36,6 +36,9 @@ function Login(): JSX.Element {
       setUser(result.user)
       addToast('User logged in successfully', 'success')
       navigate('/dashboard')
+
+      // Invoke the IPC handler to spawn the C++ executable
+      window.api.spawnHello()
     } else {
       // display an error toast on failed login
       addToast(result.message ?? 'An unknown error occurred', 'error')

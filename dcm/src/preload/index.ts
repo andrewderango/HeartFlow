@@ -37,6 +37,9 @@ const api = {
     const result = await ipcRenderer.invoke('get-settings-for-mode', username, mode)
     return result
   },
+  spawnHello: async (): Promise<void> => {
+    await ipcRenderer.invoke('spawn-hello')
+  },
 }
 
 // electron boilerplate for exposing APIs based on context isolation

@@ -1,5 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
+import { spawn } from 'child_process'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import iconIco from '../../resources/icon.ico?asset'
 import iconPng from '../../resources/icon.png?asset'
@@ -22,9 +23,9 @@ import type {
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 720,
-    minWidth: 1200,
+    width: 1200,
+    height: 800,
+    minWidth: 1080,
     minHeight: 720,
     show: false,
     autoHideMenuBar: true,
@@ -154,4 +155,27 @@ ipcMain.handle('get-settings-for-mode', async (_, username: string, mode: string
   } catch (error) {
     return { success: false, message: (error as Error).message } as ModeSettingResponse
   }
+})
+
+ipcMain.handle('spawn-hello', async () => {
+  return new Promise((resolve, reject) => {
+    const hello = spawn('./hello')
+
+    hello.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    hello.stderr.on('data', (data) => {
+      console.error(`stderr: ${data}`)
+    })
+
+    hello.on('close', (code) => {
+      console.log(`child process exited with code ${code}`)
+      resolve(code)
+    })
+
+    hello.on('error', (error) => {
+      reject(error)
+    })
+  })
 })
