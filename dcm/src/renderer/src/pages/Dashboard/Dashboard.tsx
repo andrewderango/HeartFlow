@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import LogoutButton from '../../components/LogOut/LogOut'
 import TerminateButton from '../../components/Terminate/Terminate'
-import { useUser } from '../../context/UserContext'
+import useStore from '@renderer/store/mainStore'
 import { useToast } from '../../context/ToastContext'
 import { Activity, HardDriveUpload, ClipboardX, Info, XCircle } from 'lucide-react'
 import heartflowLogo from '../../assets/heartflow.png'
@@ -21,10 +21,12 @@ function Dashboard(): JSX.Element {
   // - whether telemetry is terminated
   // - the natural heart rate
   // - the pacemaker heart rate
-  const { user } = useUser()
+
+  // for now we'll only test the user state
+  const { username, serialNumber, lastUsedMode, connectionStatus, dispatch } = useStore()
+
   const { addToast } = useToast()
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [communicationStatus, _setCommunicationStatus] = useState('CONNECTED')
   const [showHelp, setShowHelp] = useState(false)
   const [selectedMode, setSelectedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(
     null,
@@ -69,24 +71,24 @@ function Dashboard(): JSX.Element {
   // effect hook runs when user changes
   // sets the selected mode and submitted mode to the last used mode
   useEffect(() => {
-    if (user && user.lastUsedMode) {
-      setSelectedMode(user.lastUsedMode)
-      setSubmittedMode(user.lastUsedMode)
+    if (lastUsedMode) {
+      setSelectedMode(lastUsedMode)
+      setSubmittedMode(lastUsedMode)
     }
 
-    if (user && user.lastUsedMode === 'OFF') {
+    if (lastUsedMode === 'OFF') {
       setIsTerminateDisabled(true)
       setIsTelemetryTerminated(true)
-      _setCommunicationStatus('DISCONNECTED')
+      dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
     }
-  }, [user])
+  }, [lastUsedMode])
 
   // handles the terminate button click
   const handleTerminate = (): void => {
     // set the mode to OFF, disable terminate button, and set telemetry terminated
     setSelectedMode('OFF')
     setSubmittedMode('OFF')
-    _setCommunicationStatus('DISCONNECTED')
+    dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
     setIsTerminateDisabled(true)
     setIsTelemetryTerminated(true)
 
@@ -128,7 +130,7 @@ function Dashboard(): JSX.Element {
 
   // helper function to get appropriate icon based on communication status
   const getStatusIcon = (): JSX.Element => {
-    return communicationStatus === 'CONNECTED' ? (
+    return connectionStatus === 'CONNECTED' ? (
       <Activity size={16} className="activity-icon" />
     ) : (
       <XCircle size={16} className="disconnected-icon" />
@@ -137,7 +139,7 @@ function Dashboard(): JSX.Element {
 
   // helper function to get appropriate class based on communication status
   const getStatusClass = (): string => {
-    return communicationStatus === 'CONNECTED'
+    return connectionStatus === 'CONNECTED'
       ? 'communication-status'
       : 'communication-status disconnected'
   }
@@ -194,7 +196,7 @@ function Dashboard(): JSX.Element {
     switch (submittedMode) {
       case 'AOO': {
         // get the settings for the mode via ipc
-        const aooSettings = await window.api.getSettingsForMode(user?.username ?? '', 'AOO')
+        const aooSettings = await window.api.getSettingsForMode(username ?? '', 'AOO')
         // then update appropriate state variables, converted to strings
         setSelectedMode('AOO')
         setAtriumAmp((aooSettings.settings?.atrialAmplitude ?? 0).toString())
@@ -205,7 +207,7 @@ function Dashboard(): JSX.Element {
       }
       case 'VOO': {
         // get the settings for the mode via ipc
-        const vooSettings = await window.api.getSettingsForMode(user?.username ?? '', 'VOO')
+        const vooSettings = await window.api.getSettingsForMode(username ?? '', 'VOO')
         setSelectedMode('VOO')
         setVentricleAmp((vooSettings.settings?.ventricularAmplitude ?? 0).toString())
         setVentriclePW((vooSettings.settings?.ventricularPulseWidth ?? 0).toString())
@@ -215,7 +217,7 @@ function Dashboard(): JSX.Element {
       }
       case 'AAI': {
         // get the settings for the mode via ipc
-        const aaiSettings = await window.api.getSettingsForMode(user?.username ?? '', 'AAI')
+        const aaiSettings = await window.api.getSettingsForMode(username ?? '', 'AAI')
         setSelectedMode('AAI')
         setAtriumAmp((aaiSettings.settings?.atrialAmplitude ?? 0).toString())
         setAtrialPW((aaiSettings.settings?.atrialPulseWidth ?? 0).toString())
@@ -225,7 +227,7 @@ function Dashboard(): JSX.Element {
       }
       case 'VVI': {
         // get the settings for the mode via ipc
-        const vviSettings = await window.api.getSettingsForMode(user?.username ?? '', 'VVI')
+        const vviSettings = await window.api.getSettingsForMode(username ?? '', 'VVI')
         setSelectedMode('VVI')
         setVentricleAmp((vviSettings.settings?.ventricularAmplitude ?? 0).toString())
         setVentriclePW((vviSettings.settings?.ventricularPulseWidth ?? 0).toString())
@@ -238,7 +240,7 @@ function Dashboard(): JSX.Element {
         setSelectedMode('OFF')
         setIsTerminateDisabled(true)
         setIsTelemetryTerminated(true)
-        _setCommunicationStatus('DISCONNECTED')
+        dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
         break
       default:
         break
@@ -315,7 +317,7 @@ function Dashboard(): JSX.Element {
     if (selectedMode === 'OFF') {
       return
     }
-    if (!user) {
+    if (!username) {
       return
     }
 
@@ -341,15 +343,12 @@ function Dashboard(): JSX.Element {
       case 'AOO':
         if (atriumAmp !== '' && atrialPW !== '' && atrialRP !== '' && lowerRateLimit !== '') {
           // ipc channel sets the values for the mode for given user
-          window.api.setUser(user.username, 'AOO', {
+          window.api.setUser(username, 'AOO', {
             atrialAmplitude: parseFloat(atriumAmp),
             atrialPulseWidth: parseFloat(atrialPW),
             atrialRefractoryPeriod: parseFloat(atrialRP),
             lowerRateLimit: parseFloat(lowerRateLimit),
           })
-          console.log(
-            `User: ${user.username}, Mode: AOO, Settings: ${atriumAmp}, ${atrialPW}, ${atrialRP}, ${lowerRateLimit}`,
-          )
           setSubmittedMode('AOO')
         }
         break
@@ -361,15 +360,12 @@ function Dashboard(): JSX.Element {
           ventricleRP !== '' &&
           lowerRateLimit !== ''
         ) {
-          window.api.setUser(user.username, 'VOO', {
+          window.api.setUser(username, 'VOO', {
             ventricularAmplitude: parseFloat(ventricleAmp),
             ventricularPulseWidth: parseFloat(ventriclePW),
             ventricularRefractoryPeriod: parseFloat(ventricleRP),
             lowerRateLimit: parseFloat(lowerRateLimit),
           })
-          console.log(
-            `User: ${user.username}, Mode: VOO, Settings: ${ventricleAmp}, ${ventriclePW}, ${ventricleRP}, ${lowerRateLimit}`,
-          )
           setSubmittedMode('VOO')
         }
         setSubmittedMode('VOO')
@@ -377,15 +373,12 @@ function Dashboard(): JSX.Element {
       case 'AAI':
         // same as above, but for AAI
         if (atriumAmp !== '' && atrialPW !== '' && atrialRP !== '' && lowerRateLimit !== '') {
-          window.api.setUser(user.username, 'AAI', {
+          window.api.setUser(username, 'AAI', {
             atrialAmplitude: parseFloat(atriumAmp),
             atrialPulseWidth: parseFloat(atrialPW),
             atrialRefractoryPeriod: parseFloat(atrialRP),
             lowerRateLimit: parseFloat(lowerRateLimit),
           })
-          console.log(
-            `User: ${user.username}, Mode: AAI, Settings: ${atriumAmp}, ${atrialPW}, ${atrialRP}, ${lowerRateLimit}`,
-          )
         }
         setSubmittedMode('AAI')
         break
@@ -397,15 +390,12 @@ function Dashboard(): JSX.Element {
           ventricleRP !== '' &&
           lowerRateLimit !== ''
         ) {
-          window.api.setUser(user.username, 'VVI', {
+          window.api.setUser(username, 'VVI', {
             ventricularAmplitude: parseFloat(ventricleAmp),
             ventricularPulseWidth: parseFloat(ventriclePW),
             ventricularRefractoryPeriod: parseFloat(ventricleRP),
             lowerRateLimit: parseFloat(lowerRateLimit),
           })
-          console.log(
-            `User: ${user.username}, Mode: VVI, Settings: ${ventricleAmp}, ${ventriclePW}, ${ventricleRP}, ${lowerRateLimit}`,
-          )
         }
         setSubmittedMode('VVI')
         break
@@ -415,7 +405,7 @@ function Dashboard(): JSX.Element {
     }
 
     addToast('Settings sent and saved', 'success')
-    _setCommunicationStatus('CONNECTED')
+    dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
   }
 
   // effect hook to check if the input fields are filled
@@ -444,12 +434,12 @@ function Dashboard(): JSX.Element {
   // populate settings for selected mode on initial mount and when mode changes
   useEffect(() => {
     // quit early if there is no user or mode selected
-    if (!user || !selectedMode) {
+    if (!selectedMode) {
       return
     }
 
     // now get the settings for the selected mode via ipc
-    window.api.getSettingsForMode(user.username, selectedMode).then((response) => {
+    window.api.getSettingsForMode(username, selectedMode).then((response) => {
       if (response.success) {
         const settings = response.settings
         // and set the appropriate state variables based on the mode
@@ -483,7 +473,7 @@ function Dashboard(): JSX.Element {
         }
       }
     })
-  }, [user, selectedMode])
+  }, [username, selectedMode])
 
   // toggle help popup
   const toggleHelp = (): void => {
@@ -506,7 +496,7 @@ function Dashboard(): JSX.Element {
         {/* Welcome Section */}
         <div className="welcome-section">
           <p className="welcome-header">Welcome</p>
-          {user && <p className="username">{user.username}</p>}
+          {username && <p className="username">{username}</p>}
         </div>
 
         {/* Telemetry Status */}
@@ -514,7 +504,7 @@ function Dashboard(): JSX.Element {
           <p className="communication-status-header">Telemetry Status</p>
           <p className={getStatusClass()}>
             {getStatusIcon()}
-            {communicationStatus}
+            {connectionStatus}
           </p>
         </div>
 
@@ -541,7 +531,7 @@ function Dashboard(): JSX.Element {
         <div className="bottom-sidebar-components">
           <div className="sidebar-versions">
             <p>HeartFlow Release: v1.0.0</p>
-            {user && <p>Serial Number: {user.serialNumber}</p>}
+            {serialNumber && <p>Serial Number: {serialNumber}</p>}
           </div>
           <div className="logout-button-container">
             <LogoutButton />
