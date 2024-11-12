@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import type { Mode, ConnectionStatus, TelemetryStatus } from '../../../common/types'
 
 // todo: add the rest of the state as needed
+// todo: VERY IMPORTANT: change numbers to strings
+// todo: VERY IMPORTANT: to avoid breaking the UI, parse to number when needed
 
 interface UserState {
   username: string
@@ -52,7 +54,10 @@ type UserAction = { type: 'UPDATE_USER'; payload: Partial<UserState> }
 type PacemakerAction =
   | {
       type: 'UPDATE_MODE_SETTINGS'
-      payload: { mode: Mode; settings: Partial<PacemakerState['modes']> }
+      payload: {
+        mode: Mode
+        settings: Partial<PacemakerState['modes'][keyof PacemakerState['modes']]>
+      }
     }
   | { type: 'UPDATE_TELEMETRY'; payload: Partial<PacemakerState['telemetry']> }
   | { type: 'UPDATE_LAST_USED_MODE'; payload: Mode }
@@ -142,7 +147,7 @@ const useStore = create<
     },
   },
   telemetry: {
-    heartRate: 0,
+    heartRate: 69420,
   },
   connectionStatus: 'DISCONNECTED',
   telemetryStatus: 'OFF',
