@@ -45,15 +45,6 @@ function Dashboard(): JSX.Element {
   // ! we should probably remove this
   const [pacemakerBPM, _setPacemakerBPM] = useState<number>(0)
 
-  // todo: we might need a better state solution for these values
-  // these states are for the input fields
-  // treat them as strings and convert to floats when needed
-  const [atrialPW, setAtrialPW] = useState<string>('0')
-  const [ventriclePW, setVentriclePW] = useState<string>('0')
-  const [atrialRP, setAtrialRP] = useState<string>('0')
-  const [ventricleRP, setVentricleRP] = useState<string>('0')
-  const [lowerRateLimit, setLowerRateLimit] = useState<string>('0')
-
   // these states are for the error handling of the input fields
   // if an error is true, the input field will have a red border
   const [atriumAmpError, setAtriumAmpError] = useState<boolean>(false)
@@ -179,19 +170,49 @@ function Dashboard(): JSX.Element {
         })
         break
       case 'atrialPW':
-        setAtrialPW(value)
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { atrialPulseWidth: parseFloat(value) || 0 },
+          },
+        })
         break
       case 'ventriclePW':
-        setVentriclePW(value)
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { ventricularPulseWidth: parseFloat(value) || 0 },
+          },
+        })
         break
       case 'atrialRP':
-        setAtrialRP(value)
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { atrialRefractoryPeriod: parseFloat(value) || 0 },
+          },
+        })
         break
       case 'ventricleRP':
-        setVentricleRP(value)
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { ventricularRefractoryPeriod: parseFloat(value) || 0 },
+          },
+        })
         break
       case 'lowerRateLimit':
-        setLowerRateLimit(value)
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { lowerRateLimit: parseFloat(value) || 0 },
+          },
+        })
         break
       default:
         break
@@ -229,10 +250,6 @@ function Dashboard(): JSX.Element {
           },
         })
 
-        // these will be removed once we have the above dispatch working
-        setAtrialPW((aooSettings.settings?.atrialPulseWidth ?? 0).toString())
-        setAtrialRP((aooSettings.settings?.atrialRefractoryPeriod ?? 0).toString())
-        setLowerRateLimit((aooSettings.settings?.lowerRateLimit ?? 0).toString())
         break
       }
       case 'VOO': {
@@ -251,9 +268,7 @@ function Dashboard(): JSX.Element {
             },
           },
         })
-        setVentriclePW((vooSettings.settings?.ventricularPulseWidth ?? 0).toString())
-        setVentricleRP((vooSettings.settings?.ventricularRefractoryPeriod ?? 0).toString())
-        setLowerRateLimit((vooSettings.settings?.lowerRateLimit ?? 0).toString())
+
         break
       }
       case 'AAI': {
@@ -273,9 +288,6 @@ function Dashboard(): JSX.Element {
           },
         })
 
-        setAtrialPW((aaiSettings.settings?.atrialPulseWidth ?? 0).toString())
-        setAtrialRP((aaiSettings.settings?.atrialRefractoryPeriod ?? 0).toString())
-        setLowerRateLimit((aaiSettings.settings?.lowerRateLimit ?? 0).toString())
         break
       }
       case 'VVI': {
@@ -295,9 +307,6 @@ function Dashboard(): JSX.Element {
           },
         })
 
-        setVentriclePW((vviSettings.settings?.ventricularPulseWidth ?? 0).toString())
-        setVentricleRP((vviSettings.settings?.ventricularRefractoryPeriod ?? 0).toString())
-        setLowerRateLimit((vviSettings.settings?.lowerRateLimit ?? 0).toString())
         break
       }
       case 'OFF':
@@ -328,14 +337,17 @@ function Dashboard(): JSX.Element {
       } else {
         setAtriumAmpError(false)
       }
-      if (parseFloat(atrialPW) < 0.05 || parseFloat(atrialPW) > 1.9) {
+      if (modes[currentMode].atrialPulseWidth < 0.05 || modes[currentMode].atrialPulseWidth > 1.9) {
         addToast('Atrial Pulse Width must be between 0.05 and 1.9 ms', 'error')
         setAtrialPWError(true)
         isValid = false
       } else {
         setAtrialPWError(false)
       }
-      if (parseFloat(atrialRP) < 150 || parseFloat(atrialRP) > 500) {
+      if (
+        modes[currentMode].atrialRefractoryPeriod < 150 ||
+        modes[currentMode].atrialRefractoryPeriod > 500
+      ) {
         addToast('Atrial Refractory Period must be between 150 and 500 ms', 'error')
         setAtrialRPError(true)
         isValid = false
@@ -353,14 +365,20 @@ function Dashboard(): JSX.Element {
       } else {
         setVentricleAmpError(false)
       }
-      if (parseFloat(ventriclePW) < 0.05 || parseFloat(ventriclePW) > 1.9) {
+      if (
+        modes[currentMode].ventricularPulseWidth < 0.05 ||
+        modes[currentMode].ventricularPulseWidth > 1.9
+      ) {
         addToast('Ventricular Pulse Width must be between 0.05 and 1.9 ms', 'error')
         setVentriclePWError(true)
         isValid = false
       } else {
         setVentriclePWError(false)
       }
-      if (parseFloat(ventricleRP) < 150 || parseFloat(ventricleRP) > 500) {
+      if (
+        modes[currentMode].ventricularRefractoryPeriod < 150 ||
+        modes[currentMode].ventricularRefractoryPeriod > 500
+      ) {
         addToast('Ventricular Refractory Period must be between 150 and 500 ms', 'error')
         setVentricleRPError(true)
         isValid = false
@@ -369,7 +387,7 @@ function Dashboard(): JSX.Element {
       }
     }
 
-    if (parseFloat(lowerRateLimit) <= 30 || parseFloat(lowerRateLimit) >= 175) {
+    if (modes[currentMode].lowerRateLimit <= 30 || modes[currentMode].lowerRateLimit >= 175) {
       addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
       setLowerRateLimitError(true)
       isValid = false
@@ -410,17 +428,17 @@ function Dashboard(): JSX.Element {
       case 'AOO':
         if (
           modes[currentMode].atrialAmplitude !== 0 &&
-          atrialPW !== '' &&
-          atrialRP !== '' &&
-          lowerRateLimit !== ''
+          modes[currentMode].atrialPulseWidth !== 0 &&
+          modes[currentMode].atrialRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
         ) {
           // ipc channel sets the values for the mode for given user
           // ! we also might wanna fix how we get the values here
           window.api.setUser(username, 'AOO', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
-            atrialPulseWidth: parseFloat(atrialPW),
-            atrialRefractoryPeriod: parseFloat(atrialRP),
-            lowerRateLimit: parseFloat(lowerRateLimit),
+            atrialPulseWidth: modes[currentMode].atrialPulseWidth,
+            atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
           })
           setSubmittedMode('AOO')
         }
@@ -429,15 +447,15 @@ function Dashboard(): JSX.Element {
         // same as above, but for VOO
         if (
           modes[currentMode].ventricularAmplitude !== 0 &&
-          ventriclePW !== '' &&
-          ventricleRP !== '' &&
-          lowerRateLimit !== ''
+          modes[currentMode].ventricularPulseWidth !== 0 &&
+          modes[currentMode].ventricularRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
         ) {
           window.api.setUser(username, 'VOO', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
-            ventricularPulseWidth: parseFloat(ventriclePW),
-            ventricularRefractoryPeriod: parseFloat(ventricleRP),
-            lowerRateLimit: parseFloat(lowerRateLimit),
+            ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
+            ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
           })
           setSubmittedMode('VOO')
         }
@@ -447,15 +465,15 @@ function Dashboard(): JSX.Element {
         // same as above, but for AAI
         if (
           modes[currentMode].atrialAmplitude !== 0 &&
-          atrialPW !== '' &&
-          atrialRP !== '' &&
-          lowerRateLimit !== ''
+          modes[currentMode].atrialPulseWidth !== 0 &&
+          modes[currentMode].atrialRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
         ) {
           window.api.setUser(username, 'AAI', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
-            atrialPulseWidth: parseFloat(atrialPW),
-            atrialRefractoryPeriod: parseFloat(atrialRP),
-            lowerRateLimit: parseFloat(lowerRateLimit),
+            atrialPulseWidth: modes[currentMode].atrialPulseWidth,
+            atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
           })
         }
         setSubmittedMode('AAI')
@@ -464,15 +482,15 @@ function Dashboard(): JSX.Element {
         // same as above, but for VVI
         if (
           modes[currentMode].ventricularAmplitude !== 0 &&
-          ventriclePW !== '' &&
-          ventricleRP !== '' &&
-          lowerRateLimit !== ''
+          modes[currentMode].ventricularPulseWidth !== 0 &&
+          modes[currentMode].ventricularRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
         ) {
           window.api.setUser(username, 'VVI', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
-            ventricularPulseWidth: parseFloat(ventriclePW),
-            ventricularRefractoryPeriod: parseFloat(ventricleRP),
-            lowerRateLimit: parseFloat(lowerRateLimit),
+            ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
+            ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
           })
         }
         setSubmittedMode('VVI')
@@ -502,11 +520,11 @@ function Dashboard(): JSX.Element {
   }, [
     modes[currentMode]?.atrialAmplitude,
     modes[currentMode]?.ventricularAmplitude,
-    atrialPW,
-    ventriclePW,
-    atrialRP,
-    ventricleRP,
-    lowerRateLimit,
+    modes[currentMode]?.atrialPulseWidth,
+    modes[currentMode]?.ventricularPulseWidth,
+    modes[currentMode]?.atrialRefractoryPeriod,
+    modes[currentMode]?.ventricularRefractoryPeriod,
+    modes[currentMode]?.lowerRateLimit,
     currentMode,
   ])
 
@@ -537,11 +555,6 @@ function Dashboard(): JSX.Element {
               },
             })
 
-            // ? everything below this is probably gonna be removed too
-            // ? once we have the above dispatch working
-            setAtrialPW((settings?.atrialPulseWidth ?? 0).toString())
-            setAtrialRP((settings?.atrialRefractoryPeriod ?? 0).toString())
-            setLowerRateLimit((settings?.lowerRateLimit ?? 0).toString())
             break
           case 'VOO':
             dispatch({
@@ -557,9 +570,6 @@ function Dashboard(): JSX.Element {
               },
             })
 
-            setVentriclePW((settings?.ventricularPulseWidth ?? 0).toString())
-            setVentricleRP((settings?.ventricularRefractoryPeriod ?? 0).toString())
-            setLowerRateLimit((settings?.lowerRateLimit ?? 0).toString())
             break
           case 'AAI':
             dispatch({
@@ -575,9 +585,6 @@ function Dashboard(): JSX.Element {
               },
             })
 
-            setAtrialPW((settings?.atrialPulseWidth ?? 0).toString())
-            setAtrialRP((settings?.atrialRefractoryPeriod ?? 0).toString())
-            setLowerRateLimit((settings?.lowerRateLimit ?? 0).toString())
             break
           case 'VVI':
             dispatch({
@@ -593,9 +600,6 @@ function Dashboard(): JSX.Element {
               },
             })
 
-            setVentriclePW((settings?.ventricularPulseWidth ?? 0).toString())
-            setVentricleRP((settings?.ventricularRefractoryPeriod ?? 0).toString())
-            setLowerRateLimit((settings?.lowerRateLimit ?? 0).toString())
             break
           default:
             break
@@ -789,7 +793,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isAtriumDisabled}
-                value={isAtriumDisabled ? '' : atrialPW}
+                value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialPulseWidth ?? '')}
                 name="atrialPW"
               />
               <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium PW</label>
@@ -800,7 +804,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isVentricleDisabled}
-                value={isVentricleDisabled ? '' : ventriclePW}
+                value={isVentricleDisabled ? '' : (modes[currentMode]?.ventricularPulseWidth ?? '')}
                 name="ventriclePW"
               />
               <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle PW</label>
@@ -813,7 +817,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isAtriumDisabled}
-                value={isAtriumDisabled ? '' : atrialRP}
+                value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialRefractoryPeriod ?? '')}
                 name="atrialRP"
               />
               <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrial RP</label>
@@ -824,7 +828,9 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={isVentricleDisabled}
-                value={isVentricleDisabled ? '' : ventricleRP}
+                value={
+                  isVentricleDisabled ? '' : (modes[currentMode]?.ventricularRefractoryPeriod ?? '')
+                }
                 name="ventricleRP"
               />
               <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricular RP</label>
@@ -839,7 +845,7 @@ function Dashboard(): JSX.Element {
                 className="input-field"
                 onChange={handleInputChange}
                 disabled={telemetryStatus === 'OFF'}
-                value={telemetryStatus === 'OFF' ? '' : lowerRateLimit}
+                value={telemetryStatus === 'OFF' ? '' : (modes[currentMode]?.lowerRateLimit ?? '')}
                 name="lowerRateLimit"
               />
               <label className={isVentricleDisabled || isAtriumDisabled ? 'disabled-label' : ''}>
