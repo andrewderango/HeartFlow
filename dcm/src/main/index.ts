@@ -1,6 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { spawn } from 'child_process'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import iconIco from '../../resources/icon.ico?asset'
 import iconPng from '../../resources/icon.png?asset'
@@ -155,27 +154,4 @@ ipcMain.handle('get-settings-for-mode', async (_, username: string, mode: string
   } catch (error) {
     return { success: false, message: (error as Error).message } as ModeSettingResponse
   }
-})
-
-ipcMain.handle('spawn-hello', async () => {
-  return new Promise((resolve, reject) => {
-    const hello = spawn('./hello')
-
-    hello.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
-    hello.stderr.on('data', (data) => {
-      console.error(`stderr: ${data}`)
-    })
-
-    hello.on('close', (code) => {
-      console.log(`child process exited with code ${code}`)
-      resolve(code)
-    })
-
-    hello.on('error', (error) => {
-      reject(error)
-    })
-  })
 })
