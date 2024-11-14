@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Info, CircleAlert, CircleCheck, X } from 'lucide-react'
 import './Toast.css'
 
 // toasts are small notifications that appear at the bottom of the screen
@@ -40,8 +41,15 @@ const Toast: React.FC<ToastProps> = ({ message, type, onClose, removing }) => {
   // it's being removed
   return (
     <div className={`toast toast-${type} ${isRemoving ? 'toast-removal' : ''}`}>
+      <div className="toast-icon">
+        {type === 'success' && <CircleCheck size={24} />}
+        {type === 'error' && <CircleAlert size={24} />}
+        {type === 'info' && <Info size={24} />}
+      </div>
       <p>{message}</p>
-      <button onClick={handleRemove}>X</button>
+      <button className="toast-close" onClick={handleRemove}>
+        <X size={24} />
+      </button>
     </div>
   )
 }
