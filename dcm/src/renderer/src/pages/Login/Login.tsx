@@ -73,6 +73,10 @@ function Login(): JSX.Element {
     }
   }, [])
 
+  const handleTestNavigation = (): void => {
+    navigate('/test')
+  }
+
   // return the component
   return (
     <div className="login-container">
@@ -119,6 +123,13 @@ function Login(): JSX.Element {
           </Link>
         </div>
       </form>
+
+      {/* button to go to test page */}
+      <div className="test-button">
+        <button type="button" onClick={handleTestNavigation}>
+          Test Page
+        </button>
+      </div>
     </div>
   )
 }

@@ -6,10 +6,24 @@ import heartflowLogo from './assets/heartflow.png'
 import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Dashboard from './pages/Dashboard/Dashboard'
+import Test from './pages/Test/Test'
 
 // the main app component that sets up the router and routes
 
 function App(): JSX.Element {
+  const testSocket = new WebSocket('ws://localhost:8765')
+
+  testSocket.onopen = (): void => {
+    console.log('websocket connected')
+    testSocket.send(JSON.stringify({ cmd: 'add', a: '1', b: '2' }))
+    testSocket.send(JSON.stringify({ cmd: 'poop' }))
+  }
+
+  testSocket.onmessage = (event): void => {
+    const data = JSON.parse(event.data as string)
+    console.log('received from python: ', data)
+  }
+
   return (
     // wrap the app in the user and toast providers
     <UserProvider>
@@ -45,6 +59,7 @@ function App(): JSX.Element {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/test" element={<Test />} />
           </Routes>
           {/* toast container to hold all the toasts, always included on all pages */}
           <ToastContainer />
