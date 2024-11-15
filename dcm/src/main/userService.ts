@@ -68,7 +68,7 @@ export async function registerUser(
 // - otherwise throws an error that is caught by the ipc handler
 export async function setUser(
   username: string,
-  mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF',
+  mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR',
   settings: Record<string, number>,
 ): Promise<void> {
   const users = await getUsers(usersFilePath)

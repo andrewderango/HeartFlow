@@ -37,7 +37,7 @@ function Dashboard(): JSX.Element {
   const { addToast } = useToast()
   const [currentTime, setCurrentTime] = useState(new Date())
   const [showHelp, setShowHelp] = useState(false)
-  const [submittedMode, setSubmittedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null>(
+  const [submittedMode, setSubmittedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR' | null>(
     null,
   )
 
@@ -59,8 +59,8 @@ function Dashboard(): JSX.Element {
   const [isVentricleDisabled, setIsVentricleDisabled] = useState<boolean>(false)
 
   useEffect(() => {
-    setIsAtriumDisabled(currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'OFF')
-    setIsVentricleDisabled(currentMode === 'AOO' || currentMode === 'AAI' || currentMode === 'OFF')
+    setIsAtriumDisabled(currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'OFF' || currentMode === 'VOOR' || currentMode === 'VVIR')
+    setIsVentricleDisabled(currentMode === 'AOO' || currentMode === 'AAI' || currentMode === 'OFF' || currentMode === 'AOOR' || currentMode === 'AAIR')
   }, [currentMode])
 
   // set up a timer to update the current time every second
@@ -109,7 +109,7 @@ function Dashboard(): JSX.Element {
   }
 
   // handles the mode selection
-  const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'): void => {
+  const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR'): void => {
     // set the selected mode, enable terminate button, and set telemetry not terminated
     dispatch({ type: 'UPDATE_CURRENT_MODE', payload: mode })
 
@@ -308,6 +308,104 @@ function Dashboard(): JSX.Element {
 
         break
       }
+      case 'AOOR': {
+        // get the settings for the mode via ipc
+        const aoorSettings = await window.api.getSettingsForMode(username ?? '', 'AOOR')
+        dispatch({ type: 'UPDATE_CURRENT_MODE', payload: 'AOOR' })
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: 'AOOR',
+            settings: {
+              atrialAmplitude: aoorSettings.settings?.atrialAmplitude ?? 0,
+              atrialPulseWidth: aoorSettings.settings?.atrialPulseWidth ?? 0,
+              atrialRefractoryPeriod: aoorSettings.settings?.atrialRefractoryPeriod ?? 0,
+              lowerRateLimit: aoorSettings.settings?.lowerRateLimit ?? 0,
+            },
+          },
+        })
+
+        break
+      }
+      case 'VOOR': {
+        // get the settings for the mode via ipc
+        const voorSettings = await window.api.getSettingsForMode(username ?? '', 'VOOR')
+        dispatch({ type: 'UPDATE_CURRENT_MODE', payload: 'VOOR' })
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: 'VOOR',
+            settings: {
+              ventricularAmplitude: voorSettings.settings?.ventricularAmplitude ?? 0,
+              ventricularPulseWidth: voorSettings.settings?.ventricularPulseWidth ?? 0,
+              ventricularRefractoryPeriod: voorSettings.settings?.ventricularRefractoryPeriod ?? 0,
+              lowerRateLimit: voorSettings.settings?.lowerRateLimit ?? 0,
+            },
+          },
+        })
+
+        break
+      }
+      case 'AAIR': {
+        // get the settings for the mode via ipc
+        const aairSettings = await window.api.getSettingsForMode(username ?? '', 'AAIR')
+        dispatch({ type: 'UPDATE_CURRENT_MODE', payload: 'AAIR' })
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: 'AAIR',
+            settings: {
+              atrialAmplitude: aairSettings.settings?.atrialAmplitude ?? 0,
+              atrialPulseWidth: aairSettings.settings?.atrialPulseWidth ?? 0,
+              atrialRefractoryPeriod: aairSettings.settings?.atrialRefractoryPeriod ?? 0,
+              lowerRateLimit: aairSettings.settings?.lowerRateLimit ?? 0,
+            },
+          },
+        })
+
+        break
+      }
+      case 'VVIR': {
+        // get the settings for the mode via ipc
+        const vvirSettings = await window.api.getSettingsForMode(username ?? '', 'VVIR')
+        dispatch({ type: 'UPDATE_CURRENT_MODE', payload: 'VVIR' })
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: 'VVIR',
+            settings: {
+              ventricularAmplitude: vvirSettings.settings?.ventricularAmplitude ?? 0,
+              ventricularPulseWidth: vvirSettings.settings?.ventricularPulseWidth ?? 0,
+              ventricularRefractoryPeriod: vvirSettings.settings?.ventricularRefractoryPeriod ?? 0,
+              lowerRateLimit: vvirSettings.settings?.lowerRateLimit ?? 0,
+            },
+          },
+        })
+
+        break
+      }
+      case 'DDDR': {
+        // get the settings for the mode via ipc
+        const dddrSettings = await window.api.getSettingsForMode(username ?? '', 'DDDR')
+        dispatch({ type: 'UPDATE_CURRENT_MODE', payload: 'DDDR' })
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: 'DDDR',
+            settings: {
+              atrialAmplitude: dddrSettings.settings?.atrialAmplitude ?? 0,
+              atrialPulseWidth: dddrSettings.settings?.atrialPulseWidth ?? 0,
+              atrialRefractoryPeriod: dddrSettings.settings?.atrialRefractoryPeriod ?? 0,
+              ventricularAmplitude: dddrSettings.settings?.ventricularAmplitude ?? 0,
+              ventricularPulseWidth: dddrSettings.settings?.ventricularPulseWidth ?? 0,
+              ventricularRefractoryPeriod: dddrSettings.settings?.ventricularRefractoryPeriod ?? 0,
+              lowerRateLimit: dddrSettings.settings?.lowerRateLimit ?? 0,
+            },
+          },
+        })
+
+        break
+      }
       case 'OFF':
         // if the mode is OFF, set the mode to OFF, disable terminate button,
         dispatch({ type: 'UPDATE_CURRENT_MODE', payload: 'OFF' })
@@ -328,7 +426,7 @@ function Dashboard(): JSX.Element {
     // make sure the values are within the acceptable ranges
     // if not, set the error state to true and display a toast
     // otherwise, set the error state to false
-    if (currentMode === 'AOO' || currentMode === 'AAI') {
+    if (currentMode === 'AOO' || currentMode === 'AAI' || currentMode === 'DDDR' || currentMode === 'AOOR' || currentMode === 'AAIR') {
       if (modes[currentMode].atrialAmplitude < 0 || modes[currentMode].atrialAmplitude > 5) {
         addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
         setAtriumAmpError(true)
@@ -353,7 +451,7 @@ function Dashboard(): JSX.Element {
       } else {
         setAtrialRPError(false)
       }
-    } else if (currentMode === 'VOO' || currentMode === 'VVI') {
+    } else if (currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'DDDR' || currentMode === 'VOOR' || currentMode === 'VVIR') {
       if (
         modes[currentMode].ventricularAmplitude < 0 ||
         modes[currentMode].ventricularAmplitude > 5
@@ -494,6 +592,97 @@ function Dashboard(): JSX.Element {
         }
         setSubmittedMode('VVI')
         break
+      case 'AOOR':
+        // same as above, but for AOOR
+        if (
+          modes[currentMode].atrialAmplitude !== 0 &&
+          modes[currentMode].atrialPulseWidth !== 0 &&
+          modes[currentMode].atrialRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
+        ) {
+          window.api.setUser(username, 'AOOR', {
+            atrialAmplitude: modes[currentMode].atrialAmplitude,
+            atrialPulseWidth: modes[currentMode].atrialPulseWidth,
+            atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
+          })
+        }
+        setSubmittedMode('AOOR')
+        break
+      case 'VOOR':
+        // same as above, but for VOOR
+        if (
+          modes[currentMode].ventricularAmplitude !== 0 &&
+          modes[currentMode].ventricularPulseWidth !== 0 &&
+          modes[currentMode].ventricularRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
+        ) {
+          window.api.setUser(username, 'VOOR', {
+            ventricularAmplitude: modes[currentMode].ventricularAmplitude,
+            ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
+            ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
+          })
+        }
+        setSubmittedMode('VOOR')
+        break
+      case 'AAIR':
+        // same as above, but for AAIR
+        if (
+          modes[currentMode].atrialAmplitude !== 0 &&
+          modes[currentMode].atrialPulseWidth !== 0 &&
+          modes[currentMode].atrialRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
+        ) {
+          window.api.setUser(username, 'AAIR', {
+            atrialAmplitude: modes[currentMode].atrialAmplitude,
+            atrialPulseWidth: modes[currentMode].atrialPulseWidth,
+            atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
+          })
+        }
+        setSubmittedMode('AAIR')
+        break
+      case 'VVIR':
+        // same as above, but for VVIR
+        if (
+          modes[currentMode].ventricularAmplitude !== 0 &&
+          modes[currentMode].ventricularPulseWidth !== 0 &&
+          modes[currentMode].ventricularRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
+        ) {
+          window.api.setUser(username, 'VVIR', {
+            ventricularAmplitude: modes[currentMode].ventricularAmplitude,
+            ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
+            ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
+          })
+        }
+        setSubmittedMode('VVIR')
+        break
+      case 'DDDR':
+        // same as above, but for DDDR
+        if (
+          modes[currentMode].atrialAmplitude !== 0 &&
+          modes[currentMode].atrialPulseWidth !== 0 &&
+          modes[currentMode].atrialRefractoryPeriod !== 0 &&
+          modes[currentMode].ventricularAmplitude !== 0 &&
+          modes[currentMode].ventricularPulseWidth !== 0 &&
+          modes[currentMode].ventricularRefractoryPeriod !== 0 &&
+          modes[currentMode].lowerRateLimit !== 0
+        ) {
+          window.api.setUser(username, 'DDDR', {
+            atrialAmplitude: modes[currentMode].atrialAmplitude,
+            atrialPulseWidth: modes[currentMode].atrialPulseWidth,
+            atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
+            ventricularAmplitude: modes[currentMode].ventricularAmplitude,
+            ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
+            ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
+            lowerRateLimit: modes[currentMode].lowerRateLimit,
+          })
+        }
+        setSubmittedMode('DDDR')
+        break
       default:
         console.log('Invalid mode')
         break
@@ -591,6 +780,84 @@ function Dashboard(): JSX.Element {
               payload: {
                 mode: 'VVI',
                 settings: {
+                  ventricularAmplitude: settings?.ventricularAmplitude ?? 0,
+                  ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
+                  ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
+                  lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                },
+              },
+            })
+
+            break
+          case 'AOOR':
+            dispatch({
+              type: 'UPDATE_MODE_SETTINGS',
+              payload: {
+                mode: 'AOOR',
+                settings: {
+                  atrialAmplitude: settings?.atrialAmplitude ?? 0,
+                  atrialPulseWidth: settings?.atrialPulseWidth ?? 0,
+                  atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
+                  lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                },
+              },
+            })
+
+            break
+          case 'VOOR':
+            dispatch({
+              type: 'UPDATE_MODE_SETTINGS',
+              payload: {
+                mode: 'VOOR',
+                settings: {
+                  ventricularAmplitude: settings?.ventricularAmplitude ?? 0,
+                  ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
+                  ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
+                  lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                },
+              },
+            })
+
+            break
+          case 'AAIR':
+            dispatch({
+              type: 'UPDATE_MODE_SETTINGS',
+              payload: {
+                mode: 'AAIR',
+                settings: {
+                  atrialAmplitude: settings?.atrialAmplitude ?? 0,
+                  atrialPulseWidth: settings?.atrialPulseWidth ?? 0,
+                  atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
+                  lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                },
+              },
+            })
+
+            break
+          case 'VVIR':
+            dispatch({
+              type: 'UPDATE_MODE_SETTINGS',
+              payload: {
+                mode: 'VVIR',
+                settings: {
+                  ventricularAmplitude: settings?.ventricularAmplitude ?? 0,
+                  ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
+                  ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
+                  lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                },
+              },
+            })
+
+            break
+          case 'DDDR':
+            dispatch({
+              type: 'UPDATE_MODE_SETTINGS',
+              payload: {
+                mode: 'DDDR',
+                settings: {
+                  atrialAmplitude: settings?.atrialAmplitude ?? 0,
+                  atrialPulseWidth: settings?.atrialPulseWidth ?? 0,
+                  atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
                   ventricularAmplitude: settings?.ventricularAmplitude ?? 0,
                   ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,

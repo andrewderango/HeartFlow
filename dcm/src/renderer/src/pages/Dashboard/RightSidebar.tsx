@@ -4,7 +4,7 @@ import { Info, HardDriveUpload, ClipboardX, Menu } from 'lucide-react'
 interface RightSidebarProps {
   showHelp: boolean
   toggleHelp: () => void
-  handleModeSelect: (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF') => void
+  handleModeSelect: (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR') => void
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void
   handleDiscard: () => void
@@ -18,7 +18,7 @@ interface RightSidebarProps {
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
   telemetryStatus: string
-  currentMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | null
+  currentMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR' | null
   modes: any
 }
 
@@ -97,8 +97,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           {/* Mode Selection */}
           <div className="mode-container">
             <h3>Mode Selection</h3>
-            <div className="button-row">
-              {(['AOO', 'VOO', 'AAI', 'VVI'] as const).map((mode) => (
+            <div className="button-grid">
+              {(['OFF', 'AOO', 'AAI', 'VOO', 'VVI', 'DDDR', 'AOOR', 'AAIR', 'VOOR', 'VVIR'] as const).map((mode) => (
                 <button
                   key={mode}
                   className={`mode-button ${currentMode === mode ? 'selected' : ''}`}

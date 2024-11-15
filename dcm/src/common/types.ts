@@ -1,6 +1,6 @@
 // global types for the app because we're using typescript
 
-export type Mode = 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'
+export type Mode = 'OFF' | 'AOO' | 'AAI' | 'VOO' | 'VVI' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR'
 
 export type ConnectionStatus = 'CONNECTED' | 'DISCONNECTED' | 'CONNECTING'
 
@@ -35,7 +35,43 @@ export interface User {
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
       lowerRateLimit: number
-    }
+    },
+    DDDR: {
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      ventricularAmplitude: number
+      ventricularPulseWidth: number
+      ventricularRefractoryPeriod: number
+      lowerRateLimit: number
+    },
+    AOOR: {
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      lowerRateLimit: number
+    },
+    AAIR: {
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      lowerRateLimit: number
+    },
+    VOOR: {
+      ventricularAmplitude: number
+      ventricularPulseWidth: number
+      ventricularRefractoryPeriod: number
+      lowerRateLimit: number
+    },
+    VVIR: {
+      ventricularAmplitude: number
+      ventricularPulseWidth: number
+      ventricularRefractoryPeriod: number
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      lowerRateLimit: number
+    },
   }
   lastUsedMode?: Mode
 }
@@ -66,6 +102,42 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         lowerRateLimit: 0,
       },
       AAI: {
+        atrialAmplitude: 0,
+        atrialPulseWidth: 0,
+        atrialRefractoryPeriod: 0,
+        lowerRateLimit: 0,
+      },
+      DDDR: {
+        atrialAmplitude: 0,
+        atrialPulseWidth: 0,
+        atrialRefractoryPeriod: 0,
+        ventricularAmplitude: 0,
+        ventricularPulseWidth: 0,
+        ventricularRefractoryPeriod: 0,
+        lowerRateLimit: 0,
+      },
+      AOOR: {
+        atrialAmplitude: 0,
+        atrialPulseWidth: 0,
+        atrialRefractoryPeriod: 0,
+        lowerRateLimit: 0,
+      },
+      AAIR: {
+        atrialAmplitude: 0,
+        atrialPulseWidth: 0,
+        atrialRefractoryPeriod: 0,
+        lowerRateLimit: 0,
+      },
+      VOOR: {
+        ventricularAmplitude: 0,
+        ventricularPulseWidth: 0,
+        ventricularRefractoryPeriod: 0,
+        lowerRateLimit: 0,
+      },
+      VVIR: {
+        ventricularAmplitude: 0,
+        ventricularPulseWidth: 0,
+        ventricularRefractoryPeriod: 0,
         atrialAmplitude: 0,
         atrialPulseWidth: 0,
         atrialRefractoryPeriod: 0,
