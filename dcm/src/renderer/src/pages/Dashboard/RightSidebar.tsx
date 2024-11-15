@@ -64,6 +64,17 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     }
   }, [])
 
+  useEffect(() => {
+    const inputs = document.querySelectorAll('.input-field');
+    inputs.forEach(input => {
+      if (input.value) {
+        input.classList.add('filled');
+      } else {
+        input.classList.remove('filled');
+      }
+    });
+  }, [isAtriumDisabled, isVentricleDisabled]);
+
   return (
     <div className="right-sidebar">
       {/* Menu Button */}
