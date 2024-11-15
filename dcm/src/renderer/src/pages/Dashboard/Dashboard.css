@@ -129,7 +129,7 @@ hr {
 
 .help-popup {
   position: absolute;
-  top: 35px;
+  top: 310px;
   right: 15px;
   width: 550px;
   background-color: rgba(12, 12, 16, 0.95);
@@ -528,4 +528,62 @@ h3 {
 .toggle-button:hover {
   background: rgba(255, 255, 255, 0.15);
   transition: ease-in-out 0.3s;
+}
+
+.menu-button-container {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.menu-button:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.menu-popup {
+  position: absolute;
+  top: 22px;
+  right: 5px;
+  background-color: rgba(12, 12, 16, 0.95);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.menu-item {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%;
+  text-align: left;
+  transition: background 0.3s;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+.menu-item.selected {
+  background: linear-gradient(135deg, rgba(31, 138, 219, 0.6), rgba(244, 42, 140, 0.6));
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.header-with-help {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Info, HardDriveUpload, ClipboardX } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import { Info, HardDriveUpload, ClipboardX, Menu } from 'lucide-react'
 
 interface RightSidebarProps {
   showHelp: boolean
@@ -43,64 +43,57 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   modes,
 }) => {
   const [view, setView] = useState<'PARAMETERS' | 'REPORTS'>('PARAMETERS')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const helpRef = useRef<HTMLDivElement>(null)
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setMenuOpen(false)
+    }
+    if (helpRef.current && !helpRef.current.contains(event.target as Node)) {
+      setHelpOpen(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
     <div className="right-sidebar">
-      {/* View Toggle */}
-      <div className="view-toggle">
-        <button
-          className={`toggle-button ${view === 'PARAMETERS' ? 'selected' : ''}`}
-          onClick={() => setView('PARAMETERS')}
-        >
-          PARAMETERS
+      {/* Menu Button */}
+      <div className="menu-button-container" ref={menuRef}>
+        <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>
+          <Menu size={20} />
         </button>
-        <button
-          className={`toggle-button ${view === 'REPORTS' ? 'selected' : ''}`}
-          onClick={() => setView('REPORTS')}
-        >
-          REPORTS
-        </button>
+        {menuOpen && (
+          <div className="menu-popup">
+            <button
+              className={`menu-item ${view === 'PARAMETERS' ? 'selected' : ''}`}
+              onClick={() => { setView('PARAMETERS'); setMenuOpen(false); }}
+            >
+              PARAMETERS
+            </button>
+            <button
+              className={`menu-item ${view === 'REPORTS' ? 'selected' : ''}`}
+              onClick={() => { setView('REPORTS'); setMenuOpen(false); }}
+            >
+              REPORTS
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* HEADER */}
+      <h2>{view}</h2>
 
       {view === 'PARAMETERS' && (
         <>
-          {/* Help Button */}
-          <div className="help-button-container">
-            <button className="help-button" onClick={toggleHelp}>
-              <Info size={14} />
-            </button>
-          </div>
-
-          {/* Help Popup */}
-          {showHelp && (
-            <div className="help-popup">
-              <h3>Pulse Parameters</h3>
-              <ul>
-                <li>
-                  <strong>Atrium Amp:</strong> Amplitude of the atrial pulse (mV)
-                </li>
-                <li>
-                  <strong>Ventricle Amp:</strong> Amplitude of the ventricular pulse (mV)
-                </li>
-                <li>
-                  <strong>Atrial PW:</strong> Pulse width of the atrial pulse (ms)
-                </li>
-                <li>
-                  <strong>Ventricle PW:</strong> Pulse width of the ventricular pulse (ms)
-                </li>
-                <li>
-                  <strong>Atrial RP:</strong> Refractory period of the atrial pulse (ms)
-                </li>
-                <li>
-                  <strong>Ventricular RP:</strong> Refractory period of the ventricular pulse (ms)
-                </li>
-                <li>
-                  <strong>Lower Rate Limit:</strong> Minimum heart rate (bpm)
-                </li>
-              </ul>
-            </div>
-          )}
-
           {/* Mode Selection */}
           <div className="mode-container">
             <h3>Mode Selection</h3>
@@ -119,7 +112,40 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
 
           {/* Continuous Parameters */}
           <div className="parameter-container">
-            <h3>Continuous Parameters</h3>
+            <div className="header-with-help">
+              <h3>Continuous Parameters</h3>
+              <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
+                <Info size={14} />
+              </button>
+            </div>
+            {helpOpen && (
+              <div className="help-popup" ref={helpRef}>
+                <h3>Pulse Parameters</h3>
+                <ul>
+                  <li>
+                    <strong>Atrium Amp:</strong> Amplitude of the atrial pulse (mV)
+                  </li>
+                  <li>
+                    <strong>Ventricle Amp:</strong> Amplitude of the ventricular pulse (mV)
+                  </li>
+                  <li>
+                    <strong>Atrial PW:</strong> Pulse width of the atrial pulse (ms)
+                  </li>
+                  <li>
+                    <strong>Ventricle PW:</strong> Pulse width of the ventricular pulse (ms)
+                  </li>
+                  <li>
+                    <strong>Atrial RP:</strong> Refractory period of the atrial pulse (ms)
+                  </li>
+                  <li>
+                    <strong>Ventricular RP:</strong> Refractory period of the ventricular pulse (ms)
+                  </li>
+                  <li>
+                    <strong>Lower Rate Limit:</strong> Minimum heart rate (bpm)
+                  </li>
+                </ul>
+              </div>
+            )}
             <div className="input-row">
               <div className={`input-container ${atriumAmpError ? 'validation-error' : ''}`}>
                 <input
