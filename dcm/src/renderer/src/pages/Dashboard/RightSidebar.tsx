@@ -98,11 +98,12 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           <div className="mode-container">
             <h3>Mode Selection</h3>
             <div className="button-grid">
-              {(['OFF', 'AOO', 'AAI', 'VOO', 'VVI', 'DDDR', 'AOOR', 'AAIR', 'VOOR', 'VVIR'] as const).map((mode) => (
+              {(['AOO', 'AAI', 'VOO', 'VVI', 'AOOR', 'AAIR', 'VOOR', 'VVIR', 'OFF', 'DDDR'] as const).map((mode) => (
                 <button
                   key={mode}
                   className={`mode-button ${currentMode === mode ? 'selected' : ''}`}
                   onClick={() => handleModeSelect(mode)}
+                  style={{ flex: '1 1 20%' }}
                 >
                   {mode}
                 </button>

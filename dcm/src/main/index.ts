@@ -55,8 +55,7 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    minWidth: 1080,
-    minHeight: 720,
+    resizable: false,
     show: false,
     autoHideMenuBar: true,
     icon: process.platform === 'win32' ? iconIco : iconPng,
@@ -164,7 +163,7 @@ ipcMain.handle(
   async (
     _,
     username: string,
-    mode: 'OFF', 'AOO' | 'AAI' | 'VOO' | 'VVI' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR',
+    mode: 'OFF' | 'AOO' | 'AAI' | 'VOO' | 'VVI' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR',
     settings: Record<string, number>,
   ) => {
     try {
