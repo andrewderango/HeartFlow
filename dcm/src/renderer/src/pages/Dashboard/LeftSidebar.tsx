@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import LogoutButton from '../../components/LogOut/LogOut'
-import TerminateButton from '../../components/Terminate/Terminate'
 import useStore from '@renderer/store/mainStore'
 import { useToast } from '../../context/ToastContext'
 import heartflowLogo from '../../assets/heartflow.png'
-import { Activity, XCircle } from 'lucide-react'
+import { Activity, XCircle, EyeOff } from 'lucide-react'
 
 interface LeftSidebarProps {
-  handleTerminate: () => void
+  handleEgramHiding: () => void
 }
 
-const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleTerminate }) => {
+const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
   const {
     username,
     serialNumber,
@@ -86,11 +85,19 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleTerminate }) => {
           <p>HeartFlow Release: v1.0.0</p>
           {serialNumber && <p>Serial Number: {serialNumber}</p>}
         </div>
+        <div className="egram-button-container">
+          <button
+            className="egram-button"
+            type="button"
+            onClick={handleEgramHiding}
+            disabled={telemetryStatus === 'OFF'}
+          >
+            <EyeOff size={24} />
+            <span>Hide Electrogram</span>
+          </button>
+        </div>
         <div className="logout-button-container">
           <LogoutButton />
-        </div>
-        <div className="terminate-button-container">
-          <TerminateButton onTerminate={handleTerminate} disabled={telemetryStatus === 'OFF'} />
         </div>
       </div>
     </div>

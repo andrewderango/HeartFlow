@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import LogoutButton from '../../components/LogOut/LogOut'
-import TerminateButton from '../../components/Terminate/Terminate'
 import useStore from '@renderer/store/mainStore'
 import { useToast } from '../../context/ToastContext'
 import { Activity, HardDriveUpload, ClipboardX, Info, XCircle } from 'lucide-react'
-import heartflowLogo from '../../assets/heartflow.png'
-import pacemakerHeart from '../../assets/pacemaker-heart.png'
 import LeftSidebar from './LeftSidebar'
 import RightSidebar from './RightSidebar'
 import MainContent from './MainContent'
@@ -616,11 +612,15 @@ function Dashboard(): JSX.Element {
     setShowHelp(!showHelp)
   }
 
+  const handleEgramHiding = (): void => {
+    console.log('Electrogram hidden')
+  }
+
   // Return the actual JSX component
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
-      <LeftSidebar handleTerminate={handleTerminate} />
+      <LeftSidebar handleTerminate={handleTerminate} handleEgramHiding={handleEgramHiding} />
 
       {/* Main Content */}
       <MainContent
