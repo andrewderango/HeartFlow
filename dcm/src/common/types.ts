@@ -1,6 +1,6 @@
 // global types for the app because we're using typescript
 
-export type Mode = 'OFF' | 'AOO' | 'AAI' | 'VOO' | 'VVI' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR'
+export type Mode = 'OFF' | 'AOO' | 'AAI' | 'VOO' | 'VVI' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR'
 
 export type ConnectionStatus = 'CONNECTED' | 'DISCONNECTED' | 'CONNECTING'
 
@@ -37,6 +37,15 @@ export interface User {
       lowerRateLimit: number
     },
     DDDR: {
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      ventricularAmplitude: number
+      ventricularPulseWidth: number
+      ventricularRefractoryPeriod: number
+      lowerRateLimit: number
+    },
+    DDD: {
       atrialAmplitude: number
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
@@ -108,6 +117,15 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         lowerRateLimit: 0,
       },
       DDDR: {
+        atrialAmplitude: 0,
+        atrialPulseWidth: 0,
+        atrialRefractoryPeriod: 0,
+        ventricularAmplitude: 0,
+        ventricularPulseWidth: 0,
+        ventricularRefractoryPeriod: 0,
+        lowerRateLimit: 0,
+      },
+      DDD: {
         atrialAmplitude: 0,
         atrialPulseWidth: 0,
         atrialRefractoryPeriod: 0,

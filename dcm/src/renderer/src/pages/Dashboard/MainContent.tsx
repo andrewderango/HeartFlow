@@ -3,7 +3,7 @@ import React from 'react'
 import pacemakerHeart from '../../assets/pacemaker-heart.png'
 
 interface MainContentProps {
-  submittedMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'OFF' | 'DDDR' | null
+  submittedMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'OFF' | 'DDDR' | 'DDD' | null
   telemetry: { heartRate: number }
   pacemakerBPM: number
 }

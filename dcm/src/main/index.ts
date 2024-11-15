@@ -163,7 +163,7 @@ ipcMain.handle(
   async (
     _,
     username: string,
-    mode: 'OFF' | 'AOO' | 'AAI' | 'VOO' | 'VVI' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR',
+    mode: 'OFF' | 'AOO' | 'AAI' | 'VOO' | 'VVI' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR',
     settings: Record<string, number>,
   ) => {
     try {

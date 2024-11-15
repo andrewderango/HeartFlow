@@ -3,8 +3,7 @@ import { Info, HardDriveUpload, ClipboardX, Menu } from 'lucide-react'
 
 interface RightSidebarProps {
   showHelp: boolean
-  toggleHelp: () => void
-  handleModeSelect: (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR') => void
+  handleModeSelect: (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR') => void
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void
   handleDiscard: () => void
@@ -18,13 +17,12 @@ interface RightSidebarProps {
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
   telemetryStatus: string
-  currentMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR' | null
+  currentMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR' | null
   modes: any
 }
 
 const RightSidebar: React.FC<RightSidebarProps> = ({
   showHelp,
-  toggleHelp,
   handleModeSelect,
   handleInputChange,
   handleSubmit,
@@ -109,7 +107,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           <div className="mode-container">
             <h3>Mode Selection</h3>
             <div className="button-grid">
-              {(['AOO', 'AAI', 'VOO', 'VVI', 'AOOR', 'AAIR', 'VOOR', 'VVIR', 'OFF', 'DDDR'] as const).map((mode) => (
+              {(['AOO', 'AAI', 'VOO', 'VVI', 'AOOR', 'AAIR', 'VOOR', 'VVIR', 'OFF', 'DDD', 'DDDR'] as const).map((mode) => (
                 <button
                   key={mode}
                   className={`mode-button ${currentMode === mode ? 'selected' : ''}`}
@@ -126,11 +124,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           <div className="parameter-container">
             <div className="header-with-help">
               <h3>Continuous Parameters</h3>
-              <button className="help-button" onClick={toggleHelp}>
+              <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
                 <Info size={14} />
               </button>
             </div>
-            {showHelp && (
+            {helpOpen && (
               <div className="help-popup" ref={helpRef}>
                 <h3>Pulse Parameters</h3>
                 <ul>

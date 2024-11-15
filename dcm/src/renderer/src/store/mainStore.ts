@@ -38,6 +38,48 @@ interface PacemakerState {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
     }
+    DDDR: {
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      ventricularAmplitude: number
+      ventricularPulseWidth: number
+      ventricularRefractoryPeriod: number
+      lowerRateLimit: number
+    }
+    DDD: {
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      ventricularAmplitude: number
+      ventricularPulseWidth: number
+      ventricularRefractoryPeriod: number
+      lowerRateLimit: number
+    }
+    AOOR: {
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      lowerRateLimit: number
+    }
+    AAIR: {
+      atrialAmplitude: number
+      atrialPulseWidth: number
+      atrialRefractoryPeriod: number
+      lowerRateLimit: number
+    }
+    VOOR: {
+      ventricularAmplitude: number
+      ventricularPulseWidth: number
+      ventricularRefractoryPeriod: number
+      lowerRateLimit: number
+    }
+    VVIR: {
+      ventricularAmplitude: number
+      ventricularPulseWidth: number
+      ventricularRefractoryPeriod: number
+      lowerRateLimit: number
+    }
   }
   telemetry: {
     heartRate: number
@@ -143,6 +185,48 @@ const useStore = create<
       atrialAmplitude: 0,
       atrialPulseWidth: 0,
       atrialRefractoryPeriod: 0,
+      lowerRateLimit: 0,
+    },
+    DDDR: {
+      atrialAmplitude: 0,
+      atrialPulseWidth: 0,
+      atrialRefractoryPeriod: 0,
+      ventricularAmplitude: 0,
+      ventricularPulseWidth: 0,
+      ventricularRefractoryPeriod: 0,
+      lowerRateLimit: 0,
+    },
+    DDD: {
+      atrialAmplitude: 0,
+      atrialPulseWidth: 0,
+      atrialRefractoryPeriod: 0,
+      ventricularAmplitude: 0,
+      ventricularPulseWidth: 0,
+      ventricularRefractoryPeriod: 0,
+      lowerRateLimit: 0,
+    },
+    AOOR: {
+      atrialAmplitude: 0,
+      atrialPulseWidth: 0,
+      atrialRefractoryPeriod: 0,
+      lowerRateLimit: 0,
+    },
+    AAIR: {
+      atrialAmplitude: 0,
+      atrialPulseWidth: 0,
+      atrialRefractoryPeriod: 0,
+      lowerRateLimit: 0,
+    },
+    VOOR: {
+      ventricularAmplitude: 0,
+      ventricularPulseWidth: 0,
+      ventricularRefractoryPeriod: 0,
+      lowerRateLimit: 0,
+    },
+    VVIR: {
+      ventricularAmplitude: 0,
+      ventricularPulseWidth: 0,
+      ventricularRefractoryPeriod: 0,
       lowerRateLimit: 0,
     },
   },
