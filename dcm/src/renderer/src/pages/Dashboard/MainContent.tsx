@@ -12,6 +12,7 @@ interface MainContentProps {
 const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pacemakerBPM }) => {
   const [series1, setSeries1] = useState<ChartPoint[]>([])
   const [series2, setSeries2] = useState<ChartPoint[]>([])
+  const [isEgramHidden, setIsEgramHidden] = useState(false);
   let time = 0
 
   useEffect(() => {
@@ -42,41 +43,51 @@ const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pac
     return () => clearInterval(interval)
   }, [])
 
+  useEffect(() => {
+    const handleHideEgram = () => {
+      setIsEgramHidden((prev) => !prev);
+    };
+
+    window.addEventListener('hideEgram', handleHideEgram);
+
+    return () => {
+      window.removeEventListener('hideEgram', handleHideEgram);
+    };
+  }, []);
+
   return (
     <div className="main-content">
-      {/* Pacemaker Heart Image */}
-      {/* <img
-        alt="pacemaker heart"
-        className={submittedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'}
-        src={pacemakerHeart}
-      /> */}
-
-      {/* Real Time Chart */}
-      <div className="electrogram-container">
-        <h2>REAL-TIME ELECTROGRAM</h2>
-        <div className="electrogram">
-          <RealTimeChart
-            series1={{
-              data: series1,
-              title: 'Atrium',
-              xWidth: 100,
-              yMin: -100,
-              yMax: 100,
-            }}
-            series2={{
-              data: series2,
-              title: 'Ventricle',
-              xWidth: 100,
-              yMin: -100,
-              yMax: 100,
-            }}
-            width={550}
-            height={500}
-          />
+      {isEgramHidden ? (
+        <img
+          alt="pacemaker heart"
+          className={submittedMode === 'OFF' ? 'pacemaker-heart-stop' : 'pacemaker-heart'}
+          src={pacemakerHeart}
+        />
+      ) : (
+        <div className="electrogram-container">
+          <h2>REAL-TIME ELECTROGRAM</h2>
+          <div className="electrogram">
+            <RealTimeChart
+              series1={{
+                data: series1,
+                title: 'Atrium',
+                xWidth: 100,
+                yMin: -100,
+                yMax: 100,
+              }}
+              series2={{
+                data: series2,
+                title: 'Ventricle',
+                xWidth: 100,
+                yMin: -100,
+                yMax: 100,
+              }}
+              width={550}
+              height={500}
+            />
+          </div>
         </div>
-      </div>
-
-      {/* BPM Statistics */}
+      )}
       <div className="stats-container">
         <div className="stat-box">
           <h3>Current Mode</h3>

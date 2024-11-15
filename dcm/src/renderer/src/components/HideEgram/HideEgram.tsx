@@ -1,22 +1,24 @@
-import React from 'react';
-import { EyeOff } from 'lucide-react';
+import React, { useState } from 'react';
+import { EyeOff, Eye } from 'lucide-react';
 import './HideEgram.css';
 
 const HideEgramData: React.FC = () => {
-  // hide egram from the dashboard
+  const [isEgramHidden, setIsEgramHidden] = useState(false);
+
   const handleHideEgram = (): void => {
-    console.log('IMPLEMENT LOGIC FOR HIDING EGRAM');
+    const event = new CustomEvent('hideEgram');
+    window.dispatchEvent(event);
+    setIsEgramHidden((prev) => !prev);
   };
 
-  // return the component
   return (
     <button
       className="egram-button"
       type="button"
       onClick={handleHideEgram}
     >
-      <EyeOff size={24} />
-      <span>Hide Electrogram</span>
+      {!isEgramHidden ? <Eye size={24} /> : <EyeOff size={24} />}
+      <span>{!isEgramHidden ? 'Show Electrogram' : 'Hide Electrogram'}</span>
     </button>
   );
 };
