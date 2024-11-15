@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Info, HardDriveUpload, ClipboardX, Menu, HeartPulse, FileText } from 'lucide-react'
+import { is } from '@electron-toolkit/utils'
 
 interface RightSidebarProps {
   showHelp: boolean
@@ -17,6 +18,7 @@ interface RightSidebarProps {
   upperRateLimitError: boolean
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
+  isRateLimitDisabled: boolean
   telemetryStatus: string
   currentMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR' | null
   modes: any
@@ -38,6 +40,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   upperRateLimitError,
   isAtriumDisabled,
   isVentricleDisabled,
+  isRateLimitDisabled,
   telemetryStatus,
   currentMode,
   modes,
@@ -73,7 +76,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         input.classList.remove('filled');
       }
     });
-  }, [isAtriumDisabled, isVentricleDisabled]);
+  }, [isAtriumDisabled, isVentricleDisabled, isRateLimitDisabled]);
 
   return (
     <div className="right-sidebar">
@@ -243,11 +246,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   type="text"
                   className="input-field"
                   onChange={handleInputChange}
-                  disabled={telemetryStatus === 'OFF'}
-                  value={telemetryStatus === 'OFF' ? '' : (modes[currentMode]?.lowerRateLimit ?? '')}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.lowerRateLimit ?? '')}
                   name="lowerRateLimit"
                 />
-                <label className={isVentricleDisabled || isAtriumDisabled ? 'disabled-label' : ''}>
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Lower Rate Limit
                 </label>
               </div>
@@ -256,11 +259,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   type="text"
                   className="input-field"
                   onChange={handleInputChange}
-                  disabled={telemetryStatus === 'OFF'}
-                  value={telemetryStatus === 'OFF' ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
                   name="upperRateLimit"
                 />
-                <label className={isVentricleDisabled || isAtriumDisabled ? 'disabled-label' : ''}>
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Upper Rate Limit
                 </label>
               </div>
@@ -271,11 +274,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   type="text"
                   className="input-field"
                   onChange={handleInputChange}
-                  disabled={telemetryStatus === 'OFF'}
-                  value={telemetryStatus === 'OFF' ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
                   name="upperRateLimit"
                 />
-                <label className={isVentricleDisabled || isAtriumDisabled ? 'disabled-label' : ''}>
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Upper Rate Limit
                 </label>
               </div>

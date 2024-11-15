@@ -58,10 +58,12 @@ function Dashboard(): JSX.Element {
   // have to convert the variables to state variables to force a rerender
   const [isAtriumDisabled, setIsAtriumDisabled] = useState<boolean>(false)
   const [isVentricleDisabled, setIsVentricleDisabled] = useState<boolean>(false)
+  const [isRateLimitDisabled, setIsRateLimitDisabled] = useState<boolean>(false)
 
   useEffect(() => {
     setIsAtriumDisabled(currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'OFF' || currentMode === 'VOOR' || currentMode === 'VVIR')
     setIsVentricleDisabled(currentMode === 'AOO' || currentMode === 'AAI' || currentMode === 'OFF' || currentMode === 'AOOR' || currentMode === 'AAIR')
+    setIsRateLimitDisabled(currentMode === 'OFF')
   }, [currentMode])
 
   // set up a timer to update the current time every second
@@ -1039,6 +1041,7 @@ function Dashboard(): JSX.Element {
         upperRateLimitError={upperRateLimitError}
         isAtriumDisabled={isAtriumDisabled}
         isVentricleDisabled={isVentricleDisabled}
+        isRateLimitDisabled={isRateLimitDisabled}
         telemetryStatus={telemetryStatus}
         currentMode={currentMode}
         modes={modes}
