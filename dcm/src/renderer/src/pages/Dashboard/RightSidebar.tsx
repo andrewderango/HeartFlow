@@ -115,11 +115,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           <div className="parameter-container">
             <div className="header-with-help">
               <h3>Continuous Parameters</h3>
-              <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
+              <button className="help-button" onClick={toggleHelp}>
                 <Info size={14} />
               </button>
             </div>
-            {helpOpen && (
+            {showHelp && (
               <div className="help-popup" ref={helpRef}>
                 <h3>Pulse Parameters</h3>
                 <ul>
