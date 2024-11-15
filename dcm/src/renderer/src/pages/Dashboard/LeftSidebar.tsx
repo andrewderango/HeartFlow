@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import HideEgramData from '../../components/HideEgram/HideEgram'
 import LogoutButton from '../../components/LogOut/LogOut'
 import useStore from '@renderer/store/mainStore'
 import { useToast } from '../../context/ToastContext'
 import heartflowLogo from '../../assets/heartflow.png'
-import { Activity, XCircle, EyeOff } from 'lucide-react'
+import { Activity, XCircle } from 'lucide-react'
 
 interface LeftSidebarProps {
   handleEgramHiding: () => void
@@ -82,19 +83,11 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
       {/* Bottom Sidebar Components */}
       <div className="bottom-sidebar-components">
         <div className="sidebar-versions">
-          <p>HeartFlow Release: v1.0.0</p>
+          <p>HeartFlow Release: v2.0.0</p>
           {serialNumber && <p>Serial Number: {serialNumber}</p>}
         </div>
         <div className="egram-button-container">
-          <button
-            className="egram-button"
-            type="button"
-            onClick={handleEgramHiding}
-            disabled={telemetryStatus === 'OFF'}
-          >
-            <EyeOff size={24} />
-            <span>Hide Electrogram</span>
-          </button>
+          <HideEgramData />
         </div>
         <div className="logout-button-container">
           <LogoutButton />

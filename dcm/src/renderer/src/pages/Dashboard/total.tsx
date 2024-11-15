@@ -658,7 +658,7 @@ function Dashboard(): JSX.Element {
         {/* Bottom Sidebar Components */}
         <div className="bottom-sidebar-components">
           <div className="sidebar-versions">
-            <p>HeartFlow Release: v1.0.0</p>
+            <p>HeartFlow Release: v2.0.0</p>
             {serialNumber && <p>Serial Number: {serialNumber}</p>}
           </div>
           <div className="logout-button-container">

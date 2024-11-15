@@ -51,7 +51,7 @@ function App(): JSX.Element {
                     </div>
                   </div>
                   <ul className="versions">
-                    <li className="electron-version">HeartFlow v1.0.0</li>
+                    <li className="electron-version">HeartFlow v2.0.0</li>
                   </ul>
                 </>
               }
