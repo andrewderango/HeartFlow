@@ -557,16 +557,21 @@ h3 {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  width: 175px;
+  font-size: 14px;
 }
 
 .menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   color: white;
   cursor: pointer;
   padding: 10px;
   width: 100%;
-  text-align: left;
+  text-align: center;
   transition: background 0.3s;
 }
 

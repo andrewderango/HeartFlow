@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Info, HardDriveUpload, ClipboardX, Menu } from 'lucide-react'
+import { Info, HardDriveUpload, ClipboardX, Menu, HeartPulse, FileText } from 'lucide-react'
 
 interface RightSidebarProps {
   showHelp: boolean
@@ -46,6 +46,23 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const [menuOpen, setMenuOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const helpRef = useRef<HTMLDivElement>(null)
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setMenuOpen(false)
+    }
+    if (helpRef.current && !helpRef.current.contains(event.target as Node)) {
+      setHelpOpen(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   useEffect(() => {
     const inputs = document.querySelectorAll('.input-field');
@@ -71,12 +88,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               className={`menu-item ${view === 'PARAMETERS' ? 'selected' : ''}`}
               onClick={() => { setView('PARAMETERS'); setMenuOpen(false); }}
             >
+              <HeartPulse size={14} style={{ marginRight: '8px' }} />
               PARAMETERS
             </button>
             <button
               className={`menu-item ${view === 'REPORTS' ? 'selected' : ''}`}
               onClick={() => { setView('REPORTS'); setMenuOpen(false); }}
             >
+              <FileText size={14} style={{ marginRight: '8px' }} />
               REPORTS
             </button>
           </div>
@@ -114,10 +133,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </button>
             </div>
             {helpOpen && (
-              <div className="help-popup">
+              <div className="help-popup" ref={helpRef}>
                 <div className="help-header">
                   <h3>Pulse Parameters</h3>
-                  <button className="close-button" onClick={() => setHelpOpen(false)}>Close</button>
                 </div>
                 <ul>
                   <li>
