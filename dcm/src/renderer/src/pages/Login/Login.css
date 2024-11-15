@@ -134,3 +134,20 @@ input:focus + label {
 .text {
   margin-top: 0px;
 }
+
+.test-button {
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  border: 1px solid white;
+  text-align: center;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 20px;
+  padding: 0 25px;
+  line-height: 38px;
+  font-size: 16px;
+  border-color: var(--ev-button-alt-border);
+  color: var(--ev-button-alt-text);
+  background-color: rgba(27, 27, 31, 0.8);
+}
