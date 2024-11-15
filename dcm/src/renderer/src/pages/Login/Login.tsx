@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { useUser } from '../../context/UserContext'
+import useStore from '../../store/mainStore'
 import { useToast } from '../../context/ToastContext'
 import './Login.css'
 
@@ -13,7 +13,7 @@ function Login(): JSX.Element {
   // - navigate function from react router (for page navigation)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const { setUser } = useUser()
+  const { dispatch } = useStore()
   const { addToast } = useToast()
   const navigate = useNavigate()
 
@@ -33,7 +33,15 @@ function Login(): JSX.Element {
     const result = await window.api.loginUser(username, password)
     if (result.success) {
       // set the user and navigate to dashboard on successful login
-      setUser(result.user)
+      dispatch({
+        type: 'UPDATE_USER',
+        payload: {
+          username: result.user?.username ?? '',
+          serialNumber: result.user?.serialNumber ?? '',
+        },
+      })
+      dispatch({ type: 'UPDATE_LAST_USED_MODE', payload: result.user?.lastUsedMode ?? 'OFF' })
+
       addToast('User logged in successfully', 'success')
       navigate('/dashboard')
     } else {

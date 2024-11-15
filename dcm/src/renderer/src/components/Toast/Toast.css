@@ -2,7 +2,9 @@
 
 .toast {
   display: flex;
+  text-align: center;
   align-items: center;
+  place-items: center;
   justify-content: space-between;
   padding: 15px 20px;
   margin-bottom: 10px;
@@ -10,6 +12,22 @@
   color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: slide-in 0.5s ease-in-out;
+}
+
+.toast-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.toast-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .toast-success {

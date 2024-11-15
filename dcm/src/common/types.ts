@@ -1,5 +1,11 @@
 // global types for the app because we're using typescript
 
+export type Mode = 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'
+
+export type ConnectionStatus = 'CONNECTED' | 'DISCONNECTED' | 'CONNECTING'
+
+export type TelemetryStatus = 'ON' | 'OFF'
+
 // interface for User
 export interface User {
   username: string
@@ -31,7 +37,7 @@ export interface User {
       lowerRateLimit: number
     }
   }
-  lastUsedMode?: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'
+  lastUsedMode?: Mode
 }
 
 // function for creating a default User object
@@ -76,7 +82,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
 export interface PublicUser {
   username: string
   serialNumber: string
-  lastUsedMode?: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF'
+  lastUsedMode?: Mode
 }
 
 // interface for RegisterUserResponse
