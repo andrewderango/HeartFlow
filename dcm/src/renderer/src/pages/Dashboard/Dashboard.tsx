@@ -59,6 +59,11 @@ function Dashboard(): JSX.Element {
   const [isAtriumDisabled, setIsAtriumDisabled] = useState<boolean>(false)
   const [isVentricleDisabled, setIsVentricleDisabled] = useState<boolean>(false)
   const [isRateLimitDisabled, setIsRateLimitDisabled] = useState<boolean>(false)
+  const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(true)
+
+  const toggleRightSidebar = () => {
+    setIsRightSidebarVisible(!isRightSidebarVisible)
+  }
 
   useEffect(() => {
     setIsAtriumDisabled(currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'OFF' || currentMode === 'VOOR' || currentMode === 'VVIR')
@@ -1021,6 +1026,7 @@ function Dashboard(): JSX.Element {
         submittedMode={submittedMode}
         telemetry={telemetry}
         pacemakerBPM={pacemakerBPM}
+        isRightSidebarVisible={isRightSidebarVisible}
       />
 
       {/* Right Sidebar */}
@@ -1045,7 +1051,11 @@ function Dashboard(): JSX.Element {
         telemetryStatus={telemetryStatus}
         currentMode={currentMode}
         modes={modes}
+        isVisible={isRightSidebarVisible}
       />
+      <div className={`toggle-sidebar-spot ${isRightSidebarVisible ? 'visible' : 'hidden'}`} onClick={toggleRightSidebar}>
+        {isRightSidebarVisible ? '>' : '<'}
+      </div>
     </div>
   )
 }

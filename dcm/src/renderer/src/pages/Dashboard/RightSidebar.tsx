@@ -22,6 +22,7 @@ interface RightSidebarProps {
   telemetryStatus: string
   currentMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR' | null
   modes: any
+  isVisible: boolean
 }
 
 const RightSidebar: React.FC<RightSidebarProps> = ({
@@ -44,6 +45,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   telemetryStatus,
   currentMode,
   modes,
+  isVisible,
 }) => {
   const [view, setView] = useState<'PARAMETERS' | 'REPORTS'>('PARAMETERS')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -79,7 +81,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   }, [isAtriumDisabled, isVentricleDisabled, isRateLimitDisabled]);
 
   return (
-    <div className="right-sidebar">
+    <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
       {/* Menu Button */}
       <div className="menu-button-container" ref={menuRef}>
         <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)}>

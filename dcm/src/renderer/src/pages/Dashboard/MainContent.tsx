@@ -7,9 +7,10 @@ interface MainContentProps {
   submittedMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'OFF' | 'DDDR' | 'DDD' | null
   telemetry: { heartRate: number }
   pacemakerBPM: number
+  isRightSidebarVisible: boolean
 }
 
-const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pacemakerBPM }) => {
+const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pacemakerBPM, isRightSidebarVisible }) => {
   const [series1, setSeries1] = useState<ChartPoint[]>([])
   const [series2, setSeries2] = useState<ChartPoint[]>([])
   const [isEgramHidden, setIsEgramHidden] = useState(false);
@@ -56,7 +57,7 @@ const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pac
   }, []);
 
   return (
-    <div className="main-content">
+    <div className={`main-content ${isRightSidebarVisible ? '' : 'expanded'}`}>
       {isEgramHidden ? (
         <img
           alt="pacemaker heart"
@@ -82,7 +83,7 @@ const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pac
                 yMin: -100,
                 yMax: 100,
               }}
-              width={550}
+              width={isRightSidebarVisible ? 550 : 900}
               height={500}
             />
           </div>

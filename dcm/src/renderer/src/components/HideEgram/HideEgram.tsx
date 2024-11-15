@@ -17,8 +17,8 @@ const HideEgramData: React.FC = () => {
       type="button"
       onClick={handleHideEgram}
     >
-      {!isEgramHidden ? <Eye size={24} /> : <EyeOff size={24} />}
-      <span>{!isEgramHidden ? 'Show Electrogram' : 'Hide Electrogram'}</span>
+      {isEgramHidden ? <Eye size={24} /> : <EyeOff size={24} />}
+      <span>{isEgramHidden ? 'Show Electrogram' : 'Hide Electrogram'}</span>
     </button>
   );
 };
