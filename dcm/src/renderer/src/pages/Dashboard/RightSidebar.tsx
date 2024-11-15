@@ -301,10 +301,21 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         </>
       )}
 
+      {/* Reports */}
       {view === 'REPORTS' && (
-        <div className="reports-container">
-          <h2>Reports</h2>
-          <p>To be implemented</p>
+        <div className="reports-container full-height">
+          <button className="full-height-button electrogram-report" type="button">
+            Electrogram Report
+            <span className="report-subtitle">Detailed tabular electrogram data</span>
+          </button>
+          <button className="full-height-button parameter-log" type="button">
+            Parameter Log
+            <span className="report-subtitle">Log of mode and parameter changes</span>
+          </button>
+          <button className="full-height-button serial-log" type="button">
+            Serial Log
+            <span className="report-subtitle">Log of serial communication transmissions</span>
+          </button>
         </div>
       )}
     </div>

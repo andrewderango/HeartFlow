@@ -671,3 +671,101 @@ h3 {
 .toggle-sidebar-button:hover {
   background: rgba(27, 27, 31, 1);
 }
+
+.full-width-button:hover {
+  background: rgba(27, 27, 31, 1);
+  transition: ease-in-out 0.3s;
+}
+
+.full-width-button.electrogram-report {
+  background-image: url('../../assets/images/consult.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1;
+}
+
+.full-width-button.parameter-log {
+  background-image: url('../../assets/images/consult2.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1;
+}
+
+.full-width-button.serial-log {
+  background-image: url('../../assets/images/pacemaker.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.1;
+}
+
+.full-height-button {
+  width: 100%;
+  height: calc(100% / 3);
+  background: rgba(70, 70, 70, 0.8);
+  border-radius: 5px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 0;
+  transition: ease-in-out 0.3s;
+  font-size: 24px;
+  font-weight: bold;
+  position: relative;
+}
+
+.full-height-button:hover {
+  background: rgba(80, 80, 80, 0.8);
+  transition: ease-in-out 0.3s;
+}
+
+.full-height-button.electrogram-report::before,
+.full-height-button.parameter-log::before,
+.full-height-button.serial-log::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.05;
+  z-index: 0;
+  border-radius: 5px;
+}
+
+.full-height-button.electrogram-report::before {
+  background-image: url('../../assets/images/consult.jpg');
+}
+
+.full-height-button.parameter-log::before {
+  background-image: url('../../assets/images/consult2.jpg');
+}
+
+.full-height-button.serial-log::before {
+  background-image: url('../../assets/images/pacemaker.png');
+}
+
+.report-subtitle {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reports-container.full-height {
+  height: 92.5%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
