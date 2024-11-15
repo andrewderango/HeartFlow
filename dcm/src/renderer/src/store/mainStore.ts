@@ -147,7 +147,7 @@ const useStore = create<
     },
   },
   telemetry: {
-    heartRate: 69420,
+    heartRate: 0,
   },
   connectionStatus: 'DISCONNECTED',
   telemetryStatus: 'OFF',

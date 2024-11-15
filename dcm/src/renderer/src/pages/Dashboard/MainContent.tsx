@@ -26,12 +26,12 @@ const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pac
             <p>{submittedMode}</p>
           </div>
           <div className="bpm-box">
-            <h3>Natural BPM</h3>
-            <p>{telemetry.heartRate}</p>
+            <h3>Refresh Rate</h3>
+            <p>{pacemakerBPM} Hz</p>
           </div>
           <div className="bpm-box">
-            <h3>Pacemaker BPM</h3>
-            <p>{pacemakerBPM}</p>
+            <h3>Heart BPM</h3>
+            <p>{telemetry.heartRate}</p>
           </div>
         </div>
       </div>
