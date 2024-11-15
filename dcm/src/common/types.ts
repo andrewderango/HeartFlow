@@ -17,24 +17,28 @@ export interface User {
       ventricularPulseWidth: number
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     }
     AOO: {
       atrialAmplitude: number
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     }
     VVI: {
       ventricularAmplitude: number
       ventricularPulseWidth: number
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     }
     AAI: {
       atrialAmplitude: number
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     },
     DDDR: {
       atrialAmplitude: number
@@ -44,6 +48,7 @@ export interface User {
       ventricularPulseWidth: number
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     },
     DDD: {
       atrialAmplitude: number
@@ -53,24 +58,28 @@ export interface User {
       ventricularPulseWidth: number
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     },
     AOOR: {
       atrialAmplitude: number
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     },
     AAIR: {
       atrialAmplitude: number
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     },
     VOOR: {
       ventricularAmplitude: number
       ventricularPulseWidth: number
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     },
     VVIR: {
       ventricularAmplitude: number
@@ -80,6 +89,7 @@ export interface User {
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
       lowerRateLimit: number
+      upperRateLimit: number
     },
   }
   lastUsedMode?: Mode
@@ -97,24 +107,28 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularPulseWidth: 0,
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       AOO: {
         atrialAmplitude: 0,
         atrialPulseWidth: 0,
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       VVI: {
         ventricularAmplitude: 0,
         ventricularPulseWidth: 0,
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       AAI: {
         atrialAmplitude: 0,
         atrialPulseWidth: 0,
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       DDDR: {
         atrialAmplitude: 0,
@@ -124,6 +138,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularPulseWidth: 0,
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       DDD: {
         atrialAmplitude: 0,
@@ -133,24 +148,28 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularPulseWidth: 0,
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       AOOR: {
         atrialAmplitude: 0,
         atrialPulseWidth: 0,
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       AAIR: {
         atrialAmplitude: 0,
         atrialPulseWidth: 0,
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       VOOR: {
         ventricularAmplitude: 0,
         ventricularPulseWidth: 0,
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
       VVIR: {
         ventricularAmplitude: 0,
@@ -160,6 +179,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         atrialPulseWidth: 0,
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
+        upperRateLimit: 0,
       },
     },
     lastUsedMode: 'OFF',

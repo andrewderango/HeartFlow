@@ -53,6 +53,7 @@ function Dashboard(): JSX.Element {
   const [atrialRPError, setAtrialRPError] = useState<boolean>(false)
   const [ventricleRPError, setVentricleRPError] = useState<boolean>(false)
   const [lowerRateLimitError, setLowerRateLimitError] = useState<boolean>(false)
+  const [upperRateLimitError, setUpperRateLimitError] = useState<boolean>(false)
 
   // have to convert the variables to state variables to force a rerender
   const [isAtriumDisabled, setIsAtriumDisabled] = useState<boolean>(false)
@@ -103,6 +104,7 @@ function Dashboard(): JSX.Element {
     setAtrialRPError(false)
     setVentricleRPError(false)
     setLowerRateLimitError(false)
+    setUpperRateLimitError(false)
 
     // todo: figure out if we want to reset the input fields after
     // todo: terminating telemetry. this may change.
@@ -121,6 +123,7 @@ function Dashboard(): JSX.Element {
     setAtrialRPError(false)
     setVentricleRPError(false)
     setLowerRateLimitError(false)
+    setUpperRateLimitError(false)
   }
 
   // helper function to get appropriate icon based on communication status
@@ -213,6 +216,15 @@ function Dashboard(): JSX.Element {
           },
         })
         break
+      case 'upperRateLimit':
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { upperRateLimit: parseFloat(value) || 0 },
+          },
+        })
+        break
       default:
         break
     }
@@ -228,6 +240,7 @@ function Dashboard(): JSX.Element {
     setAtrialRPError(false)
     setVentricleRPError(false)
     setLowerRateLimitError(false)
+    setUpperRateLimitError(false)
 
     // just set the values back to previous values based on the submitted mode
     switch (submittedMode) {
@@ -245,6 +258,7 @@ function Dashboard(): JSX.Element {
               atrialPulseWidth: aooSettings.settings?.atrialPulseWidth ?? 0,
               atrialRefractoryPeriod: aooSettings.settings?.atrialRefractoryPeriod ?? 0,
               lowerRateLimit: aooSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: aooSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -264,6 +278,7 @@ function Dashboard(): JSX.Element {
               ventricularPulseWidth: vooSettings.settings?.ventricularPulseWidth ?? 0,
               ventricularRefractoryPeriod: vooSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: vooSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: vooSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -283,6 +298,7 @@ function Dashboard(): JSX.Element {
               atrialPulseWidth: aaiSettings.settings?.atrialPulseWidth ?? 0,
               atrialRefractoryPeriod: aaiSettings.settings?.atrialRefractoryPeriod ?? 0,
               lowerRateLimit: aaiSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: aaiSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -302,6 +318,7 @@ function Dashboard(): JSX.Element {
               ventricularPulseWidth: vviSettings.settings?.ventricularPulseWidth ?? 0,
               ventricularRefractoryPeriod: vviSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: vviSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: vviSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -321,6 +338,7 @@ function Dashboard(): JSX.Element {
               atrialPulseWidth: aoorSettings.settings?.atrialPulseWidth ?? 0,
               atrialRefractoryPeriod: aoorSettings.settings?.atrialRefractoryPeriod ?? 0,
               lowerRateLimit: aoorSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: aoorSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -340,6 +358,7 @@ function Dashboard(): JSX.Element {
               ventricularPulseWidth: voorSettings.settings?.ventricularPulseWidth ?? 0,
               ventricularRefractoryPeriod: voorSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: voorSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: voorSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -359,6 +378,7 @@ function Dashboard(): JSX.Element {
               atrialPulseWidth: aairSettings.settings?.atrialPulseWidth ?? 0,
               atrialRefractoryPeriod: aairSettings.settings?.atrialRefractoryPeriod ?? 0,
               lowerRateLimit: aairSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: aairSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -378,6 +398,7 @@ function Dashboard(): JSX.Element {
               ventricularPulseWidth: vvirSettings.settings?.ventricularPulseWidth ?? 0,
               ventricularRefractoryPeriod: vvirSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: vvirSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: vvirSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -400,6 +421,7 @@ function Dashboard(): JSX.Element {
               ventricularPulseWidth: dddrSettings.settings?.ventricularPulseWidth ?? 0,
               ventricularRefractoryPeriod: dddrSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: dddrSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: dddrSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -422,6 +444,7 @@ function Dashboard(): JSX.Element {
               ventricularPulseWidth: dddSettings.settings?.ventricularPulseWidth ?? 0,
               ventricularRefractoryPeriod: dddSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: dddSettings.settings?.lowerRateLimit ?? 0,
+              upperRateLimit: dddSettings.settings?.upperRateLimit ?? 0,
             },
           },
         })
@@ -512,6 +535,13 @@ function Dashboard(): JSX.Element {
       isValid = false
     }
 
+    /// TODO: i just picked random numbers for the upper rate limit for now
+    if (modes[currentMode].upperRateLimit <= 50 || modes[currentMode].upperRateLimit >= 175) {
+      addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
+      setUpperRateLimitError(true)
+      isValid = false
+    }
+
     return isValid
   }
 
@@ -539,6 +569,7 @@ function Dashboard(): JSX.Element {
     setAtrialRPError(false)
     setVentricleRPError(false)
     setLowerRateLimitError(false)
+    setUpperRateLimitError(false)
 
     // e.preventDefault()
     // based on selected mode, call the appropriate ipc channel with
@@ -549,7 +580,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialAmplitude !== 0 &&
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           // ipc channel sets the values for the mode for given user
           // ! we also might wanna fix how we get the values here
@@ -558,6 +590,7 @@ function Dashboard(): JSX.Element {
             atrialPulseWidth: modes[currentMode].atrialPulseWidth,
             atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
           setSubmittedMode('AOO')
         }
@@ -568,13 +601,15 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularAmplitude !== 0 &&
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'VOO', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
             ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
           setSubmittedMode('VOO')
         }
@@ -586,13 +621,15 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialAmplitude !== 0 &&
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'AAI', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
             atrialPulseWidth: modes[currentMode].atrialPulseWidth,
             atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
         }
         setSubmittedMode('AAI')
@@ -603,13 +640,15 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularAmplitude !== 0 &&
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'VVI', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
             ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
         }
         setSubmittedMode('VVI')
@@ -620,13 +659,15 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialAmplitude !== 0 &&
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'AOOR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
             atrialPulseWidth: modes[currentMode].atrialPulseWidth,
             atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
         }
         setSubmittedMode('AOOR')
@@ -637,13 +678,15 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularAmplitude !== 0 &&
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'VOOR', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
             ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
         }
         setSubmittedMode('VOOR')
@@ -654,13 +697,15 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialAmplitude !== 0 &&
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'AAIR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
             atrialPulseWidth: modes[currentMode].atrialPulseWidth,
             atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
         }
         setSubmittedMode('AAIR')
@@ -671,13 +716,15 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularAmplitude !== 0 &&
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'VVIR', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
             ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
         }
         setSubmittedMode('VVIR')
@@ -691,7 +738,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularAmplitude !== 0 &&
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'DDDR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -701,6 +749,7 @@ function Dashboard(): JSX.Element {
             ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
         }
         setSubmittedMode('DDDR')
@@ -714,7 +763,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularAmplitude !== 0 &&
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
-          modes[currentMode].lowerRateLimit !== 0
+          modes[currentMode].lowerRateLimit !== 0 &&
+          modes[currentMode].upperRateLimit !== 0
         ) {
           window.api.setUser(username, 'DDD', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -724,6 +774,7 @@ function Dashboard(): JSX.Element {
             ventricularPulseWidth: modes[currentMode].ventricularPulseWidth,
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
+            upperRateLimit: modes[currentMode].upperRateLimit,
           })
         }
         setSubmittedMode('DDD')
@@ -758,6 +809,7 @@ function Dashboard(): JSX.Element {
     modes[currentMode]?.atrialRefractoryPeriod,
     modes[currentMode]?.ventricularRefractoryPeriod,
     modes[currentMode]?.lowerRateLimit,
+    modes[currentMode]?.upperRateLimit,
     currentMode,
   ])
 
@@ -784,6 +836,7 @@ function Dashboard(): JSX.Element {
                   atrialPulseWidth: settings?.atrialPulseWidth ?? 0,
                   atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -799,6 +852,7 @@ function Dashboard(): JSX.Element {
                   ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -814,6 +868,7 @@ function Dashboard(): JSX.Element {
                   atrialPulseWidth: settings?.atrialPulseWidth ?? 0,
                   atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -829,6 +884,7 @@ function Dashboard(): JSX.Element {
                   ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -844,6 +900,7 @@ function Dashboard(): JSX.Element {
                   atrialPulseWidth: settings?.atrialPulseWidth ?? 0,
                   atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -859,6 +916,7 @@ function Dashboard(): JSX.Element {
                   ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -874,6 +932,7 @@ function Dashboard(): JSX.Element {
                   atrialPulseWidth: settings?.atrialPulseWidth ?? 0,
                   atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -889,6 +948,7 @@ function Dashboard(): JSX.Element {
                   ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -907,6 +967,7 @@ function Dashboard(): JSX.Element {
                   ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -925,6 +986,7 @@ function Dashboard(): JSX.Element {
                   ventricularPulseWidth: settings?.ventricularPulseWidth ?? 0,
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
+                  upperRateLimit: settings?.upperRateLimit ?? 0,
                 },
               },
             })
@@ -974,6 +1036,7 @@ function Dashboard(): JSX.Element {
         atrialRPError={atrialRPError}
         ventricleRPError={ventricleRPError}
         lowerRateLimitError={lowerRateLimitError}
+        upperRateLimitError={upperRateLimitError}
         isAtriumDisabled={isAtriumDisabled}
         isVentricleDisabled={isVentricleDisabled}
         telemetryStatus={telemetryStatus}

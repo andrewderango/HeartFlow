@@ -14,6 +14,7 @@ interface RightSidebarProps {
   atrialRPError: boolean
   ventricleRPError: boolean
   lowerRateLimitError: boolean
+  upperRateLimitError: boolean
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
   telemetryStatus: string
@@ -34,6 +35,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   atrialRPError,
   ventricleRPError,
   lowerRateLimitError,
+  upperRateLimitError,
   isAtriumDisabled,
   isVentricleDisabled,
   telemetryStatus,
@@ -44,23 +46,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const [menuOpen, setMenuOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const helpRef = useRef<HTMLDivElement>(null)
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      setMenuOpen(false)
-    }
-    if (helpRef.current && !helpRef.current.contains(event.target as Node)) {
-      setHelpOpen(false)
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
 
   useEffect(() => {
     const inputs = document.querySelectorAll('.input-field');
@@ -129,8 +114,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </button>
             </div>
             {helpOpen && (
-              <div className="help-popup" ref={helpRef}>
-                <h3>Pulse Parameters</h3>
+              <div className="help-popup">
+                <div className="help-header">
+                  <h3>Pulse Parameters</h3>
+                  <button className="close-button" onClick={() => setHelpOpen(false)}>Close</button>
+                </div>
                 <ul>
                   <li>
                     <strong>Atrium Amp:</strong> Amplitude of the atrial pulse (mV)
@@ -152,6 +140,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </li>
                   <li>
                     <strong>Lower Rate Limit:</strong> Minimum heart rate (bpm)
+                  </li>
+                  <li>
+                    <strong>Upper Rate Limit:</strong> Maximum heart rate (bpm)
                   </li>
                 </ul>
               </div>
@@ -198,9 +189,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricleDisabled}
-                  value={
-                    isVentricleDisabled ? '' : (modes[currentMode]?.ventricularPulseWidth ?? '')
-                  }
+                  value={isVentricleDisabled ? '' : (modes[currentMode]?.ventricularPulseWidth ?? '')}
                   name="ventriclePW"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle PW</label>
@@ -224,16 +213,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricleDisabled}
-                  value={
-                    isVentricleDisabled ? '' : (modes[currentMode]?.ventricularRefractoryPeriod ?? '')
-                  }
+                  value={isVentricleDisabled ? '' : (modes[currentMode]?.ventricularRefractoryPeriod ?? '')}
                   name="ventricleRP"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricular RP</label>
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container-long ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container ${lowerRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="text"
                   className="input-field"
@@ -246,7 +233,35 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   Lower Rate Limit
                 </label>
               </div>
+              <div className={`input-container ${upperRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="text"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={telemetryStatus === 'OFF'}
+                  value={telemetryStatus === 'OFF' ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
+                  name="upperRateLimit"
+                />
+                <label className={isVentricleDisabled || isAtriumDisabled ? 'disabled-label' : ''}>
+                  Upper Rate Limit
+                </label>
+              </div>
             </div>
+            {/* <div className="input-row">
+              <div className={`input-container-long ${upperRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="text"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={telemetryStatus === 'OFF'}
+                  value={telemetryStatus === 'OFF' ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
+                  name="upperRateLimit"
+                />
+                <label className={isVentricleDisabled || isAtriumDisabled ? 'disabled-label' : ''}>
+                  Upper Rate Limit
+                </label>
+              </div>
+            </div> */}
           </div>
 
           {/* Submit and Discard Buttons */}
@@ -266,7 +281,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
       {view === 'REPORTS' && (
         <div className="reports-container">
           <h2>Reports</h2>
-            <p>To be implemented</p>
+          <p>To be implemented</p>
         </div>
       )}
     </div>
