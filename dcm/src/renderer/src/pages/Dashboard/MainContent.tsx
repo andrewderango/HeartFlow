@@ -20,19 +20,17 @@ const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pac
 
       {/* BPM Statistics */}
       <div className="stats-container">
-        <div className="bpm-container">
-          <div className="bpm-box">
-            <h3>Current Mode</h3>
-            <p>{submittedMode}</p>
-          </div>
-          <div className="bpm-box">
-            <h3>Refresh Rate</h3>
-            <p>{pacemakerBPM} Hz</p>
-          </div>
-          <div className="bpm-box">
-            <h3>Heart BPM</h3>
-            <p>{telemetry.heartRate}</p>
-          </div>
+        <div className="stat-box">
+          <h3>Current Mode</h3>
+          <p>{submittedMode}</p>
+        </div>
+        <div className="stat-box">
+          <h3>Refresh Rate</h3>
+          <p>{pacemakerBPM} Hz</p>
+        </div>
+        <div className="stat-box">
+          <h3>Heart BPM</h3>
+          <p>{telemetry.heartRate}</p>
         </div>
       </div>
     </div>

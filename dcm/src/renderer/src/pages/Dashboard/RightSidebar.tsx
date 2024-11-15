@@ -91,14 +91,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               className={`menu-item ${view === 'PARAMETERS' ? 'selected' : ''}`}
               onClick={() => { setView('PARAMETERS'); setMenuOpen(false); }}
             >
-              <HeartPulse size={14} style={{ marginRight: '8px' }} />
+              <HeartPulse size={16} style={{ marginRight: '8px' }} />
               PARAMETERS
             </button>
             <button
               className={`menu-item ${view === 'REPORTS' ? 'selected' : ''}`}
               onClick={() => { setView('REPORTS'); setMenuOpen(false); }}
             >
-              <FileText size={14} style={{ marginRight: '8px' }} />
+              <FileText size={16} style={{ marginRight: '8px' }} />
               REPORTS
             </button>
           </div>

@@ -682,15 +682,15 @@ function Dashboard(): JSX.Element {
         {/* BPM Statistics */}
         <div className="stats-container">
           <div className="bpm-container">
-            <div className="bpm-box">
+            <div className="stat-box">
               <h3>Current Mode</h3>
               <p>{submittedMode}</p>
             </div>
-            <div className="bpm-box">
+            <div className="stat-box">
               <h3>Natural BPM</h3>
               <p>{telemetry.heartRate}</p>
             </div>
-            <div className="bpm-box">
+            <div className="stat-box">
               <h3>Pacemaker BPM</h3>
               <p>{pacemakerBPM}</p>
             </div>
