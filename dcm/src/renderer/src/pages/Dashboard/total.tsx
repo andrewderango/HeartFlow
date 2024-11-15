@@ -6,7 +6,6 @@ import { useToast } from '../../context/ToastContext'
 import { Activity, HardDriveUpload, ClipboardX, Info, XCircle } from 'lucide-react'
 import heartflowLogo from '../../assets/heartflow.png'
 import pacemakerHeart from '../../assets/pacemaker-heart.png'
-import LeftSidebar from './LeftSidebar'
 import './Dashboard.css'
 
 function Dashboard(): JSX.Element {
@@ -618,7 +617,58 @@ function Dashboard(): JSX.Element {
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
-      <LeftSidebar handleTerminate={handleTerminate} />
+      <div className="sidebar">
+        {/* Logo */}
+        <img alt="logo" className="logo-sidebar" src={heartflowLogo} />
+
+        {/* Welcome Section */}
+        <div className="welcome-section">
+          <p className="welcome-header">Welcome</p>
+          {username && <p className="username">{username}</p>}
+        </div>
+
+        {/* Telemetry Status */}
+        <div className="sidebar-section">
+          <p className="communication-status-header">Telemetry Status</p>
+          <p className={getStatusClass()}>
+            {getStatusIcon()}
+            {connectionStatus}
+          </p>
+        </div>
+
+        {/* Current Date and Time */}
+        <div className="sidebar-time">
+          <p className="current-date">
+            {currentTime.toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            })}
+          </p>
+          <p className="current-time">
+            {currentTime.toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: 'numeric',
+              // second: 'numeric',
+              hour12: true,
+            })}
+          </p>
+        </div>
+
+        {/* Bottom Sidebar Components */}
+        <div className="bottom-sidebar-components">
+          <div className="sidebar-versions">
+            <p>HeartFlow Release: v1.0.0</p>
+            {serialNumber && <p>Serial Number: {serialNumber}</p>}
+          </div>
+          <div className="logout-button-container">
+            <LogoutButton />
+          </div>
+          <div className="terminate-button-container">
+            <TerminateButton onTerminate={handleTerminate} disabled={telemetryStatus === 'OFF'} />
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="main-content">
