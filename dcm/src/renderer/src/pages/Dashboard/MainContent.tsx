@@ -4,16 +4,33 @@ import RealTimeChart from '../../components/RealTimeChart/RealTimeChart'
 import type { ChartPoint } from 'src/common/types'
 
 interface MainContentProps {
-  submittedMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'OFF' | 'DDDR' | 'DDD' | null
+  submittedMode:
+    | 'VOO'
+    | 'AOO'
+    | 'VVI'
+    | 'AAI'
+    | 'VOOR'
+    | 'AOOR'
+    | 'VVIR'
+    | 'AAIR'
+    | 'OFF'
+    | 'DDDR'
+    | 'DDD'
+    | null
   telemetry: { heartRate: number }
   pacemakerBPM: number
   isRightSidebarVisible: boolean
 }
 
-const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pacemakerBPM, isRightSidebarVisible }) => {
+const MainContent: React.FC<MainContentProps> = ({
+  submittedMode,
+  telemetry,
+  pacemakerBPM,
+  isRightSidebarVisible,
+}) => {
   const [series1, setSeries1] = useState<ChartPoint[]>([])
   const [series2, setSeries2] = useState<ChartPoint[]>([])
-  const [isEgramHidden, setIsEgramHidden] = useState(false);
+  const [isEgramHidden, setIsEgramHidden] = useState(false)
   let time = 0
 
   useEffect(() => {
@@ -46,15 +63,15 @@ const MainContent: React.FC<MainContentProps> = ({ submittedMode, telemetry, pac
 
   useEffect(() => {
     const handleHideEgram = () => {
-      setIsEgramHidden((prev) => !prev);
-    };
+      setIsEgramHidden((prev) => !prev)
+    }
 
-    window.addEventListener('hideEgram', handleHideEgram);
+    window.addEventListener('hideEgram', handleHideEgram)
 
     return () => {
-      window.removeEventListener('hideEgram', handleHideEgram);
-    };
-  }, []);
+      window.removeEventListener('hideEgram', handleHideEgram)
+    }
+  }, [])
 
   return (
     <div className={`main-content ${isRightSidebarVisible ? '' : 'expanded'}`}>

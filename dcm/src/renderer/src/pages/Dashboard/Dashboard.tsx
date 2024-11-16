@@ -37,9 +37,20 @@ function Dashboard(): JSX.Element {
   const { addToast } = useToast()
   const [currentTime, setCurrentTime] = useState(new Date())
   const [showHelp, setShowHelp] = useState(false)
-  const [submittedMode, setSubmittedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR' | 'DDD' | 'OFF' | null>(
-    null,
-  )
+  const [submittedMode, setSubmittedMode] = useState<
+    | 'VOO'
+    | 'AOO'
+    | 'VVI'
+    | 'AAI'
+    | 'VOOR'
+    | 'AOOR'
+    | 'VVIR'
+    | 'AAIR'
+    | 'DDDR'
+    | 'DDD'
+    | 'OFF'
+    | null
+  >(null)
 
   // ! we should probably remove this
   const [pacemakerBPM, _setPacemakerBPM] = useState<number>(0)
@@ -66,8 +77,20 @@ function Dashboard(): JSX.Element {
   }
 
   useEffect(() => {
-    setIsAtriumDisabled(currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'OFF' || currentMode === 'VOOR' || currentMode === 'VVIR')
-    setIsVentricleDisabled(currentMode === 'AOO' || currentMode === 'AAI' || currentMode === 'OFF' || currentMode === 'AOOR' || currentMode === 'AAIR')
+    setIsAtriumDisabled(
+      currentMode === 'VOO' ||
+        currentMode === 'VVI' ||
+        currentMode === 'OFF' ||
+        currentMode === 'VOOR' ||
+        currentMode === 'VVIR',
+    )
+    setIsVentricleDisabled(
+      currentMode === 'AOO' ||
+        currentMode === 'AAI' ||
+        currentMode === 'OFF' ||
+        currentMode === 'AOOR' ||
+        currentMode === 'AAIR',
+    )
     setIsRateLimitDisabled(currentMode === 'OFF')
   }, [currentMode])
 
@@ -91,7 +114,20 @@ function Dashboard(): JSX.Element {
   }, [lastUsedMode])
 
   // handles the mode selection
-  const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR' | 'DDD' | 'OFF'): void => {
+  const handleModeSelect = (
+    mode:
+      | 'VOO'
+      | 'AOO'
+      | 'VVI'
+      | 'AAI'
+      | 'VOOR'
+      | 'AOOR'
+      | 'VVIR'
+      | 'AAIR'
+      | 'DDDR'
+      | 'DDD'
+      | 'OFF',
+  ): void => {
     // set the selected mode, enable terminate button, and set telemetry not terminated
     dispatch({ type: 'UPDATE_CURRENT_MODE', payload: mode })
 
@@ -125,18 +161,18 @@ function Dashboard(): JSX.Element {
   const normalizeInput = (value: string) => {
     // check if the value is a decimal number
     if (/^0\.\d+$/.test(value)) {
-      return value;
+      return value
     }
     // remove leading zeros for integers
-    return value.replace(/^0+/, '') || '0';
-  };
+    return value.replace(/^0+/, '') || '0'
+  }
 
   // handles the input change for the input fields
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     // get the name and value from the event
     const { name, value } = e.target
-    const normalizedValue = normalizeInput(value);
-    e.target.value = normalizedValue;
+    const normalizedValue = normalizeInput(value)
+    e.target.value = normalizedValue
     // check if only numbers and decimals are entered w/ regex
     if (!/^\d*\.?\d*$/.test(normalizedValue)) {
       return
@@ -460,7 +496,14 @@ function Dashboard(): JSX.Element {
     // make sure the values are within the acceptable ranges
     // if not, set the error state to true and display a toast
     // otherwise, set the error state to false
-    if (currentMode === 'AOO' || currentMode === 'AAI' || currentMode === 'DDDR' || currentMode === 'DDD' || currentMode === 'AOOR' || currentMode === 'AAIR') {
+    if (
+      currentMode === 'AOO' ||
+      currentMode === 'AAI' ||
+      currentMode === 'DDDR' ||
+      currentMode === 'DDD' ||
+      currentMode === 'AOOR' ||
+      currentMode === 'AAIR'
+    ) {
       if (modes[currentMode].atrialAmplitude < 0.5 || modes[currentMode].atrialAmplitude > 5) {
         addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
         setAtriumAmpError(true)
@@ -485,8 +528,15 @@ function Dashboard(): JSX.Element {
       } else {
         setAtrialRPError(false)
       }
-    } 
-    if (currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'DDDR' || currentMode === 'DDD' || currentMode === 'VOOR' || currentMode === 'VVIR') {
+    }
+    if (
+      currentMode === 'VOO' ||
+      currentMode === 'VVI' ||
+      currentMode === 'DDDR' ||
+      currentMode === 'DDD' ||
+      currentMode === 'VOOR' ||
+      currentMode === 'VVIR'
+    ) {
       if (
         modes[currentMode].ventricularAmplitude < 0.5 ||
         modes[currentMode].ventricularAmplitude > 5
@@ -541,23 +591,23 @@ function Dashboard(): JSX.Element {
   const handleSubmit = async (_e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     // quit early if there is no user
     if (!username) {
-      return;
+      return
     }
 
     // reset error states
-    setAtriumAmpError(false);
-    setVentricleAmpError(false);
-    setAtrialPWError(false);
-    setVentriclePWError(false);
-    setAtrialRPError(false);
-    setVentricleRPError(false);
-    setLowerRateLimitError(false);
-    setUpperRateLimitError(false);
+    setAtriumAmpError(false)
+    setVentricleAmpError(false)
+    setAtrialPWError(false)
+    setVentriclePWError(false)
+    setAtrialRPError(false)
+    setVentricleRPError(false)
+    setLowerRateLimitError(false)
+    setUpperRateLimitError(false)
 
     // quit early if the input is not valid
-    const isValid = validateInput();
+    const isValid = validateInput()
     if (!isValid) {
-      return;
+      return
     }
 
     // reset error states
@@ -993,8 +1043,8 @@ function Dashboard(): JSX.Element {
                 },
               },
             })
-              
-              break
+
+            break
           default:
             break
         }
@@ -1049,7 +1099,10 @@ function Dashboard(): JSX.Element {
         modes={modes}
         isVisible={isRightSidebarVisible}
       />
-      <div className={`toggle-sidebar-spot ${isRightSidebarVisible ? 'visible' : 'hidden'}`} onClick={toggleRightSidebar}>
+      <div
+        className={`toggle-sidebar-spot ${isRightSidebarVisible ? 'visible' : 'hidden'}`}
+        onClick={toggleRightSidebar}
+      >
         {isRightSidebarVisible ? '>' : '<'}
       </div>
     </div>

@@ -4,7 +4,20 @@ import { is } from '@electron-toolkit/utils'
 
 interface RightSidebarProps {
   showHelp: boolean
-  handleModeSelect: (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR') => void
+  handleModeSelect: (
+    mode:
+      | 'VOO'
+      | 'AOO'
+      | 'VVI'
+      | 'AAI'
+      | 'OFF'
+      | 'DDDR'
+      | 'DDD'
+      | 'AOOR'
+      | 'AAIR'
+      | 'VOOR'
+      | 'VVIR',
+  ) => void
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void
   handleDiscard: () => void
@@ -20,7 +33,19 @@ interface RightSidebarProps {
   isVentricleDisabled: boolean
   isRateLimitDisabled: boolean
   telemetryStatus: string
-  currentMode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR' | null
+  currentMode:
+    | 'VOO'
+    | 'AOO'
+    | 'VVI'
+    | 'AAI'
+    | 'OFF'
+    | 'DDDR'
+    | 'DDD'
+    | 'AOOR'
+    | 'AAIR'
+    | 'VOOR'
+    | 'VVIR'
+    | null
   modes: any
   isVisible: boolean
 }
@@ -70,32 +95,32 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   }, [])
 
   useEffect(() => {
-    const inputs = document.querySelectorAll('.input-field');
-    inputs.forEach(input => {
+    const inputs = document.querySelectorAll('.input-field')
+    inputs.forEach((input) => {
       if (input.value) {
-        input.classList.add('filled');
+        input.classList.add('filled')
       } else {
-        input.classList.remove('filled');
+        input.classList.remove('filled')
       }
-    });
-  }, [isAtriumDisabled, isVentricleDisabled, isRateLimitDisabled]);
+    })
+  }, [isAtriumDisabled, isVentricleDisabled, isRateLimitDisabled])
 
   useEffect(() => {
     if (view === 'PARAMETERS') {
-      const inputs = document.querySelectorAll('.input-field');
-      inputs.forEach(input => {
+      const inputs = document.querySelectorAll('.input-field')
+      inputs.forEach((input) => {
         if (input.value) {
-          input.classList.add('filled');
+          input.classList.add('filled')
         } else {
-          input.classList.remove('filled');
+          input.classList.remove('filled')
         }
-      });
+      })
     }
-  }, [view]);
+  }, [view])
 
   const handleViewChange = (newView: 'PARAMETERS' | 'REPORTS') => {
-    setView(newView);
-  };
+    setView(newView)
+  }
 
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
@@ -108,14 +133,20 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           <div className="menu-popup">
             <button
               className={`menu-item ${view === 'PARAMETERS' ? 'selected' : ''}`}
-              onClick={() => { handleViewChange('PARAMETERS'); setMenuOpen(false); }}
+              onClick={() => {
+                handleViewChange('PARAMETERS')
+                setMenuOpen(false)
+              }}
             >
               <HeartPulse size={16} style={{ marginRight: '8px' }} />
               PARAMETERS
             </button>
             <button
               className={`menu-item ${view === 'REPORTS' ? 'selected' : ''}`}
-              onClick={() => { handleViewChange('REPORTS'); setMenuOpen(false); }}
+              onClick={() => {
+                handleViewChange('REPORTS')
+                setMenuOpen(false)
+              }}
             >
               <FileText size={16} style={{ marginRight: '8px' }} />
               REPORTS
@@ -133,7 +164,21 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           <div className="mode-container">
             <h3>Mode Selection</h3>
             <div className="button-grid">
-              {(['AOO', 'AAI', 'VOO', 'VVI', 'AOOR', 'AAIR', 'VOOR', 'VVIR', 'OFF', 'DDD', 'DDDR'] as const).map((mode) => (
+              {(
+                [
+                  'AOO',
+                  'AAI',
+                  'VOO',
+                  'VVI',
+                  'AOOR',
+                  'AAIR',
+                  'VOOR',
+                  'VVIR',
+                  'OFF',
+                  'DDD',
+                  'DDDR',
+                ] as const
+              ).map((mode) => (
                 <button
                   key={mode}
                   className={`mode-button ${currentMode === mode ? 'selected' : ''}`}
@@ -205,7 +250,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricleDisabled}
-                  value={isVentricleDisabled ? '' : (modes[currentMode]?.ventricularAmplitude ?? '')}
+                  value={
+                    isVentricleDisabled ? '' : (modes[currentMode]?.ventricularAmplitude ?? '')
+                  }
                   name="ventricleAmp"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle AMP</label>
@@ -229,7 +276,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricleDisabled}
-                  value={isVentricleDisabled ? '' : (modes[currentMode]?.ventricularPulseWidth ?? '')}
+                  value={
+                    isVentricleDisabled ? '' : (modes[currentMode]?.ventricularPulseWidth ?? '')
+                  }
                   name="ventriclePW"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle PW</label>
@@ -253,10 +302,16 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricleDisabled}
-                  value={isVentricleDisabled ? '' : (modes[currentMode]?.ventricularRefractoryPeriod ?? '')}
+                  value={
+                    isVentricleDisabled
+                      ? ''
+                      : (modes[currentMode]?.ventricularRefractoryPeriod ?? '')
+                  }
                   name="ventricleRP"
                 />
-                <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricular RP</label>
+                <label className={isVentricleDisabled ? 'disabled-label' : ''}>
+                  Ventricular RP
+                </label>
               </div>
             </div>
             <div className="input-row">

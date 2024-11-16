@@ -11,12 +11,7 @@ interface LeftSidebarProps {
 }
 
 const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
-  const {
-    username,
-    serialNumber,
-    connectionStatus,
-    telemetryStatus,
-  } = useStore()
+  const { username, serialNumber, connectionStatus, telemetryStatus } = useStore()
   const { addToast } = useToast()
   const [currentTime, setCurrentTime] = useState(new Date())
 

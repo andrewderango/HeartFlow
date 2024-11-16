@@ -1,6 +1,17 @@
 // global types for the app because we're using typescript
 
-export type Mode = 'OFF' | 'AOO' | 'AAI' | 'VOO' | 'VVI' | 'DDDR' | 'DDD' | 'AOOR' | 'AAIR' | 'VOOR' | 'VVIR'
+export type Mode =
+  | 'OFF'
+  | 'AOO'
+  | 'AAI'
+  | 'VOO'
+  | 'VVI'
+  | 'DDDR'
+  | 'DDD'
+  | 'AOOR'
+  | 'AAIR'
+  | 'VOOR'
+  | 'VVIR'
 
 export type ConnectionStatus = 'CONNECTED' | 'DISCONNECTED' | 'CONNECTING'
 
@@ -39,7 +50,7 @@ export interface User {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
-    },
+    }
     DDDR: {
       atrialAmplitude: number
       atrialPulseWidth: number
@@ -49,7 +60,7 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
-    },
+    }
     DDD: {
       atrialAmplitude: number
       atrialPulseWidth: number
@@ -59,28 +70,28 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
-    },
+    }
     AOOR: {
       atrialAmplitude: number
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
-    },
+    }
     AAIR: {
       atrialAmplitude: number
       atrialPulseWidth: number
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
-    },
+    }
     VOOR: {
       ventricularAmplitude: number
       ventricularPulseWidth: number
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
-    },
+    }
     VVIR: {
       ventricularAmplitude: number
       ventricularPulseWidth: number
@@ -90,7 +101,7 @@ export interface User {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
-    },
+    }
   }
   lastUsedMode?: Mode
 }
