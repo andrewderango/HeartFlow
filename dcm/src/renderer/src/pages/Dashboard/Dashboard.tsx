@@ -149,12 +149,18 @@ function Dashboard(): JSX.Element {
       : 'communication-status disconnected'
   }
 
+  const normalizeInput = (value: string) => {
+    return value.replace(/^0+/, '') || '0';
+  };
+
   // handles the input change for the input fields
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     // get the name and value from the event
     const { name, value } = e.target
+    const normalizedValue = normalizeInput(value);
+    e.target.value = normalizedValue;
     // check if only numbers and decimals are entered w/ regex
-    if (!/^\d*\.?\d*$/.test(value)) {
+    if (!/^\d*\.?\d*$/.test(normalizedValue)) {
       return
     }
     // set the appropriate state variable based on the input field name from
@@ -165,7 +171,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { atrialAmplitude: parseFloat(value) || 0 },
+            settings: { atrialAmplitude: parseFloat(normalizedValue) || 0 },
           },
         })
         break
@@ -174,7 +180,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { ventricularAmplitude: parseFloat(value) || 0 },
+            settings: { ventricularAmplitude: parseFloat(normalizedValue) || 0 },
           },
         })
         break
@@ -183,7 +189,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { atrialPulseWidth: parseFloat(value) || 0 },
+            settings: { atrialPulseWidth: parseFloat(normalizedValue) || 0 },
           },
         })
         break
@@ -192,7 +198,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { ventricularPulseWidth: parseFloat(value) || 0 },
+            settings: { ventricularPulseWidth: parseFloat(normalizedValue) || 0 },
           },
         })
         break
@@ -201,7 +207,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { atrialRefractoryPeriod: parseFloat(value) || 0 },
+            settings: { atrialRefractoryPeriod: parseFloat(normalizedValue) || 0 },
           },
         })
         break
@@ -210,7 +216,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { ventricularRefractoryPeriod: parseFloat(value) || 0 },
+            settings: { ventricularRefractoryPeriod: parseFloat(normalizedValue) || 0 },
           },
         })
         break
@@ -219,7 +225,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { lowerRateLimit: parseFloat(value) || 0 },
+            settings: { lowerRateLimit: parseFloat(normalizedValue) || 0 },
           },
         })
         break
@@ -228,7 +234,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { upperRateLimit: parseFloat(value) || 0 },
+            settings: { upperRateLimit: parseFloat(normalizedValue) || 0 },
           },
         })
         break
@@ -479,7 +485,7 @@ function Dashboard(): JSX.Element {
     // if not, set the error state to true and display a toast
     // otherwise, set the error state to false
     if (currentMode === 'AOO' || currentMode === 'AAI' || currentMode === 'DDDR' || currentMode === 'DDD' || currentMode === 'AOOR' || currentMode === 'AAIR') {
-      if (modes[currentMode].atrialAmplitude < 0 || modes[currentMode].atrialAmplitude > 5) {
+      if (modes[currentMode].atrialAmplitude < 0.5 || modes[currentMode].atrialAmplitude > 5) {
         addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
         setAtriumAmpError(true)
         isValid = false
@@ -505,7 +511,7 @@ function Dashboard(): JSX.Element {
       }
     } else if (currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'DDDR' || currentMode === 'DDD' || currentMode === 'VOOR' || currentMode === 'VVIR') {
       if (
-        modes[currentMode].ventricularAmplitude < 0 ||
+        modes[currentMode].ventricularAmplitude < 0.5 ||
         modes[currentMode].ventricularAmplitude > 5
       ) {
         addToast('Ventricle Amplitude must be between 0.5 and 5 mV', 'error')

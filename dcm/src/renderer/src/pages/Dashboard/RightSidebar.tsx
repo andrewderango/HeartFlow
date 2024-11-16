@@ -190,7 +190,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             <div className="input-row">
               <div className={`input-container ${atriumAmpError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isAtriumDisabled}
@@ -201,7 +201,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
               <div className={`input-container ${ventricleAmpError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricleDisabled}
@@ -214,7 +214,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             <div className="input-row">
               <div className={`input-container ${atrialPWError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isAtriumDisabled}
@@ -225,7 +225,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
               <div className={`input-container ${ventriclePWError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricleDisabled}
@@ -238,7 +238,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             <div className="input-row">
               <div className={`input-container ${atrialRPError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isAtriumDisabled}
@@ -249,7 +249,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
               <div className={`input-container ${ventricleRPError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricleDisabled}
@@ -262,7 +262,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             <div className="input-row">
               <div className={`input-container ${lowerRateLimitError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isRateLimitDisabled}
@@ -275,7 +275,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
               <div className={`input-container ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isRateLimitDisabled}
