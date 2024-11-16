@@ -14,7 +14,7 @@ function App(): JSX.Element {
 
   testSocket.onopen = (): void => {
     console.log('websocket connected')
-    testSocket.send(JSON.stringify({ cmd: 'add', a: '1', b: '2' }))
+    testSocket.send(JSON.stringify({ type: 'test' }))
   }
 
   testSocket.onmessage = (event): void => {

@@ -95,8 +95,6 @@ app.whenReady().then(async () => {
   const pythonPath = resolve(__dirname, '../../src/python/pyEnv/bin/python')
   const scriptPath = resolve(__dirname, '../../src/python/mainProcess.py')
 
-  console.log('pythonPath: ', pythonPath)
-
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
@@ -107,6 +105,7 @@ app.whenReady().then(async () => {
   // spawn the python process
   try {
     pythonProcess = await spawnPythonProcess(pythonPath, scriptPath)
+    console.log('Python process spawned successfully')
   } catch (error) {
     console.error('Error spawning python process: ', error)
   }
