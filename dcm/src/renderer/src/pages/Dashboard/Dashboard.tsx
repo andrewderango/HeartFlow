@@ -37,7 +37,7 @@ function Dashboard(): JSX.Element {
   const { addToast } = useToast()
   const [currentTime, setCurrentTime] = useState(new Date())
   const [showHelp, setShowHelp] = useState(false)
-  const [submittedMode, setSubmittedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR' | 'DDD' | null>(
+  const [submittedMode, setSubmittedMode] = useState<'VOO' | 'AOO' | 'VVI' | 'AAI' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR' | 'DDD' | 'OFF' | null>(
     null,
   )
 
@@ -91,7 +91,7 @@ function Dashboard(): JSX.Element {
   }, [lastUsedMode])
 
   // handles the mode selection
-  const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR' | 'DDD'): void => {
+  const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR' | 'DDD' | 'OFF'): void => {
     // set the selected mode, enable terminate button, and set telemetry not terminated
     dispatch({ type: 'UPDATE_CURRENT_MODE', payload: mode })
 
@@ -519,17 +519,19 @@ function Dashboard(): JSX.Element {
       }
     }
 
-    if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
-      addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
-      setLowerRateLimitError(true)
-      isValid = false
-    }
+    if (currentMode !== 'OFF') {
+      if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
+        addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
+        setLowerRateLimitError(true)
+        isValid = false
+      }
 
-    /// TODO: i just picked random numbers for the upper rate limit for now
-    if (modes[currentMode].upperRateLimit < 50 || modes[currentMode].upperRateLimit > 175) {
-      addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
-      setUpperRateLimitError(true)
-      isValid = false
+      /// TODO: i just picked random numbers for the upper rate limit for now
+      if (modes[currentMode].upperRateLimit < 50 || modes[currentMode].upperRateLimit > 175) {
+        addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
+        setUpperRateLimitError(true)
+        isValid = false
+      }
     }
 
     return isValid
@@ -551,14 +553,6 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false);
     setLowerRateLimitError(false);
     setUpperRateLimitError(false);
-
-    if (currentMode === 'OFF') {
-      setSubmittedMode('OFF');
-      addToast('Settings sent and saved', 'success')
-      dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })
-      dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
-      return;
-    }
 
     // quit early if the input is not valid
     const isValid = validateInput();
@@ -783,6 +777,10 @@ function Dashboard(): JSX.Element {
           })
         }
         setSubmittedMode('DDD')
+        break
+      case 'OFF':
+        window.api.setUser(username, 'OFF', {})
+        setSubmittedMode('OFF')
         break
       default:
         console.log('Invalid mode')
