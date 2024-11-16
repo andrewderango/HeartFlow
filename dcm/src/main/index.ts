@@ -17,15 +17,45 @@ import type {
   LoginUserResponse,
   ModeSettingResponse,
 } from '../common/types'
+import { resolve } from 'path'
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
+
+let pythonProcess: ReturnType<typeof spawn> | null = null
+
+export const spawnPythonProcess = (
+  pythonPath: string,
+  scriptPath: string,
+): Promise<ChildProcessWithoutNullStreams> => {
+  return new Promise((resolve, reject) => {
+    const process = spawn(pythonPath, [scriptPath])
+
+    process.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    process.stderr.on('data', (data) => {
+      console.error(`stderr: ${data}`)
+    })
+
+    process.on('close', (code) => {
+      console.log(`Python process exited with code ${code}`)
+    })
+
+    process.on('error', (error) => {
+      reject(error)
+    })
+
+    resolve(process)
+  })
+}
 
 // default electron boilerplate
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 720,
-    minWidth: 1200,
-    minHeight: 720,
+    width: 1200,
+    height: 800,
+    resizable: false,
     show: false,
     autoHideMenuBar: true,
     icon: process.platform === 'win32' ? iconIco : iconPng,
@@ -62,12 +92,24 @@ app.whenReady().then(async () => {
   // when the app is ready, ensure the users file exists
   await ensureUsersFile(usersFilePath)
 
+  const pythonPath = resolve(__dirname, '../../src/python/pyEnv/bin/python')
+  const scriptPath = resolve(__dirname, '../../src/python/mainProcess.py')
+
+  console.log('pythonPath: ', pythonPath)
+
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+
+  // spawn the python process
+  try {
+    pythonProcess = await spawnPythonProcess(pythonPath, scriptPath)
+  } catch (error) {
+    console.error('Error spawning python process: ', error)
+  }
 
   createWindow()
 
@@ -84,6 +126,11 @@ app.whenReady().then(async () => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
+  }
+
+  // Kill the python process
+  if (pythonProcess) {
+    pythonProcess.kill()
   }
 })
 
@@ -116,7 +163,18 @@ ipcMain.handle(
   async (
     _,
     username: string,
-    mode: 'AOO' | 'VOO' | 'AAI' | 'VVI' | 'OFF',
+    mode:
+      | 'OFF'
+      | 'AOO'
+      | 'AAI'
+      | 'VOO'
+      | 'VVI'
+      | 'DDDR'
+      | 'DDD'
+      | 'AOOR'
+      | 'AAIR'
+      | 'VOOR'
+      | 'VVIR',
     settings: Record<string, number>,
   ) => {
     try {

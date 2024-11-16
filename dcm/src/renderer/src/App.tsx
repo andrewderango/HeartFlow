@@ -10,6 +10,18 @@ import Dashboard from './pages/Dashboard/Dashboard'
 // the main app component that sets up the router and routes
 
 function App(): JSX.Element {
+  const testSocket = new WebSocket('ws://localhost:8765')
+
+  testSocket.onopen = (): void => {
+    console.log('websocket connected')
+    testSocket.send(JSON.stringify({ cmd: 'add', a: '1', b: '2' }))
+  }
+
+  testSocket.onmessage = (event): void => {
+    const data = JSON.parse(event.data as string)
+    console.log('received from python: ', data)
+  }
+
   return (
     // wrap the app in the user and toast providers
     <UserProvider>
@@ -37,7 +49,7 @@ function App(): JSX.Element {
                     </div>
                   </div>
                   <ul className="versions">
-                    <li className="electron-version">HeartFlow v1.0.0</li>
+                    <li className="electron-version">HeartFlow v2.0.0</li>
                   </ul>
                 </>
               }

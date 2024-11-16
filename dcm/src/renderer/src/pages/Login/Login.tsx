@@ -73,6 +73,10 @@ function Login(): JSX.Element {
     }
   }, [])
 
+  const handleTestNavigation = (): void => {
+    navigate('/test')
+  }
+
   // return the component
   return (
     <div className="login-container">
