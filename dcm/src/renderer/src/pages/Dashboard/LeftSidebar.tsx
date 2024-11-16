@@ -54,7 +54,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
 
       {/* Telemetry Status */}
       <div className="sidebar-section">
-        <p className="communication-status-header">Telemetry Status</p>
+        <p className="communication-status-header">Communication Status</p>
         <p className={getStatusClass()}>
           {getStatusIcon()}
           {connectionStatus}

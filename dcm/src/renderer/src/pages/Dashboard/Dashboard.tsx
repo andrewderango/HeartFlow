@@ -88,34 +88,7 @@ function Dashboard(): JSX.Element {
       dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })
       dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
     }
-
-    if (lastUsedMode === 'OFF') {
-      dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'OFF' })
-      dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
-    }
   }, [lastUsedMode])
-
-  // handles the terminate button click
-  const handleTerminate = (): void => {
-    // set the mode to OFF, disable terminate button, and set telemetry terminated
-    setSubmittedMode('OFF')
-    dispatch({ type: 'UPDATE_CURRENT_MODE', payload: 'OFF' })
-    dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'OFF' })
-    dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
-
-    // reset error states
-    setAtriumAmpError(false)
-    setVentricleAmpError(false)
-    setAtrialPWError(false)
-    setVentriclePWError(false)
-    setAtrialRPError(false)
-    setVentricleRPError(false)
-    setLowerRateLimitError(false)
-    setUpperRateLimitError(false)
-
-    // todo: figure out if we want to reset the input fields after
-    // todo: terminating telemetry. this may change.
-  }
 
   // handles the mode selection
   const handleModeSelect = (mode: 'VOO' | 'AOO' | 'VVI' | 'AAI' | 'OFF' | 'VOOR' | 'AOOR' | 'VVIR' | 'AAIR' | 'DDDR' | 'DDD'): void => {
@@ -150,6 +123,11 @@ function Dashboard(): JSX.Element {
   }
 
   const normalizeInput = (value: string) => {
+    // check if the value is a decimal number
+    if (/^0\.\d+$/.test(value)) {
+      return value;
+    }
+    // remove leading zeros for integers
     return value.replace(/^0+/, '') || '0';
   };
 
@@ -465,10 +443,8 @@ function Dashboard(): JSX.Element {
         break
       }
       case 'OFF':
-        // if the mode is OFF, set the mode to OFF, disable terminate button,
+        // set the current mode to off
         dispatch({ type: 'UPDATE_CURRENT_MODE', payload: 'OFF' })
-        dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'OFF' })
-        dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
         break
       default:
         break
@@ -509,7 +485,8 @@ function Dashboard(): JSX.Element {
       } else {
         setAtrialRPError(false)
       }
-    } else if (currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'DDDR' || currentMode === 'DDD' || currentMode === 'VOOR' || currentMode === 'VVIR') {
+    } 
+    if (currentMode === 'VOO' || currentMode === 'VVI' || currentMode === 'DDDR' || currentMode === 'DDD' || currentMode === 'VOOR' || currentMode === 'VVIR') {
       if (
         modes[currentMode].ventricularAmplitude < 0.5 ||
         modes[currentMode].ventricularAmplitude > 5
@@ -542,14 +519,14 @@ function Dashboard(): JSX.Element {
       }
     }
 
-    if (modes[currentMode].lowerRateLimit <= 30 || modes[currentMode].lowerRateLimit >= 175) {
+    if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
       addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
       setLowerRateLimitError(true)
       isValid = false
     }
 
     /// TODO: i just picked random numbers for the upper rate limit for now
-    if (modes[currentMode].upperRateLimit <= 50 || modes[currentMode].upperRateLimit >= 175) {
+    if (modes[currentMode].upperRateLimit < 50 || modes[currentMode].upperRateLimit > 175) {
       addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
       setUpperRateLimitError(true)
       isValid = false
@@ -560,18 +537,33 @@ function Dashboard(): JSX.Element {
 
   // handles the submit button click
   const handleSubmit = async (_e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
-    // quit early if the mode is OFF or there is no user
-    if (currentMode === 'OFF') {
-      return
-    }
+    // quit early if there is no user
     if (!username) {
-      return
+      return;
+    }
+
+    // reset error states
+    setAtriumAmpError(false);
+    setVentricleAmpError(false);
+    setAtrialPWError(false);
+    setVentriclePWError(false);
+    setAtrialRPError(false);
+    setVentricleRPError(false);
+    setLowerRateLimitError(false);
+    setUpperRateLimitError(false);
+
+    if (currentMode === 'OFF') {
+      setSubmittedMode('OFF');
+      addToast('Settings sent and saved', 'success')
+      dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })
+      dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
+      return;
     }
 
     // quit early if the input is not valid
-    const isValid = validateInput()
+    const isValid = validateInput();
     if (!isValid) {
-      return
+      return;
     }
 
     // reset error states
@@ -1025,7 +1017,7 @@ function Dashboard(): JSX.Element {
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
-      <LeftSidebar handleTerminate={handleTerminate} handleEgramHiding={handleEgramHiding} />
+      <LeftSidebar handleEgramHiding={handleEgramHiding} />
 
       {/* Main Content */}
       <MainContent
