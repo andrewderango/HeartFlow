@@ -6,7 +6,6 @@ import heartflowLogo from './assets/heartflow.png'
 import Register from './pages/Register/Register'
 import Login from './pages/Login/Login'
 import Dashboard from './pages/Dashboard/Dashboard'
-import Test from './pages/Test/Test'
 
 // the main app component that sets up the router and routes
 
@@ -50,7 +49,7 @@ function App(): JSX.Element {
                     </div>
                   </div>
                   <ul className="versions">
-                    <li className="electron-version">HeartFlow v1.0.0</li>
+                    <li className="electron-version">HeartFlow v2.0.0</li>
                   </ul>
                 </>
               }
@@ -58,7 +57,6 @@ function App(): JSX.Element {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/test" element={<Test />} />
           </Routes>
           {/* toast container to hold all the toasts, always included on all pages */}
           <ToastContainer />

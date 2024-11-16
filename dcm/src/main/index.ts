@@ -53,10 +53,9 @@ export const spawnPythonProcess = (
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 720,
-    minWidth: 1200,
-    minHeight: 720,
+    width: 1200,
+    height: 800,
+    resizable: false,
     show: false,
     autoHideMenuBar: true,
     icon: process.platform === 'win32' ? iconIco : iconPng,
@@ -163,7 +162,18 @@ ipcMain.handle(
   async (
     _,
     username: string,
-    mode: 'AOO' | 'VOO' | 'AAI' | 'VVI' | 'OFF',
+    mode:
+      | 'OFF'
+      | 'AOO'
+      | 'AAI'
+      | 'VOO'
+      | 'VVI'
+      | 'DDDR'
+      | 'DDD'
+      | 'AOOR'
+      | 'AAIR'
+      | 'VOOR'
+      | 'VVIR',
     settings: Record<string, number>,
   ) => {
     try {
