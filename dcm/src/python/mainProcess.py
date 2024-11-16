@@ -1,135 +1,219 @@
 import asyncio
 import json
-import serial
-import serial.tools.list_ports
-import platform
-import struct
-import sys
+import logging
 from websockets.asyncio.server import serve
+from serialClass import PacemakerSerial
 
-pacemaker = None
-
-
-def _scan_ports() -> list[str]:
-    raw_ports = serial.tools.list_ports.comports()
-    ports = []
-    platformName = platform.system()
-    for port in raw_ports:
-        if platformName == "Windows":
-            ports.append(port.device)
-        elif platformName == "Linux":
-            if "ttyUSB" in port.device or "ttyACM" in port.device:
-                ports.append(port.device)
-        elif platformName == "Darwin":
-            if "tty.usbserial" in port.device:
-                ports.append(port.device)
-    return ports
+pacemaker_serial = PacemakerSerial(baudrate=115200)
+pacemaker_connecting = asyncio.Event()
+pacemaker_connected = asyncio.Event()
 
 
-def _serial_connect(port: str, baudrate: int) -> serial.Serial:
-    return serial.Serial(
-        port=port,
-        baudrate=baudrate,
-    )
+async def poll_pacemaker(websocket):
+    global pacemaker_serial
+    global pacemaker_connected
+
+    while True:
+        if pacemaker_connected.is_set():
+            logging.info("Polling pacemaker...")
+            res = pacemaker_serial.poll_pacemaker()
+            if not res:
+                websocket.send(
+                    json.dumps(
+                        {
+                            "from": "pm_poll",
+                            "type": "error",
+                            "msg": "Pacemaker not responding",
+                        }
+                    )
+                )
+                pacemaker_connected.clear()
+        else:
+            logging.info("Pacemaker not connected")
+        await asyncio.sleep(1)
 
 
-def _send(
-    serialPort: serial.Serial,
-    msgId: int,
-    msg: int,
-    mode: int,
-    LRL: int,
-    URL: int,
-    ARP: int,
-    VRP: int,
-    APW: int,
-    VPW: int,
-    AAmp: float,
-    VAmp: float,
-    ASens: float,
-    VSens: float,
-) -> None:
-    # todo: add error handling for invalid values
+async def handle_pacemaker_connection(websocket):
+    global pacemaker_serial
+    global pacemaker_connecting
+    global pacemaker_connected
 
-    data = bytearray()
-    data.append(msgId)  # for the message id
-    data.append(msg)  # for the message type
-    data.extend(struct.pack("<B", mode))
-    data.extend(struct.pack("<B", LRL))
-    data.extend(struct.pack("<B", URL))
-    data.extend(struct.pack("<H", ARP))  # pack as little-endian unsigned short
-    data.extend(struct.pack("<H", VRP))  # pack as little-endian unsigned short
-    data.extend(struct.pack("<B", APW))
-    data.extend(struct.pack("<B", VPW))
-    data.extend(struct.pack("<f", AAmp))  # pack as little-endian float
-    data.extend(struct.pack("<f", VAmp))  # pack as little-endian float
-    data.extend(struct.pack("<f", ASens))  # pack as little-endian float
-    data.extend(struct.pack("<f", VSens))  # pack as little-endian float
+    while True:
+        async for message in websocket:
+            data = json.loads(message)
 
-    serialPort.write(data)
+            if data["type"] == "init":
+                logging.info("Attempting to connect to pacemaker...")
+                pm_id = data["pm_id"]
 
-
-def _read(serialPort: serial.Serial) -> dict:
-    buffer = serialPort.read(27)
-    return {
-        "msgId": buffer[0],
-        "mode": buffer[1],
-        "LRL": buffer[2],
-        "URL": buffer[3],
-        "ARP": struct.unpack("<H", buffer[4:6])[0],
-        "VRP": struct.unpack("<H", buffer[6:8])[0],
-        "APW": buffer[8],
-        "VPW": buffer[9],
-        "AAmp": struct.unpack("<f", buffer[10:14])[0],
-        "VAmp": struct.unpack("<f", buffer[14:18])[0],
-        "ASens": struct.unpack("<f", buffer[18:22])[0],
-        "VSens": struct.unpack("<f", buffer[22:26])[0],
-    }
-
-
-def search_and_connect(pacemaker_id: str) -> None:
-    global pacemaker
-
-    ports = _scan_ports()
-    found = False
-
-    while not found:
-        for port in ports:
-            try:
-                serialPort = _serial_connect(port, 9600)
-                _send(serialPort, 0x01, 0x01, 0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0)
-                response = _read(serialPort)
-                msgId = response["msgId"]
-                mode = response["mode"]
-                byte_lrl = response["LRL"]
-                byte_url = response["URL"]
-                id = byte_lrl + byte_url
-
-                if msgId == 0x01 and mode == 0x01 and id == pacemaker_id:
-                    found = True
-                    pacemaker = serialPort
-                    break
+                pacemaker_serial.set_serial_id(pm_id)
+                res = pacemaker_serial.search_and_connect(mode="init")
+                if res["status"] == "connected":
+                    pacemaker_connected.set()
+                    pacemaker_connecting.clear()
+                    logging.info("Connected to pacemaker")
+                    await websocket.send(
+                        json.dumps(
+                            {
+                                "from": "pm_handle_connection",
+                                "type": "connected",
+                                "port": res["port"],
+                            }
+                        )
+                    )
                 else:
-                    serialPort.close()
-            except serial.SerialException:
-                pass
+                    logging.error("Failed to connect to pacemaker")
+                    await websocket.send(
+                        json.dumps(
+                            {
+                                "from": "pm_handle_connection",
+                                "type": "failed",
+                            }
+                        )
+                    )
+            elif not pacemaker_connected.is_set() and not pacemaker_connecting.is_set():
+                # attempt a reconnect
+                logging.warning("Attempting to reconnect to pacemaker...")
+                res = pacemaker_serial.search_and_connect(mode="reconnect")
+                if res["status"] == "connected":
+                    pacemaker_connected.set()
+                    logging.info("Reconnected to pacemaker")
+                    await websocket.send(
+                        json.dumps(
+                            {
+                                "from": "pm_handle_connection",
+                                "type": "connected",
+                                "port": res["port"],
+                            }
+                        )
+                    )
+                else:
+                    logging.error("Failed to reconnect to pacemaker")
+                    await websocket.send(
+                        json.dumps(
+                            {
+                                "from": "pm_handle_connection",
+                                "type": "failed",
+                            }
+                        )
+                    )
+            else:
+                logging.info("No change in pacemaker connection status")
+                continue
+
+        # remove this later
+        await asyncio.sleep(1)
+
+
+async def handle_pacemaker_parameters(websocket):
+    global pacemaker_serial
+    global pacemaker_connected
+
+    while True:
+        async for message in websocket:
+            data = json.loads(message)
+
+            if data["type"] == "set":
+                if pacemaker_connected.is_set():
+                    params = data["params"]
+                    success = False
+
+                    for _ in range(3):
+                        # todo: verify parameters
+                        pacemaker_serial.send_params(
+                            msg=0x03,
+                            mode=params["mode"],
+                            LRL=params["LRL"],
+                            URL=params["URL"],
+                            ARP=params["ARP"],
+                            VRP=params["VRP"],
+                            APW=params["APW"],
+                            VPW=params["VPW"],
+                            AAmp=params["AAmp"],
+                            VAmp=params["VAmp"],
+                            ASens=params["ASens"],
+                            VSens=params["VSens"],
+                        )
+                        res = pacemaker_serial.read_params()
+
+                        # verify the parameters are the same
+                        # if they are, send 0x04 ack
+                        # else, continue sending 0x03
+                        if res == params:
+                            # just gonna grab the private method
+                            ack_bytearray = bytearray()
+                            ack_bytearray.append(pacemaker_serial._get_msg_id())
+                            ack_bytearray.append(0x04)
+                            for _ in range(25):
+                                ack_bytearray.append(0x00)
+                            pacemaker_serial._send_raw(ack_bytearray)
+                            success = True
+                            logging.info("Parameters set successfully")
+                            websocket.send(
+                                json.dumps(
+                                    {
+                                        "from": "pm_handle_parameters",
+                                        "type": "success",
+                                    }
+                                )
+                            )
+                            break
+                        else:
+                            continue
+
+                    if not success:
+                        logging.error("Failed to set parameters")
+                        websocket.send(
+                            json.dumps(
+                                {
+                                    "from": "pm_handle_parameters",
+                                    "type": "error",
+                                    "msg": "Failed to set parameters",
+                                }
+                            )
+                        )
+
+                else:
+                    logging.error("Pacemaker not connected")
+                    await websocket.send(
+                        json.dumps(
+                            {
+                                "from": "pm_handle_parameters",
+                                "type": "error",
+                                "msg": "Pacemaker not connected",
+                            }
+                        )
+                    )
 
 
 async def handler(websocket):
-    async for message in websocket:
-        data = json.loads(message)
-        if data["type"] == "search":
-            search_and_connect(data["id"])
-        else:
-            await websocket.send(json.dumps({"err": "Invalid message type"}))
-            continue
+    pm_polling_task = asyncio.create_task(poll_pacemaker(websocket))
+    pm_connection_task = asyncio.create_task(handle_pacemaker_connection(websocket))
+    pm_params_task = asyncio.create_task(handle_pacemaker_parameters(websocket))
+
+    logging.info("Tasks created, beginning main loop...")
+    done, pending = await asyncio.wait(
+        [pm_polling_task, pm_connection_task, pm_params_task], return_when=asyncio.FIRST_COMPLETED
+    )
+
+    for task in pending:
+        task.cancel()
+
+    for task in done:
+        task.exception()
 
 
 async def main():
+    global pacemaker_connecting
+
+    # we'll default to "connecting"
+    pacemaker_connecting.set()
+
     async with serve(handler, "localhost", 8765) as server:
         await server.serve_forever()
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    logging.info("Starting server...")
     asyncio.run(main())
-    sys.exit(0)
