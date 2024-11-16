@@ -80,6 +80,23 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     });
   }, [isAtriumDisabled, isVentricleDisabled, isRateLimitDisabled]);
 
+  useEffect(() => {
+    if (view === 'PARAMETERS') {
+      const inputs = document.querySelectorAll('.input-field');
+      inputs.forEach(input => {
+        if (input.value) {
+          input.classList.add('filled');
+        } else {
+          input.classList.remove('filled');
+        }
+      });
+    }
+  }, [view]);
+
+  const handleViewChange = (newView: 'PARAMETERS' | 'REPORTS') => {
+    setView(newView);
+  };
+
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
       {/* Menu Button */}
@@ -91,14 +108,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           <div className="menu-popup">
             <button
               className={`menu-item ${view === 'PARAMETERS' ? 'selected' : ''}`}
-              onClick={() => { setView('PARAMETERS'); setMenuOpen(false); }}
+              onClick={() => { handleViewChange('PARAMETERS'); setMenuOpen(false); }}
             >
               <HeartPulse size={16} style={{ marginRight: '8px' }} />
               PARAMETERS
             </button>
             <button
               className={`menu-item ${view === 'REPORTS' ? 'selected' : ''}`}
-              onClick={() => { setView('REPORTS'); setMenuOpen(false); }}
+              onClick={() => { handleViewChange('REPORTS'); setMenuOpen(false); }}
             >
               <FileText size={16} style={{ marginRight: '8px' }} />
               REPORTS
