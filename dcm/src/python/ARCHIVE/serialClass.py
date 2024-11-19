@@ -3,6 +3,7 @@ import serial
 import platform
 import random
 import serial.tools.list_ports
+import time
 from enum import Enum
 
 
@@ -11,6 +12,7 @@ class PacemakerMsgStatus(Enum):
     FULFILLED = 1
     FAILED = 2
 
+# todo: i might need to convert the methods to async
 
 class PacemakerSerial:
     def __init__(self, baudrate: int) -> None:
@@ -69,30 +71,32 @@ class PacemakerSerial:
         ASens: float,
         VSens: float,
     ) -> None:
-        data = bytearray()
-        data.append(msg_id)
-        data.append(msg)
-        data.extend(struct.pack("<B", mode))
-        data.extend(struct.pack("<B", LRL))
-        data.extend(struct.pack("<B", URL))
-        data.extend(struct.pack("<H", ARP))
-        data.extend(struct.pack("<H", VRP))
-        data.extend(struct.pack("<B", APW))
-        data.extend(struct.pack("<B", VPW))
-        data.extend(struct.pack("<f", AAmp))
-        data.extend(struct.pack("<f", VAmp))
-        data.extend(struct.pack("<f", ASens))
-        data.extend(struct.pack("<f", VSens))
+        data = bytearray(82)
+        data[0] = msg_id
+        data[1] = msg
+        data[2] = mode
+        data[3] = LRL
+        data[4] = URL
+        data[5:7] = struct.pack("<H", ARP)
+        data[7:9] = struct.pack("<H", VRP)
+        data[9] = APW
+        data[10] = VPW
+        data[11:15] = struct.pack("<f", AAmp)
+        data[15:19] = struct.pack("<f", VAmp)
+        data[19:23] = struct.pack("<f", ASens)
+        data[23:27] = struct.pack("<f", VSens)
+
+        self._send_raw(data)
 
     def _send_raw(self, payload: bytearray) -> None:
         # ensure bytearray is of size 27
-        if len(payload) != 27:
-            raise ValueError("Payload must be of size 27")
+        if len(payload) != 82:
+            raise ValueError("Payload must be of size 82")
 
         self.serial_port.write(payload)
 
     def _read_params(self) -> dict:
-        buffer = self.serial_port.read(27)
+        buffer = self.serial_port.read(82)
         return {
             "msg_id": buffer[0],
             "msg": buffer[1],
@@ -109,7 +113,7 @@ class PacemakerSerial:
             "VSens": struct.unpack("<f", buffer[23:27])[0],
         }
 
-    def _read_raw(self, bytesize: int = 27) -> bytearray:
+    def _read_raw(self, bytesize: int = 82) -> bytearray:
         return self.serial_port.read(bytesize)
 
     def _close(self) -> None:
@@ -120,27 +124,27 @@ class PacemakerSerial:
         if mode == "init":
             while True:
                 ports = self._scan_ports()
+                msg_id = None
 
                 for port in ports:
                     try:
                         msg_id = self._get_msg_id()
 
-                        handshake_bytearray = bytearray()
-                        handshake_bytearray.append(msg_id)  # msg id
-                        handshake_bytearray.append(0x01)  # msg type
-                        for _ in range(25):
-                            handshake_bytearray.append(0x00)
+                        handshake_bytearray = bytearray(82)
+                        handshake_bytearray[0] = msg_id
+                        handshake_bytearray[1] = 0x01
 
                         self._serial_connect(port)
                         self._send_raw(handshake_bytearray)
+
                         response = self._read_raw()
                         res_msg_id = response[0]
                         res_mode = response[1]
-                        res_pm_id = response[2] + response[3]
+                        res_pm_id = struct.unpack("<H", response[2:4])[0]
 
                         if (
                             res_msg_id == msg_id
-                            and res_mode == 0x02
+                            and res_mode == 0x01
                             and res_pm_id == self.serial_id
                         ):
                             self.serial_port_name = port
@@ -150,56 +154,85 @@ class PacemakerSerial:
                                 "port": port,
                             }
                         else:
+                            self.requests.pop(msg_id)
                             self._close()
                     except Exception as e:
+                        self.requests.pop(msg_id)
                         self._close()
 
         elif mode == "reconnect":
             if self.serial_port_name is None:
                 return {
-                    "status": "no previous connection",
+                    "status": "failed",
+                    "reason": "no port to reconnect to",
                 }
 
             connected = False
             for _ in range(tries):
                 try:
+                    msg_id = self._get_msg_id()
+                    handshake_bytearray = bytearray(82)
+                    handshake_bytearray[0] = msg_id
+                    handshake_bytearray[1] = 0x01
+
                     self._serial_connect(self.serial_port_name)
-                    connected = True
-                    return {
-                        "status": "connected",
-                        "port": self.serial_port_name,
-                    }
+                    self._send_raw(handshake_bytearray)
+
+                    response = self._read_raw()
+                    res_msg_id = response[0]
+                    res_mode = response[1]
+                    res_pm_id = struct.unpack("<H", response[2:4])[0]
+
+                    if (
+                        res_msg_id == msg_id
+                        and res_mode == 0x01
+                        and res_pm_id == self.serial_id
+                    ):
+                        connected = True
+                        return {
+                            "status": "connected",
+                            "port": self.serial_port_name,
+                        }
+                    else:
+                        self._close()
                 except Exception as e:
-                    print(e)
                     self._close()
+
+                time.sleep(1)
 
             if not connected:
                 return {
                     "status": "failed",
+                    "reason": "failed to reconnect",
                 }
         else:
             return {
-                "status": "invalid mode",
+                "status": "failed",
+                "reason": "invalid mode",
             }
 
     def poll_pacemaker(self) -> bool:
-        poll_bytearray = bytearray()
+        poll_bytearray = bytearray(82)
         msg_id = self._get_msg_id()
-        poll_bytearray.append(msg_id)
-        poll_bytearray.append(0x02)
-        for _ in range(25):
-            poll_bytearray.append(0x00)
+        poll_bytearray[0] = msg_id
+        poll_bytearray[1] = 0x02
 
-        self._send_raw(poll_bytearray)
-        response = self._read_raw()
-        res_msg_id = response[0]
-        res_mode = response[1]
-        res_pm_id = response[2] + response[3]
+        try:
+            self._send_raw(poll_bytearray)
+            res = self._read_raw()
+            res_msg_id = res[0]
+            res_mode = res[1]
+            res_pm_id = struct.unpack("<H", res[2:4])[0]
 
-        if res_msg_id == msg_id and res_mode == 0x03 and res_pm_id == self.serial_id:
-            self.requests.pop(msg_id)
-            return True
-        else:
+            if res_msg_id == msg_id and res_mode == 0x02 and res_pm_id == self.serial_id:
+                self.requests.pop(msg_id)
+                return True
+            else:
+                print("failed poll: the response did not match the request")
+                self.requests.pop(msg_id)
+                return False
+        except Exception as e:
+            print(f"failed poll: {e}")
             self.requests.pop(msg_id)
             return False
 
