@@ -43,12 +43,18 @@ class PacemakerMPSerial:
         self.serial_port: Optional[serial.Serial] = None
         self.serial_port_name: Optional[str] = None
         self.read_process: Optional[multiprocessing.Process] = None
+        self.poll_process: Optional[multiprocessing.Process] = None
         self.manager = multiprocessing.Manager()
         self.read_running = self.manager.Value("b", False)
+        self.poll_running = self.manager.Value("b", False)
+        self.connected = self.manager.Value("b", False)
+        self.connecting = self.manager.Value("b", True)
         self.msg_log: Dict[int, Msg] = self.manager.dict()
         self.egram_msg_log: Dict[int, Msg] = self.manager.dict()
 
-    def __read_process(self, read_running, msg_log, egram_msg_log) -> None:
+    def __read_process(
+        self, read_running, msg_log: Dict[int, Msg], egram_msg_log: Dict[int, Msg]
+    ) -> None:
         msg_id: Optional[int] = None
         msg_type: Optional[int] = None
         timestamp: Optional[float] = None
@@ -85,6 +91,36 @@ class PacemakerMPSerial:
 
             time.sleep(0.01)
 
+    def __poll_process(self, poll_running, connected, connecting) -> None:
+        while poll_running.value and connected.value:
+            if self.serial_port is not None and self.serial_port.is_open:
+                logger.debug("[poll_process] Polling for data...")
+
+                msg_id = self.__create_msg(0x02)
+                req = bytearray(82)
+                req[0] = msg_id
+                req[1] = 0x02
+
+                self.__send_raw(req)
+                res = self.__block_until_fulfilled(msg_id)
+                res_msg_id = res.msg_id
+                res_msg_type = res.msg_type
+                res_bytearray = res.msg
+                res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
+
+                if (
+                    res_msg_id == msg_id
+                    and res_msg_type == 0x02
+                    and res_pm_id == self.serial_id
+                ):
+                    logger.debug(f"[poll_process] Polling success: {res_bytearray}")
+                else:
+                    logger.debug(f"[poll_process] Polling failed: {res_bytearray}")
+                    connected.set(False)
+                    connecting.set(True)
+
+            time.sleep(1)
+
     def __block_until_fulfilled(self, msg_id: int) -> Msg:
         while self.msg_log[msg_id].msg_status != MsgStatus.FULFILLED:
             logger.debug(f"[block_until_fulfilled] Waiting for message: {msg_id}")
@@ -105,7 +141,7 @@ class PacemakerMPSerial:
 
     def __scan_ports(self) -> List[str]:
         raw_port_list = serial.tools.list_ports.comports()
-        return_list = []
+        return_list: List[str] = []
         platform_name = platform.system()
 
         for port in raw_port_list:
@@ -129,14 +165,23 @@ class PacemakerMPSerial:
             target=self.__read_process,
             args=(self.read_running, self.msg_log, self.egram_msg_log),
         )
+        self.poll_process = multiprocessing.Process(
+            target=self.__poll_process,
+            args=(self.poll_running, self.connected, self.connecting),
+        )
         self.read_running.value = True
+        self.poll_running.value = True
         self.read_process.start()
+        self.poll_process.start()
         logger.debug(f"[serial_connect] Connected to port: {port}")
 
     def __serial_close(self) -> None:
         self.read_running.value = False
+        self.poll_running.value = False
         if self.read_process is not None:
             self.read_process.join()
+        if self.poll_process is not None:
+            self.poll_process.join()
         if self.serial_port is not None and self.serial_port.is_open:
             self.serial_port.close()
         self.serial_port = None
@@ -159,7 +204,7 @@ class PacemakerMPSerial:
         if mode == "init":
             while True:
                 ports = self.__scan_ports()
-                msg_id = None
+                msg_id: Optional[int] = None
 
                 logger.debug(f"[search_and_connect] Scanned ports: {ports}")
                 for port in ports:
@@ -188,6 +233,8 @@ class PacemakerMPSerial:
                             and res_pm_id == self.serial_id
                         ):
                             self.serial_port_name = port
+                            self.connected.set(True)
+                            self.connecting.set(False)
                             logger.debug(
                                 f"[search_and_connect] Connected on port: {port}"
                             )
@@ -207,6 +254,57 @@ class PacemakerMPSerial:
                         )
 
         elif mode == "reconnect":
-            pass
+            if self.serial_port_name is None:
+                return PMPSerialMsg(PMPSerialMsgType.ERROR, "No port to reconnect")
+
+            msg_id: Optional[int] = None
+            for _ in range(tries):
+                try:
+                    msg_id = self.__create_msg(0x01)
+
+                    req = bytearray(82)
+                    req[0] = msg_id
+                    req[1] = 0x01
+
+                    logger.debug(
+                        f"[search_and_connect] Attempting handshake on port: {self.serial_port_name}"
+                    )
+                    self.__serial_connect(self.serial_port_name)
+                    self.__send_raw(req)
+
+                    res = self.__block_until_fulfilled(msg_id)
+                    res_msg_id = res.msg_id
+                    res_msg_type = res.msg_type
+                    res_bytearray = res.msg
+                    res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
+
+                    if (
+                        res_msg_id == msg_id
+                        and res_msg_type == 0x01
+                        and res_pm_id == self.serial_id
+                    ):
+                        logger.debug(
+                            f"[search_and_connect] Connected on port: {self.serial_port_name}"
+                        )
+                        self.connected.set(True)
+                        self.connecting.set(False)
+                        return PMPSerialMsg(
+                            PMPSerialMsgType.SUCCESS,
+                            f"Connected on port {self.serial_port_name}",
+                        )
+                    else:
+                        self.__serial_close()
+                        logger.debug(
+                            f"[search_and_connect] Failed handshake on port: {self.serial_port_name}"
+                        )
+                except Exception as e:
+                    self.msg_log.pop(msg_id)
+                    self.__serial_close()
+                    logger.critical(
+                        f"[search_and_connect] Critical failure on port: {self.serial_port_name} | {e}"
+                    )
+
+            if not self.connected.value:
+                return PMPSerialMsg(PMPSerialMsgType.ERROR, "Failed to reconnect")
         else:
             return PMPSerialMsg(PMPSerialMsgType.ERROR, "Invalid mode")
