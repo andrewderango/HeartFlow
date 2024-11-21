@@ -364,7 +364,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                     Rate Factor
                   </label>
                 </div>
-              <div className={`input-container ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container ${avDelayError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -373,7 +373,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
                   name="avDelay"
                 />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
+                <label className={isAvDelayDisabled ? 'disabled-label' : ''}>
                   AV Delay
                 </label>
               </div>
