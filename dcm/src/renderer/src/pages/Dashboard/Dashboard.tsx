@@ -53,7 +53,7 @@ function Dashboard(): JSX.Element {
   >(null)
 
   // ! we should probably remove this
-  const [pacemakerBPM, _setPacemakerBPM] = useState<number>(0)
+  const [pacemakerBPM, _setPacemakerBPM] = useState<number>(500)
 
   // these states are for the error handling of the input fields
   // if an error is true, the input field will have a red border

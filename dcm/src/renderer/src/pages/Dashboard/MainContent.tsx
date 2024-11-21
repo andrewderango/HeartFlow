@@ -112,7 +112,7 @@ const MainContent: React.FC<MainContentProps> = ({
           <p>{submittedMode}</p>
         </div>
         <div className="stat-box">
-          <h3>Refresh Rate</h3>
+          <h3>Telemetry Rate</h3>
           <p>{pacemakerBPM} Hz</p>
         </div>
         <div className="stat-box">
