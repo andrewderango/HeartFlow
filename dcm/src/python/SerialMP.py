@@ -9,7 +9,7 @@ import logging
 from enum import Enum
 from typing import Optional, Dict, NamedTuple, List
 
-logger = logging.getLogger("PacemakerMPSerial")
+logger = logging.getLogger("SerialMP")
 
 
 class MsgStatus(Enum):
@@ -34,10 +34,11 @@ class PMPSerialMsg(NamedTuple):
     status: PMPSerialMsgType
     msg: Optional[str]
 
+
 class PMPEgramData(NamedTuple):
-    timestamp: int
-    atrialSense: list[float]
-    ventricularSense: list[float]
+    atrialSense: List[float]
+    ventricularSense: List[float]
+
 
 class PMParameters(NamedTuple):
     mode: int  # restrict to 0, 100, 200, 111, 221
@@ -72,6 +73,10 @@ class PacemakerMPSerial:
         self.egram_msg_log: Dict[int, Msg] = self.manager.dict()
         self.egram_running: bool = False
         self.egram_lock = multiprocessing.Lock()
+
+    def __del__(self) -> None:
+        self.__serial_close()
+        logger.debug(f"[__del__] Egram backlog: {self.egram_msg_log}")
 
     def __read_process(
         self, read_running, msg_log: Dict[int, Msg], egram_msg_log: Dict[int, Msg]
@@ -118,7 +123,7 @@ class PacemakerMPSerial:
                 else:
                     logger.debug("[read_process] Waiting for connection...")
             except Exception as e:
-                logger.critical(f"[read_process] Critical failure: {e}")
+                logger.debug(f"[read_process] Critical failure: {e}")
 
             time.sleep(0.01)
 
@@ -259,17 +264,21 @@ class PacemakerMPSerial:
     def set_pm_id(self, pm_id: int) -> None:
         self.serial_id = pm_id
 
-    def consume_egram_data(self) -> PMPEgramData:
+    def consume_egram_data(self) -> Dict[int, PMPEgramData]:
         with self.egram_lock:
             if len(self.egram_msg_log) == 0:
-                return PMPEgramData(0, [], [])
-            timestamp = list(self.egram_msg_log.keys())[0]
-            msg = self.egram_msg_log.pop(timestamp)
-            atrialSense = struct.unpack("<" + "f" * 10, msg.msg[0:40])
-            ventricularSense = struct.unpack("<" + "f" * 10, msg.msg[40:80])
-            return PMPEgramData(timestamp, atrialSense, ventricularSense)
+                return {}
 
-    def search_and_connect(self, mode: str, timeout: int = 5) -> PMPSerialMsg:
+            egram_data: Dict[PMPEgramData] = {}
+            for timestamp, msg in self.egram_msg_log.items():
+                atrial_sense = struct.unpack("<" + "f" * 10, msg.msg[0:40])
+                ventricular_sense = struct.unpack("<" + "f" * 10, msg.msg[40:80])
+                egram_data[timestamp] = PMPEgramData(atrial_sense, ventricular_sense)
+
+            self.egram_msg_log.clear()
+            return egram_data
+
+    def search_and_connect(self, mode: str, timeout: int = 3) -> PMPSerialMsg:
         if mode == "init":
             while True:
                 ports = self.__scan_ports()
@@ -320,7 +329,10 @@ class PacemakerMPSerial:
                 msg_id: Optional[int] = None
                 ports = self.__scan_ports()
 
-                logger.debug(f"[search_and_connect] Scanned ports: {ports}")
+                logger.debug(f"[search_and_connect] Scanned reconnect ports: {ports}")
+                logger.debug(
+                    f"[search_and_connect] Current timeout: {time.time() - time_now}"
+                )
                 for port in ports:
                     msg_id = self.__create_msg(0x01)
 
@@ -329,7 +341,7 @@ class PacemakerMPSerial:
                     req[1] = 0x01
 
                     logger.debug(
-                        f"[search_and_connect] Attempting handshake on port: {port}"
+                        f"[search_and_connect] Attempting reconnect handshake on port: {port}"
                     )
                     self.__serial_connect(port)
                     self.__send_raw(req)
@@ -348,14 +360,16 @@ class PacemakerMPSerial:
                         self.serial_port_name = port
                         self.connected.set(True)
                         self.connecting.set(False)
-                        logger.debug(f"[search_and_connect] Connected on port: {port}")
+                        logger.debug(
+                            f"[search_and_connect] Reconnected on port: {port}"
+                        )
                         return PMPSerialMsg(
-                            PMPSerialMsgType.SUCCESS, f"Connected on port {port}"
+                            PMPSerialMsgType.SUCCESS, f"Reconnected on port {port}"
                         )
                     else:
                         self.__serial_close()
                         logger.debug(
-                            f"[search_and_connect] Failed handshake on port: {port}"
+                            f"[search_and_connect] Failed reconnect handshake on port: {port}"
                         )
 
             if self.connected.value == False:
