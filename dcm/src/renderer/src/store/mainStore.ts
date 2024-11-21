@@ -51,6 +51,7 @@ interface PacemakerState {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      avDelay: number
     }
     DDD: {
       atrialAmplitude: number
@@ -61,6 +62,7 @@ interface PacemakerState {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      avDelay: number
     }
     AOOR: {
       atrialAmplitude: number
@@ -210,6 +212,7 @@ const useStore = create<
       ventricularRefractoryPeriod: 0,
       lowerRateLimit: 0,
       upperRateLimit: 0,
+      avDelay: 0,
     },
     DDD: {
       atrialAmplitude: 0,
@@ -220,6 +223,7 @@ const useStore = create<
       ventricularRefractoryPeriod: 0,
       lowerRateLimit: 0,
       upperRateLimit: 0,
+      avDelay: 0,
     },
     AOOR: {
       atrialAmplitude: 0,

@@ -60,6 +60,7 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      avDelay: number
     }
     DDD: {
       atrialAmplitude: number
@@ -70,6 +71,7 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      avDelay: number
     }
     AOOR: {
       atrialAmplitude: number
@@ -150,6 +152,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        avDelay: 0,
       },
       DDD: {
         atrialAmplitude: 0,
@@ -160,6 +163,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        avDelay: 0,
       },
       AOOR: {
         atrialAmplitude: 0,

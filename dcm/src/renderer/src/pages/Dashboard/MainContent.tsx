@@ -18,14 +18,14 @@ interface MainContentProps {
     | 'DDD'
     | null
   telemetry: { heartRate: number }
-  pacemakerBPM: number
+  telemetryRate: number
   isRightSidebarVisible: boolean
 }
 
 const MainContent: React.FC<MainContentProps> = ({
   submittedMode,
   telemetry,
-  pacemakerBPM,
+  telemetryRate,
   isRightSidebarVisible,
 }) => {
   const [series1, setSeries1] = useState<ChartPoint[]>([])
@@ -113,7 +113,7 @@ const MainContent: React.FC<MainContentProps> = ({
         </div>
         <div className="stat-box">
           <h3>Telemetry Rate</h3>
-          <p>{pacemakerBPM} Hz</p>
+          <p>{telemetryRate} Hz</p>
         </div>
         <div className="stat-box">
           <h3>Heart BPM</h3>

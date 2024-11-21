@@ -52,8 +52,7 @@ function Dashboard(): JSX.Element {
     | null
   >(null)
 
-  // ! we should probably remove this
-  const [pacemakerBPM, _setPacemakerBPM] = useState<number>(500)
+  const [telemetryRate, _setTelemetryRate] = useState<number>(500)
 
   // these states are for the error handling of the input fields
   // if an error is true, the input field will have a red border
@@ -65,11 +64,13 @@ function Dashboard(): JSX.Element {
   const [ventricleRPError, setVentricleRPError] = useState<boolean>(false)
   const [lowerRateLimitError, setLowerRateLimitError] = useState<boolean>(false)
   const [upperRateLimitError, setUpperRateLimitError] = useState<boolean>(false)
+  const [avDelayError, setAvDelayError] = useState<boolean>(false)
 
   // have to convert the variables to state variables to force a rerender
   const [isAtriumDisabled, setIsAtriumDisabled] = useState<boolean>(false)
   const [isVentricleDisabled, setIsVentricleDisabled] = useState<boolean>(false)
   const [isRateLimitDisabled, setIsRateLimitDisabled] = useState<boolean>(false)
+  const [isAvDelayDisabled, setIsAvDelayDisabled] = useState<boolean>(false)
   const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(true)
 
   const toggleRightSidebar = () => {
@@ -91,6 +92,7 @@ function Dashboard(): JSX.Element {
         currentMode === 'AOOR' ||
         currentMode === 'AAIR',
     )
+    setIsAvDelayDisabled(currentMode !== 'DDDR' && currentMode !== 'DDD')
     setIsRateLimitDisabled(currentMode === 'OFF')
   }, [currentMode])
 
@@ -140,6 +142,7 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
+    setAvDelayError(false)
   }
 
   // helper function to get appropriate icon based on communication status
@@ -254,6 +257,15 @@ function Dashboard(): JSX.Element {
         break
       default:
         break
+    case 'avDelay':
+      dispatch({
+        type: 'UPDATE_MODE_SETTINGS',
+        payload: {
+          mode: currentMode,
+          settings: { avDelay: parseFloat(normalizedValue) || 0 },
+        },
+      })
+      break
     }
   }
 
@@ -268,6 +280,7 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
+    setAvDelayError(false)
 
     // just set the values back to previous values based on the submitted mode
     switch (submittedMode) {
@@ -449,6 +462,7 @@ function Dashboard(): JSX.Element {
               ventricularRefractoryPeriod: dddrSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: dddrSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: dddrSettings.settings?.upperRateLimit ?? 0,
+              avDelay: dddrSettings.settings?.avDelay ?? 0,
             },
           },
         })
@@ -472,6 +486,7 @@ function Dashboard(): JSX.Element {
               ventricularRefractoryPeriod: dddSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: dddSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: dddSettings.settings?.upperRateLimit ?? 0,
+              avDelay: dddSettings.settings?.avDelay ?? 0,
             },
           },
         })
@@ -568,7 +583,15 @@ function Dashboard(): JSX.Element {
         setVentricleRPError(false)
       }
     }
-
+    if (currentMode === 'DDDR' || currentMode === 'DDD') {
+      if (modes[currentMode].avDelay < 30 || modes[currentMode].avDelay > 300) {
+        addToast('AV Delay must be between 30 and 300 ms', 'error')
+        setAvDelayError(true)
+        isValid = false
+      } else {
+        setAvDelayError(false)
+      }
+    }
     if (currentMode !== 'OFF') {
       if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
         addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
@@ -576,7 +599,6 @@ function Dashboard(): JSX.Element {
         isValid = false
       }
 
-      /// TODO: i just picked random numbers for the upper rate limit for now
       if (modes[currentMode].upperRateLimit < 50 || modes[currentMode].upperRateLimit > 175) {
         addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
         setUpperRateLimitError(true)
@@ -603,6 +625,7 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
+    setAvDelayError(false)
 
     // quit early if the input is not valid
     const isValid = validateInput()
@@ -619,6 +642,7 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
+    setAvDelayError(false)
 
     // e.preventDefault()
     // based on selected mode, call the appropriate ipc channel with
@@ -788,7 +812,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0
+          modes[currentMode].upperRateLimit !== 0 &&
+          modes[currentMode].avDelay !== 0
         ) {
           window.api.setUser(username, 'DDDR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -799,6 +824,7 @@ function Dashboard(): JSX.Element {
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            avDelay: modes[currentMode].avDelay,
           })
         }
         setSubmittedMode('DDDR')
@@ -813,7 +839,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0
+          modes[currentMode].upperRateLimit !== 0 &&
+          modes[currentMode].avDelay !== 0
         ) {
           window.api.setUser(username, 'DDD', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -824,6 +851,7 @@ function Dashboard(): JSX.Element {
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            avDelay: modes[currentMode].avDelay,
           })
         }
         setSubmittedMode('DDD')
@@ -863,6 +891,7 @@ function Dashboard(): JSX.Element {
     modes[currentMode]?.ventricularRefractoryPeriod,
     modes[currentMode]?.lowerRateLimit,
     modes[currentMode]?.upperRateLimit,
+    modes[currentMode]?.avDelay,
     currentMode,
   ])
 
@@ -1021,6 +1050,7 @@ function Dashboard(): JSX.Element {
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  avDelay: settings?.avDelay ?? 0,
                 },
               },
             })
@@ -1040,6 +1070,7 @@ function Dashboard(): JSX.Element {
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  avDelay: settings?.avDelay ?? 0,
                 },
               },
             })
@@ -1071,7 +1102,7 @@ function Dashboard(): JSX.Element {
       <MainContent
         submittedMode={submittedMode}
         telemetry={telemetry}
-        pacemakerBPM={pacemakerBPM}
+        telemetryRate={telemetryRate}
         isRightSidebarVisible={isRightSidebarVisible}
       />
 
@@ -1091,8 +1122,10 @@ function Dashboard(): JSX.Element {
         ventricleRPError={ventricleRPError}
         lowerRateLimitError={lowerRateLimitError}
         upperRateLimitError={upperRateLimitError}
+        avDelayError={avDelayError}
         isAtriumDisabled={isAtriumDisabled}
         isVentricleDisabled={isVentricleDisabled}
+        isAvDelayDisabled={isAvDelayDisabled}
         isRateLimitDisabled={isRateLimitDisabled}
         telemetryStatus={telemetryStatus}
         currentMode={currentMode}

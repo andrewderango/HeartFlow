@@ -29,8 +29,10 @@ interface RightSidebarProps {
   ventricleRPError: boolean
   lowerRateLimitError: boolean
   upperRateLimitError: boolean
+  avDelayError: boolean
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
+  isAvDelayDisabled: boolean
   isRateLimitDisabled: boolean
   telemetryStatus: string
   currentMode:
@@ -64,8 +66,10 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   ventricleRPError,
   lowerRateLimitError,
   upperRateLimitError,
+  avDelayError,
   isAtriumDisabled,
   isVentricleDisabled,
+  isAvDelayDisabled,
   isRateLimitDisabled,
   telemetryStatus,
   currentMode,
@@ -103,7 +107,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         input.classList.remove('filled')
       }
     })
-  }, [isAtriumDisabled, isVentricleDisabled, isRateLimitDisabled])
+  }, [isAtriumDisabled, isVentricleDisabled, isAvDelayDisabled, isRateLimitDisabled])
 
   useEffect(() => {
     if (view === 'PARAMETERS') {
@@ -342,6 +346,34 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 </label>
               </div>
             </div>
+            <div className="input-row">
+              <div className={`input-container ${avDelayError ? 'validation-error' : ''}`}>
+                  <input
+                    type="number"
+                    className="input-field"
+                    onChange={handleInputChange}
+                    disabled={isAvDelayDisabled}
+                    value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
+                    name="avDelay"
+                  />
+                  <label className={isAvDelayDisabled ? 'disabled-label' : ''}>
+                    AV Delay
+                  </label>
+                </div>
+              </div>
+              {/* <div className={`input-container ${lowerRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.lowerRateLimit ?? '')}
+                  name="lowerRateLimit"
+                />
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
+                  Lower Rate Limit
+                </label>
+              </div> */}
             {/* <div className="input-row">
               <div className={`input-container-long ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
