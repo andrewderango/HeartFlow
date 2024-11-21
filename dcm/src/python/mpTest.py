@@ -4,7 +4,7 @@ import multiprocessing
 import asyncio
 import datetime
 import os
-from SerialMP import PacemakerMPSerial, PMPSerialMsgType
+from SerialMP import PacemakerMPSerial, PMPSerialMsgType, PMParameters
 
 log_queue = multiprocessing.Queue()
 
@@ -66,6 +66,24 @@ async def main():
     try:
         while not reconnect_fail.is_set():
             logger.debug("[MAIN] Main event loop doing something...")
+            test = PMParameters(
+                mode=100,
+                lrl=100,
+                url=130,
+                arp=150,
+                vrp=0,
+                apw=10,
+                vpw=0,
+                aamp=5,
+                vamp=0,
+                asens=5,
+                vsens=0,
+            )
+            res = pm_serial.send_parameters(test)
+            if res.status == PMPSerialMsgType.SUCCESS:
+                logger.debug("[MAIN] Parameters sent successfully")
+            else:
+                logger.error("[MAIN] Failed to send parameters")
             await asyncio.sleep(1)
     except asyncio.CancelledError:
         logger.debug("[MAIN] Main event loop cancelled, cleaning up...")

@@ -150,9 +150,19 @@ class PacemakerMPSerial:
 
             time.sleep(0.1)
 
-    def __block_until_fulfilled(self, msg_id: int) -> Msg:
+    def __block_until_fulfilled(self, msg_id: int, timeout: float = 5) -> Msg:
+        time_now: float = time.time()
+
         while self.msg_log[msg_id].msg_status != MsgStatus.FULFILLED:
             logger.debug(f"[block_until_fulfilled] Waiting for message: {msg_id}")
+
+            if time.time() - time_now > timeout:
+                logger.debug(f"[block_until_fulfilled] Timeout exceeded: {msg_id}")
+                self.msg_log[msg_id] = Msg(
+                    msg_id, self.msg_log[msg_id].msg_type, MsgStatus.FAILED, None
+                )
+                return self.msg_log[msg_id]
+            
             time.sleep(0.1)
 
         logger.debug(f"[block_until_fulfilled] Message fulfilled: {msg_id}")
@@ -343,12 +353,9 @@ class PacemakerMPSerial:
             return PMPSerialMsg(PMPSerialMsgType.ERROR, "Invalid mode")
         
     def send_parameters(self, parameters: PMParameters, retry_limit: int = 5) -> PMPSerialMsg:
-        # todo: verify parameters
-
+        logger.debug(f"[send_parameters] Sending parameters: {parameters}")
         # create the message here as it can be reused
-        msg_id = self.__create_msg(0x03)
         req = bytearray(82)
-        req[0] = msg_id
         req[1] = 0x03
         req[2] = parameters.mode
         req[3] = parameters.lrl
@@ -362,4 +369,46 @@ class PacemakerMPSerial:
         req[19:23] = struct.pack("<f", parameters.asens)
         req[23:27] = struct.pack("<f", parameters.vsens)
 
-        raise NotImplementedError("Method not implemented")
+        for _ in range(retry_limit):
+            try:
+                logger.debug(f"[send_parameters] Attempting to send parameters: {req}")
+                msg_id = self.__create_msg(0x03)
+                req[0] = msg_id
+                self.__send_raw(req)
+                res = self.__block_until_fulfilled(msg_id)
+                res_msg_id = res.msg_id
+                res_msg_type = res.msg_type
+                res_bytearray = res.msg
+
+                if res_msg_id == msg_id and res_msg_type == 0x03 and res_bytearray == req[2:]:
+                    logger.debug(f"[send_parameters] Parameters sent successfully, awaiting verification...")
+                    # send ack
+                    ack_msg_id = self.__create_msg(0x04)
+                    ack = bytearray(82)
+                    ack[0] = ack_msg_id
+                    ack[1] = 0x04
+                    self.__send_raw(ack)
+
+                    # wait for verification
+                    res = self.__block_until_fulfilled(ack_msg_id)
+                    res_msg_id = res.msg_id
+                    res_msg_type = res.msg_type
+                    res_bytearray = res.msg
+
+                    if res_msg_id == ack_msg_id and res_msg_type == 0x04 and res_bytearray == req[2:]:
+                        logger.debug(f"[send_parameters] Final verification successful: {res_bytearray}")
+                        return PMPSerialMsg(PMPSerialMsgType.SUCCESS, "Parameters sent successfully")
+                    else:
+                        logger.debug(f"[send_parameters] Final verification failed: {res_bytearray}")
+                        time.sleep(0.5)
+                        continue
+                else:
+                    logger.debug(f"[send_parameters] Failed to send parameters: {res_bytearray}, attempting retry...")
+                    time.sleep(0.5)
+                    continue
+            except Exception as e:
+                logger.critical(f"[send_parameters] Critical failure: {e}")
+                time.sleep(0.5)
+                continue
+
+        return PMPSerialMsg(PMPSerialMsgType.ERROR, "Failed to send parameters")
