@@ -34,19 +34,24 @@ class PMPSerialMsg(NamedTuple):
     status: PMPSerialMsgType
     msg: Optional[str]
 
+class PMPEgramData(NamedTuple):
+    timestamp: int
+    atrialSense: list[float]
+    ventricularSense: list[float]
 
 class PMParameters(NamedTuple):
-    mode: int # restrict to 0, 100, 200, 111, 221
-    lrl: int # lower rate limit
-    url: int # upper rate limit
-    arp: int # atrial refractory period
-    vrp: int # ventricular refractory period
-    apw: int # atrial pulse width
-    vpw: int # ventricular pulse width
-    aamp: float # atrial amplitude
-    vamp: float # ventricular amplitude
-    asens: float # atrial sensitivity
-    vsens: float # ventricular sensitivity
+    mode: int  # restrict to 0, 100, 200, 111, 221
+    lrl: int  # lower rate limit
+    url: int  # upper rate limit
+    arp: int  # atrial refractory period
+    vrp: int  # ventricular refractory period
+    apw: int  # atrial pulse width
+    vpw: int  # ventricular pulse width
+    aamp: float  # atrial amplitude
+    vamp: float  # ventricular amplitude
+    asens: float  # atrial sensitivity
+    vsens: float  # ventricular sensitivity
+
 
 class PacemakerMPSerial:
     def __init__(self, baudrate: int, msg_size: int) -> None:
@@ -62,8 +67,11 @@ class PacemakerMPSerial:
         self.poll_running = self.manager.Value("b", False)
         self.connected = self.manager.Value("b", False)
         self.connecting = self.manager.Value("b", True)
+        self.cleanup_flag = self.manager.Value("b", False)
         self.msg_log: Dict[int, Msg] = self.manager.dict()
         self.egram_msg_log: Dict[int, Msg] = self.manager.dict()
+        self.egram_running: bool = False
+        self.egram_lock = multiprocessing.Lock()
 
     def __read_process(
         self, read_running, msg_log: Dict[int, Msg], egram_msg_log: Dict[int, Msg]
@@ -74,8 +82,8 @@ class PacemakerMPSerial:
         msg: Optional[bytearray] = None
 
         while read_running.value:
-            if self.serial_port is not None and self.serial_port.is_open:
-                try:
+            try:
+                if self.serial_port is not None and self.serial_port.is_open:
                     logger.debug("[read_process] Waiting for data...")
 
                     if self.serial_port.in_waiting < self.msg_size:
@@ -90,10 +98,11 @@ class PacemakerMPSerial:
 
                     if msg_type == 0x05:
                         # must handle egram data separately
-                        egram_msg_log[timestamp] = Msg(
-                            msg_id, msg_type, MsgStatus.FULFILLED, msg
-                        )
-                        logger.debug(f"[read_process] Egram data received: {msg}")
+                        with self.egram_lock:
+                            egram_msg_log[timestamp] = Msg(
+                                msg_id, msg_type, MsgStatus.FULFILLED, msg
+                            )
+                            logger.debug(f"[read_process] Egram data received: {msg}")
                     elif msg_id in self.msg_log:
                         msg_log[msg_id] = Msg(
                             msg_id, msg_type, MsgStatus.FULFILLED, msg
@@ -106,51 +115,57 @@ class PacemakerMPSerial:
                         logger.debug(
                             f"[read_process] Unknown message received: {msg_id} | {msg}"
                         )
-                except Exception as e:
-                    logger.critical(f"[read_process] Critical failure: {e}")
-            else:
-                logger.debug("[read_process] Waiting for connection...")
+                else:
+                    logger.debug("[read_process] Waiting for connection...")
+            except Exception as e:
+                logger.critical(f"[read_process] Critical failure: {e}")
 
-            time.sleep(0.1)
+            time.sleep(0.01)
 
-    def __poll_process(self, poll_running, connected, connecting) -> None:
+    def __poll_process(
+        self, poll_running, connected, connecting, timeout: float = 0.5
+    ) -> None:
         logger.debug("[poll_process] Polling process started")
         while poll_running.value:
             if connected.value:
-                try:
-                    logger.debug("[poll_process] Polling for data...")
-                    msg_id = self.__create_msg(0x02)
-                    req = bytearray(82)
-                    req[0] = msg_id
-                    req[1] = 0x02
+                logger.debug("[poll_process] Polling for data...")
+                msg_id = self.__create_msg(0x02)
+                req = bytearray(82)
+                req[0] = msg_id
+                req[1] = 0x02
 
-                    self.__send_raw(req)
-                    res = self.__block_until_fulfilled(msg_id)
-                    res_msg_id = res.msg_id
-                    res_msg_type = res.msg_type
-                    res_bytearray = res.msg
-                    res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
+                self.__send_raw(req)
+                res = self.__block_until_fulfilled(msg_id, timeout=timeout)
+                res_msg_id = res.msg_id
+                res_msg_type = res.msg_type
+                res_bytearray = res.msg
 
-                    if (
-                        res_msg_id == msg_id
-                        and res_msg_type == 0x02
-                        and res_pm_id == self.serial_id
-                    ):
-                        logger.debug(f"[poll_process] Polling success: {res_bytearray}")
-                    else:
-                        logger.debug(f"[poll_process] Polling failed: {res_bytearray}")
-                        connected.set(False)
-                        connecting.set(True)
-                except Exception as e:
-                    logger.critical(f"[poll_process] Critical failure: {e}")
+                if res_bytearray is None:
+                    logger.debug("[poll_process] Polling failed: No data received")
                     connected.set(False)
                     connecting.set(True)
+                    self.cleanup_flag.set(True)
+                    continue
+
+                res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
+
+                if (
+                    res_msg_id == msg_id
+                    and res_msg_type == 0x02
+                    and res_pm_id == self.serial_id
+                ):
+                    logger.debug(f"[poll_process] Polling success: {res_bytearray}")
+                else:
+                    logger.debug(f"[poll_process] Polling failed: {res_bytearray}")
+                    connected.set(False)
+                    connecting.set(True)
+                    self.cleanup_flag.set(True)
             else:
                 logger.debug("[poll_process] Waiting for connection...")
 
             time.sleep(0.1)
 
-    def __block_until_fulfilled(self, msg_id: int, timeout: float = 5) -> Msg:
+    def __block_until_fulfilled(self, msg_id: int, timeout: float = 0.5) -> Msg:
         time_now: float = time.time()
 
         while self.msg_log[msg_id].msg_status != MsgStatus.FULFILLED:
@@ -162,7 +177,7 @@ class PacemakerMPSerial:
                     msg_id, self.msg_log[msg_id].msg_type, MsgStatus.FAILED, None
                 )
                 return self.msg_log[msg_id]
-            
+
             time.sleep(0.1)
 
         logger.debug(f"[block_until_fulfilled] Message fulfilled: {msg_id}")
@@ -174,7 +189,9 @@ class PacemakerMPSerial:
         msg_id = random.randint(0, 255)
         while msg_id in self.msg_log:
             msg_id = random.randint(0, 255)
-        self.msg_log[msg_id] = Msg(msg_id, msg_type, MsgStatus.FULFILLING, None)
+
+        if msg_type != 0x05:
+            self.msg_log[msg_id] = Msg(msg_id, msg_type, MsgStatus.FULFILLING, None)
         logger.debug(f"[create_msg] Message created: {msg_id}")
         return msg_id
 
@@ -230,7 +247,10 @@ class PacemakerMPSerial:
     def __send_raw(self, payload: bytearray) -> None:
         if len(payload) != self.msg_size:
             raise ValueError("Invalid payload size")
-        self.serial_port.write(payload)
+        try:
+            self.serial_port.write(payload)
+        except Exception as e:
+            logger.critical(f"[send_raw] Critical failure: {e}")
         logger.debug(f"[send_raw] Message sent: {payload}")
 
     def close(self) -> None:
@@ -238,6 +258,16 @@ class PacemakerMPSerial:
 
     def set_pm_id(self, pm_id: int) -> None:
         self.serial_id = pm_id
+
+    def consume_egram_data(self) -> PMPEgramData:
+        with self.egram_lock:
+            if len(self.egram_msg_log) == 0:
+                return PMPEgramData(0, [], [])
+            timestamp = list(self.egram_msg_log.keys())[0]
+            msg = self.egram_msg_log.pop(timestamp)
+            atrialSense = struct.unpack("<" + "f" * 10, msg.msg[0:40])
+            ventricularSense = struct.unpack("<" + "f" * 10, msg.msg[40:80])
+            return PMPEgramData(timestamp, atrialSense, ventricularSense)
 
     def search_and_connect(self, mode: str, timeout: int = 5) -> PMPSerialMsg:
         if mode == "init":
@@ -247,49 +277,40 @@ class PacemakerMPSerial:
 
                 logger.debug(f"[search_and_connect] Scanned ports: {ports}")
                 for port in ports:
-                    try:
-                        msg_id = self.__create_msg(0x01)
+                    msg_id = self.__create_msg(0x01)
 
-                        req = bytearray(82)
-                        req[0] = msg_id
-                        req[1] = 0x01
+                    req = bytearray(82)
+                    req[0] = msg_id
+                    req[1] = 0x01
 
-                        logger.debug(
-                            f"[search_and_connect] Attempting handshake on port: {port}"
+                    logger.debug(
+                        f"[search_and_connect] Attempting handshake on port: {port}"
+                    )
+                    self.__serial_connect(port)
+                    self.__send_raw(req)
+
+                    res = self.__block_until_fulfilled(msg_id, timeout=2)
+                    res_msg_id = res.msg_id
+                    res_msg_type = res.msg_type
+                    res_bytearray = res.msg
+                    res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
+
+                    if (
+                        res_msg_id == msg_id
+                        and res_msg_type == 0x01
+                        and res_pm_id == self.serial_id
+                    ):
+                        self.serial_port_name = port
+                        self.connected.set(True)
+                        self.connecting.set(False)
+                        logger.debug(f"[search_and_connect] Connected on port: {port}")
+                        return PMPSerialMsg(
+                            PMPSerialMsgType.SUCCESS, f"Connected on port {port}"
                         )
-                        self.__serial_connect(port)
-                        self.__send_raw(req)
-
-                        res = self.__block_until_fulfilled(msg_id)
-                        res_msg_id = res.msg_id
-                        res_msg_type = res.msg_type
-                        res_bytearray = res.msg
-                        res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
-
-                        if (
-                            res_msg_id == msg_id
-                            and res_msg_type == 0x01
-                            and res_pm_id == self.serial_id
-                        ):
-                            self.serial_port_name = port
-                            self.connected.set(True)
-                            self.connecting.set(False)
-                            logger.debug(
-                                f"[search_and_connect] Connected on port: {port}"
-                            )
-                            return PMPSerialMsg(
-                                PMPSerialMsgType.SUCCESS, f"Connected on port {port}"
-                            )
-                        else:
-                            self.__serial_close()
-                            logger.debug(
-                                f"[search_and_connect] Failed handshake on port: {port}"
-                            )
-                    except Exception as e:
-                        self.msg_log.pop(msg_id)
+                    else:
                         self.__serial_close()
-                        logger.critical(
-                            f"[search_and_connect] Critical failure on port: {port} | {e}"
+                        logger.debug(
+                            f"[search_and_connect] Failed handshake on port: {port}"
                         )
 
         elif mode == "reconnect":
@@ -301,49 +322,40 @@ class PacemakerMPSerial:
 
                 logger.debug(f"[search_and_connect] Scanned ports: {ports}")
                 for port in ports:
-                    try:
-                        msg_id = self.__create_msg(0x01)
+                    msg_id = self.__create_msg(0x01)
 
-                        req = bytearray(82)
-                        req[0] = msg_id
-                        req[1] = 0x01
+                    req = bytearray(82)
+                    req[0] = msg_id
+                    req[1] = 0x01
 
-                        logger.debug(
-                            f"[search_and_connect] Attempting handshake on port: {port}"
+                    logger.debug(
+                        f"[search_and_connect] Attempting handshake on port: {port}"
+                    )
+                    self.__serial_connect(port)
+                    self.__send_raw(req)
+
+                    res = self.__block_until_fulfilled(msg_id)
+                    res_msg_id = res.msg_id
+                    res_msg_type = res.msg_type
+                    res_bytearray = res.msg
+                    res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
+
+                    if (
+                        res_msg_id == msg_id
+                        and res_msg_type == 0x01
+                        and res_pm_id == self.serial_id
+                    ):
+                        self.serial_port_name = port
+                        self.connected.set(True)
+                        self.connecting.set(False)
+                        logger.debug(f"[search_and_connect] Connected on port: {port}")
+                        return PMPSerialMsg(
+                            PMPSerialMsgType.SUCCESS, f"Connected on port {port}"
                         )
-                        self.__serial_connect(port)
-                        self.__send_raw(req)
-
-                        res = self.__block_until_fulfilled(msg_id)
-                        res_msg_id = res.msg_id
-                        res_msg_type = res.msg_type
-                        res_bytearray = res.msg
-                        res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
-
-                        if (
-                            res_msg_id == msg_id
-                            and res_msg_type == 0x01
-                            and res_pm_id == self.serial_id
-                        ):
-                            self.serial_port_name = port
-                            self.connected.set(True)
-                            self.connecting.set(False)
-                            logger.debug(
-                                f"[search_and_connect] Connected on port: {port}"
-                            )
-                            return PMPSerialMsg(
-                                PMPSerialMsgType.SUCCESS, f"Connected on port {port}"
-                            )
-                        else:
-                            self.__serial_close()
-                            logger.debug(
-                                f"[search_and_connect] Failed handshake on port: {port}"
-                            )
-                    except Exception as e:
-                        self.msg_log.pop(msg_id)
+                    else:
                         self.__serial_close()
-                        logger.critical(
-                            f"[search_and_connect] Critical failure on port: {port} | {e}"
+                        logger.debug(
+                            f"[search_and_connect] Failed handshake on port: {port}"
                         )
 
             if self.connected.value == False:
@@ -351,8 +363,10 @@ class PacemakerMPSerial:
 
         else:
             return PMPSerialMsg(PMPSerialMsgType.ERROR, "Invalid mode")
-        
-    def send_parameters(self, parameters: PMParameters, retry_limit: int = 5) -> PMPSerialMsg:
+
+    def send_parameters(
+        self, parameters: PMParameters, retry_limit: int = 5
+    ) -> PMPSerialMsg:
         logger.debug(f"[send_parameters] Sending parameters: {parameters}")
         # create the message here as it can be reused
         req = bytearray(82)
@@ -370,45 +384,110 @@ class PacemakerMPSerial:
         req[23:27] = struct.pack("<f", parameters.vsens)
 
         for _ in range(retry_limit):
-            try:
-                logger.debug(f"[send_parameters] Attempting to send parameters: {req}")
-                msg_id = self.__create_msg(0x03)
-                req[0] = msg_id
-                self.__send_raw(req)
-                res = self.__block_until_fulfilled(msg_id)
+            # explicitly check for connection status
+            if not self.connected.value:
+                return PMPSerialMsg(PMPSerialMsgType.ERROR, "Not connected")
+
+            logger.debug(f"[send_parameters] Attempting to send parameters: {req}")
+            msg_id = self.__create_msg(0x03)
+            req[0] = msg_id
+            self.__send_raw(req)
+            res = self.__block_until_fulfilled(msg_id)
+            res_msg_id = res.msg_id
+            res_msg_type = res.msg_type
+            res_bytearray = res.msg
+
+            if (
+                res_msg_id == msg_id
+                and res_msg_type == 0x03
+                and res_bytearray == req[2:]
+            ):
+                logger.debug(
+                    f"[send_parameters] Parameters sent successfully, awaiting verification..."
+                )
+                # send ack
+                ack_msg_id = self.__create_msg(0x04)
+                ack = bytearray(82)
+                ack[0] = ack_msg_id
+                ack[1] = 0x04
+                self.__send_raw(ack)
+
+                # wait for verification
+                res = self.__block_until_fulfilled(ack_msg_id)
                 res_msg_id = res.msg_id
                 res_msg_type = res.msg_type
                 res_bytearray = res.msg
 
-                if res_msg_id == msg_id and res_msg_type == 0x03 and res_bytearray == req[2:]:
-                    logger.debug(f"[send_parameters] Parameters sent successfully, awaiting verification...")
-                    # send ack
-                    ack_msg_id = self.__create_msg(0x04)
-                    ack = bytearray(82)
-                    ack[0] = ack_msg_id
-                    ack[1] = 0x04
-                    self.__send_raw(ack)
-
-                    # wait for verification
-                    res = self.__block_until_fulfilled(ack_msg_id)
-                    res_msg_id = res.msg_id
-                    res_msg_type = res.msg_type
-                    res_bytearray = res.msg
-
-                    if res_msg_id == ack_msg_id and res_msg_type == 0x04 and res_bytearray == req[2:]:
-                        logger.debug(f"[send_parameters] Final verification successful: {res_bytearray}")
-                        return PMPSerialMsg(PMPSerialMsgType.SUCCESS, "Parameters sent successfully")
-                    else:
-                        logger.debug(f"[send_parameters] Final verification failed: {res_bytearray}")
-                        time.sleep(0.5)
-                        continue
+                if (
+                    res_msg_id == ack_msg_id
+                    and res_msg_type == 0x04
+                    and res_bytearray == req[2:]
+                ):
+                    logger.debug(
+                        f"[send_parameters] Final verification successful: {res_bytearray}"
+                    )
+                    return PMPSerialMsg(
+                        PMPSerialMsgType.SUCCESS, "Parameters sent successfully"
+                    )
                 else:
-                    logger.debug(f"[send_parameters] Failed to send parameters: {res_bytearray}, attempting retry...")
+                    logger.debug(
+                        f"[send_parameters] Final verification failed: {res_bytearray}"
+                    )
                     time.sleep(0.5)
                     continue
-            except Exception as e:
-                logger.critical(f"[send_parameters] Critical failure: {e}")
+            else:
+                logger.debug(
+                    f"[send_parameters] Failed to send parameters: {res_bytearray}, attempting retry..."
+                )
                 time.sleep(0.5)
                 continue
 
         return PMPSerialMsg(PMPSerialMsgType.ERROR, "Failed to send parameters")
+
+    def toggle_egram(
+        self, use_internal: bool = True, explicit_command: bool = False
+    ) -> PMPSerialMsg:
+        if use_internal:
+            if self.egram_running:
+                self.egram_running = False
+                msg_id = self.__create_msg(0x05)
+                req = bytearray(82)
+                req[0] = msg_id
+                req[1] = 0x05
+                req[2] = 0x00
+
+                self.__send_raw(req)
+                logger.debug("[toggle_egram] Egram stopped, internal toggle")
+            else:
+                self.egram_running = True
+                msg_id = self.__create_msg(0x05)
+                req = bytearray(82)
+                req[0] = msg_id
+                req[1] = 0x05
+                req[2] = 0xFF
+
+                self.__send_raw(req)
+                logger.debug("[toggle_egram] Egram started, internal toggle")
+        else:
+            if explicit_command:
+                self.egram_running = True
+                msg_id = self.__create_msg(0x05)
+                req = bytearray(82)
+                req[0] = msg_id
+                req[1] = 0x05
+                req[2] = 0xFF
+
+                self.__send_raw(req)
+                logger.debug("[toggle_egram] Egram started, explicit toggle")
+            else:
+                self.egram_running = False
+                msg_id = self.__create_msg(0x05)
+                req = bytearray(82)
+                req[0] = msg_id
+                req[1] = 0x05
+                req[2] = 0x00
+
+                self.__send_raw(req)
+                logger.debug("[toggle_egram] Egram stopped, explicit toggle")
+
+        return PMPSerialMsg(PMPSerialMsgType.SUCCESS, "Egram toggled")

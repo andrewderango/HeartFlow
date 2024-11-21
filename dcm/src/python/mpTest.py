@@ -48,7 +48,7 @@ async def verify_reconnect(pm_serial: PacemakerMPSerial):
         else:
             logger.debug("[RECONNECT] Connection is alive")
 
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
 
 async def main():
     logger.debug("[MAIN] Connecting to pacemaker")
@@ -62,29 +62,43 @@ async def main():
         exit(1)
     
     reconnect_task = asyncio.create_task(verify_reconnect(pm_serial))
+    test_counter = 0
     
     try:
         while not reconnect_fail.is_set():
-            logger.debug("[MAIN] Main event loop doing something...")
-            test = PMParameters(
-                mode=100,
-                lrl=100,
-                url=130,
-                arp=150,
-                vrp=0,
-                apw=10,
-                vpw=0,
-                aamp=5,
-                vamp=0,
-                asens=5,
-                vsens=0,
-            )
-            res = pm_serial.send_parameters(test)
-            if res.status == PMPSerialMsgType.SUCCESS:
-                logger.debug("[MAIN] Parameters sent successfully")
-            else:
-                logger.error("[MAIN] Failed to send parameters")
-            await asyncio.sleep(1)
+            while pm_serial.connected.value:
+                logger.debug("[MAIN] Main event loop doing something...")
+                test = PMParameters(
+                    mode=100,
+                    lrl=100,
+                    url=130,
+                    arp=150,
+                    vrp=0,
+                    apw=10,
+                    vpw=0,
+                    aamp=5,
+                    vamp=0,
+                    asens=5,
+                    vsens=0,
+                )
+                res = pm_serial.send_parameters(test)
+                if res.status == PMPSerialMsgType.SUCCESS:
+                    logger.debug("[MAIN] Parameters sent successfully")
+                else:
+                    logger.error("[MAIN] Failed to send parameters")
+
+                if (test_counter % 5) == 0:
+                    pm_serial.toggle_egram()
+                    logger.debug("[MAIN] Toggled egram")
+                
+                test_counter += 1
+
+                if pm_serial.cleanup_flag.value:
+                    pm_serial.close()
+                    pm_serial.cleanup_flag.set(False)
+                    logger.debug("[MAIN] Pacemaker disconnected, cleaning up...")
+
+                await asyncio.sleep(0.1)
     except asyncio.CancelledError:
         logger.debug("[MAIN] Main event loop cancelled, cleaning up...")
     except KeyboardInterrupt:
