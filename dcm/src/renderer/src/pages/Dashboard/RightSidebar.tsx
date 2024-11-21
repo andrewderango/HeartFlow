@@ -29,9 +29,11 @@ interface RightSidebarProps {
   ventricleRPError: boolean
   lowerRateLimitError: boolean
   upperRateLimitError: boolean
+  rateFactorError: boolean
   avDelayError: boolean
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
+  isRateFactorDisabled: boolean
   isAvDelayDisabled: boolean
   isRateLimitDisabled: boolean
   telemetryStatus: string
@@ -66,9 +68,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   ventricleRPError,
   lowerRateLimitError,
   upperRateLimitError,
+  rateFactorError,
   avDelayError,
   isAtriumDisabled,
   isVentricleDisabled,
+  isRateFactorDisabled,
   isAvDelayDisabled,
   isRateLimitDisabled,
   telemetryStatus,
@@ -107,7 +111,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         input.classList.remove('filled')
       }
     })
-  }, [isAtriumDisabled, isVentricleDisabled, isAvDelayDisabled, isRateLimitDisabled])
+  }, [isAtriumDisabled, isVentricleDisabled, isAvDelayDisabled, isRateFactorDisabled, isRateLimitDisabled])
 
   useEffect(() => {
     if (view === 'PARAMETERS') {
@@ -347,33 +351,34 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container ${avDelayError ? 'validation-error' : ''}`}>
+              <div className={`input-container ${rateFactorError ? 'validation-error' : ''}`}>
                   <input
                     type="number"
                     className="input-field"
                     onChange={handleInputChange}
-                    disabled={isAvDelayDisabled}
-                    value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
-                    name="avDelay"
+                    disabled={isRateFactorDisabled}
+                    value={isRateFactorDisabled ? '' : (modes[currentMode]?.rateFactor ?? '')}
+                    name="rateFactor"
                   />
-                  <label className={isAvDelayDisabled ? 'disabled-label' : ''}>
-                    AV Delay
+                  <label className={isRateFactorDisabled ? 'disabled-label' : ''}>
+                    Rate Factor
                   </label>
                 </div>
-              </div>
-              {/* <div className={`input-container ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container ${lowerRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
                   onChange={handleInputChange}
-                  disabled={isRateLimitDisabled}
-                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.lowerRateLimit ?? '')}
-                  name="lowerRateLimit"
+                  disabled={isAvDelayDisabled}
+                  value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
+                  name="avDelay"
                 />
                 <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
-                  Lower Rate Limit
+                  AV Delay
                 </label>
-              </div> */}
+              </div>
+            </div>
+          </div>
             {/* <div className="input-row">
               <div className={`input-container-long ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
@@ -389,7 +394,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 </label>
               </div>
             </div> */}
-          </div>
 
           {/* Submit and Discard Buttons */}
           <div className="button-container">

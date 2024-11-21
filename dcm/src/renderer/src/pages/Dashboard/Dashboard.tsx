@@ -64,12 +64,14 @@ function Dashboard(): JSX.Element {
   const [ventricleRPError, setVentricleRPError] = useState<boolean>(false)
   const [lowerRateLimitError, setLowerRateLimitError] = useState<boolean>(false)
   const [upperRateLimitError, setUpperRateLimitError] = useState<boolean>(false)
+  const [rateFactorError, setRateFactorError] = useState<boolean>(false)
   const [avDelayError, setAvDelayError] = useState<boolean>(false)
 
   // have to convert the variables to state variables to force a rerender
   const [isAtriumDisabled, setIsAtriumDisabled] = useState<boolean>(false)
   const [isVentricleDisabled, setIsVentricleDisabled] = useState<boolean>(false)
   const [isRateLimitDisabled, setIsRateLimitDisabled] = useState<boolean>(false)
+  const [isRateFactorDisabled, setIsRateFactorDisabled] = useState<boolean>(false)
   const [isAvDelayDisabled, setIsAvDelayDisabled] = useState<boolean>(false)
   const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(true)
 
@@ -93,6 +95,7 @@ function Dashboard(): JSX.Element {
         currentMode === 'AAIR',
     )
     setIsAvDelayDisabled(currentMode !== 'DDDR' && currentMode !== 'DDD')
+    setIsRateFactorDisabled(currentMode !== 'DDDR' && currentMode !== 'AOOR' && currentMode !== 'AAIR' && currentMode !== 'VOOR' && currentMode !== 'VVIR')
     setIsRateLimitDisabled(currentMode === 'OFF')
   }, [currentMode])
 
@@ -142,6 +145,7 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
+    setRateFactorError(false)
     setAvDelayError(false)
   }
 
@@ -255,17 +259,26 @@ function Dashboard(): JSX.Element {
           },
         })
         break
+      case 'rateFactor':
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { rateFactor: parseFloat(normalizedValue) || 0 },
+          },
+        })
+        break
+      case 'avDelay':
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { avDelay: parseFloat(normalizedValue) || 0 },
+          },
+        })
+        break
       default:
         break
-    case 'avDelay':
-      dispatch({
-        type: 'UPDATE_MODE_SETTINGS',
-        payload: {
-          mode: currentMode,
-          settings: { avDelay: parseFloat(normalizedValue) || 0 },
-        },
-      })
-      break
     }
   }
 
@@ -280,6 +293,7 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
+    setRateFactorError(false)
     setAvDelayError(false)
 
     // just set the values back to previous values based on the submitted mode
@@ -379,6 +393,7 @@ function Dashboard(): JSX.Element {
               atrialRefractoryPeriod: aoorSettings.settings?.atrialRefractoryPeriod ?? 0,
               lowerRateLimit: aoorSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: aoorSettings.settings?.upperRateLimit ?? 0,
+              rateFactor: aoorSettings.settings?.rateFactor ?? 0,
             },
           },
         })
@@ -399,6 +414,7 @@ function Dashboard(): JSX.Element {
               ventricularRefractoryPeriod: voorSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: voorSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: voorSettings.settings?.upperRateLimit ?? 0,
+              rateFactor: voorSettings.settings?.rateFactor
             },
           },
         })
@@ -419,6 +435,7 @@ function Dashboard(): JSX.Element {
               atrialRefractoryPeriod: aairSettings.settings?.atrialRefractoryPeriod ?? 0,
               lowerRateLimit: aairSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: aairSettings.settings?.upperRateLimit ?? 0,
+              rateFactor: aairSettings.settings?.rateFactor ?? 0,
             },
           },
         })
@@ -439,6 +456,7 @@ function Dashboard(): JSX.Element {
               ventricularRefractoryPeriod: vvirSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: vvirSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: vvirSettings.settings?.upperRateLimit ?? 0,
+              rateFactor: vvirSettings.settings?.rateFactor ?? 0,
             },
           },
         })
@@ -462,6 +480,7 @@ function Dashboard(): JSX.Element {
               ventricularRefractoryPeriod: dddrSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: dddrSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: dddrSettings.settings?.upperRateLimit ?? 0,
+              rateFactor: dddrSettings.settings?.rateFactor ?? 0,
               avDelay: dddrSettings.settings?.avDelay ?? 0,
             },
           },
@@ -583,6 +602,15 @@ function Dashboard(): JSX.Element {
         setVentricleRPError(false)
       }
     }
+    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
+      if (modes[currentMode].rateFactor < 1 || modes[currentMode].rateFactor > 16) {
+        addToast('Rate Factor must be between 1 and 16', 'error')
+        setRateFactorError(true)
+        isValid = false
+      } else {
+        setRateFactorError(false)
+      }
+    }
     if (currentMode === 'DDDR' || currentMode === 'DDD') {
       if (modes[currentMode].avDelay < 30 || modes[currentMode].avDelay > 300) {
         addToast('AV Delay must be between 30 and 300 ms', 'error')
@@ -625,6 +653,7 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
+    setRateFactorError(false)
     setAvDelayError(false)
 
     // quit early if the input is not valid
@@ -642,6 +671,7 @@ function Dashboard(): JSX.Element {
     setVentricleRPError(false)
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
+    setRateFactorError(false)
     setAvDelayError(false)
 
     // e.preventDefault()
@@ -733,7 +763,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0
+          modes[currentMode].upperRateLimit !== 0 && 
+          modes[currentMode].rateFactor !== 0
         ) {
           window.api.setUser(username, 'AOOR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -741,6 +772,7 @@ function Dashboard(): JSX.Element {
             atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            rateFactor: modes[currentMode].rateFactor,
           })
         }
         setSubmittedMode('AOOR')
@@ -752,7 +784,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0
+          modes[currentMode].upperRateLimit !== 0 &&
+          modes[currentMode].rateFactor !== 0
         ) {
           window.api.setUser(username, 'VOOR', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
@@ -760,6 +793,7 @@ function Dashboard(): JSX.Element {
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            rateFactor: modes[currentMode].rateFactor,
           })
         }
         setSubmittedMode('VOOR')
@@ -771,7 +805,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0
+          modes[currentMode].upperRateLimit !== 0 &&
+          modes[currentMode].rateFactor !== 0
         ) {
           window.api.setUser(username, 'AAIR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -779,6 +814,7 @@ function Dashboard(): JSX.Element {
             atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            rateFactor: modes[currentMode].rateFactor,
           })
         }
         setSubmittedMode('AAIR')
@@ -790,7 +826,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0
+          modes[currentMode].upperRateLimit !== 0 &&
+          modes[currentMode].rateFactor !== 0
         ) {
           window.api.setUser(username, 'VVIR', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
@@ -798,6 +835,7 @@ function Dashboard(): JSX.Element {
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            rateFactor: modes[currentMode].rateFactor,
           })
         }
         setSubmittedMode('VVIR')
@@ -813,6 +851,7 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
           modes[currentMode].upperRateLimit !== 0 &&
+          modes[currentMode].rateFactor !== 0 &&
           modes[currentMode].avDelay !== 0
         ) {
           window.api.setUser(username, 'DDDR', {
@@ -824,6 +863,7 @@ function Dashboard(): JSX.Element {
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            rateFactor: modes[currentMode].rateFactor,
             avDelay: modes[currentMode].avDelay,
           })
         }
@@ -891,6 +931,7 @@ function Dashboard(): JSX.Element {
     modes[currentMode]?.ventricularRefractoryPeriod,
     modes[currentMode]?.lowerRateLimit,
     modes[currentMode]?.upperRateLimit,
+    modes[currentMode]?.rateFactor,
     modes[currentMode]?.avDelay,
     currentMode,
   ])
@@ -983,6 +1024,7 @@ function Dashboard(): JSX.Element {
                   atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  rateFactor: settings?.rateFactor ?? 0,
                 },
               },
             })
@@ -999,6 +1041,7 @@ function Dashboard(): JSX.Element {
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  rateFactor: settings?.rateFactor ?? 0,
                 },
               },
             })
@@ -1015,6 +1058,7 @@ function Dashboard(): JSX.Element {
                   atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  rateFactor: settings?.rateFactor ?? 0,
                 },
               },
             })
@@ -1031,6 +1075,7 @@ function Dashboard(): JSX.Element {
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  rateFactor: settings?.rateFactor ?? 0,
                 },
               },
             })
@@ -1050,6 +1095,7 @@ function Dashboard(): JSX.Element {
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  rateFactor: settings?.rateFactor ?? 0,
                   avDelay: settings?.avDelay ?? 0,
                 },
               },
@@ -1122,9 +1168,11 @@ function Dashboard(): JSX.Element {
         ventricleRPError={ventricleRPError}
         lowerRateLimitError={lowerRateLimitError}
         upperRateLimitError={upperRateLimitError}
+        rateFactorError={rateFactorError}
         avDelayError={avDelayError}
         isAtriumDisabled={isAtriumDisabled}
         isVentricleDisabled={isVentricleDisabled}
+        isRateFactorDisabled={isRateFactorDisabled}
         isAvDelayDisabled={isAvDelayDisabled}
         isRateLimitDisabled={isRateLimitDisabled}
         telemetryStatus={telemetryStatus}

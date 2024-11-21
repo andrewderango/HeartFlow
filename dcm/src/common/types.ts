@@ -60,6 +60,7 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
       avDelay: number
     }
     DDD: {
@@ -79,6 +80,7 @@ export interface User {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
     }
     AAIR: {
       atrialAmplitude: number
@@ -86,6 +88,7 @@ export interface User {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
     }
     VOOR: {
       ventricularAmplitude: number
@@ -93,6 +96,7 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
     }
     VVIR: {
       ventricularAmplitude: number
@@ -103,6 +107,7 @@ export interface User {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
     }
   }
   lastUsedMode?: Mode
@@ -152,6 +157,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
         avDelay: 0,
       },
       DDD: {
@@ -171,6 +177,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
       },
       AAIR: {
         atrialAmplitude: 0,
@@ -178,6 +185,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
       },
       VOOR: {
         ventricularAmplitude: 0,
@@ -185,6 +193,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
       },
       VVIR: {
         ventricularAmplitude: 0,
@@ -195,6 +204,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
       },
     },
     lastUsedMode: 'OFF',
