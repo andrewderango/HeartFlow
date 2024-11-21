@@ -199,14 +199,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             </div>
           </div>
 
+          <div className="header-with-help">
+            <h3>Continuous Parameters</h3>
+            <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
+              <Info size={14} />
+            </button>
+          </div>
           {/* Continuous Parameters */}
-          <div className="parameter-container">
-            <div className="header-with-help">
-              <h3>Continuous Parameters</h3>
-              <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
-                <Info size={14} />
-              </button>
-            </div>
+          <div className="parameter-container scrollable no-scrollbar">
             {helpOpen && (
               <div className="help-popup" ref={helpRef}>
                 <div className="help-header">
@@ -347,6 +347,34 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Upper Rate Limit
+                </label>
+              </div>
+            </div>
+            <div className="input-row">
+              <div className={`input-container ${rateFactorError ? 'validation-error' : ''}`}>
+                  <input
+                    type="number"
+                    className="input-field"
+                    onChange={handleInputChange}
+                    disabled={isRateFactorDisabled}
+                    value={isRateFactorDisabled ? '' : (modes[currentMode]?.rateFactor ?? '')}
+                    name="rateFactor"
+                  />
+                  <label className={isRateFactorDisabled ? 'disabled-label' : ''}>
+                    Rate Factor
+                  </label>
+                </div>
+              <div className={`input-container ${avDelayError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAvDelayDisabled}
+                  value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
+                  name="avDelay"
+                />
+                <label className={isAvDelayDisabled ? 'disabled-label' : ''}>
+                  AV Delay
                 </label>
               </div>
             </div>
