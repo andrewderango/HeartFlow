@@ -8,10 +8,13 @@ from websockets.asyncio.server import serve
 from SerialMP import PacemakerMPSerial, PMPSerialMsgType, PMParameters
 
 # setup some globals
-reconnect_task: asyncio.Task = None
 reconnect_fail: asyncio.Event = asyncio.Event()
+first_connection: asyncio.Event = asyncio.Event()
+pm_serial: PacemakerMPSerial = None
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
+# -- logging setup --
+
+logging.basicConfig(level=logging.DEBUG, format="%(message)s")
 main_logger = logging.getLogger("main")
 
 today = datetime.datetime.now()
@@ -23,11 +26,12 @@ else:
         i += 1
     today = today.strftime("%Y-%m-%d") + f"_webserver_{i}"
 file_handler = logging.handlers.RotatingFileHandler(
-    f"logs/{today}.log", maxBytes=1000000, backupCount=5
+    f"logs/{today}.log", maxBytes=10000000, backupCount=5
 )
 file_handler.setFormatter(
     logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
 )
+
 main_logger.addHandler(file_handler)
 
 serial_logger = logging.getLogger("SerialMP")
@@ -36,238 +40,270 @@ serial_logger.addHandler(file_handler)
 websockets_logger = logging.getLogger("websockets.server")
 websockets_logger.addHandler(file_handler)
 
+# -- end logging setup --
 
-async def _reconnect_handler(websocket, pm_serial: PacemakerMPSerial):
+
+async def _reconnect(websocket):
     global reconnect_fail
+    global first_connection
+    global pm_serial
+    global main_logger
 
-    while not reconnect_fail.is_set():
-        if not pm_serial.connected.value and pm_serial.connecting:
-            res = pm_serial.search_and_connect(mode="reconnect")
-            if res.status == PMPSerialMsgType.SUCCESS:
-                await websocket.send(json.dumps({"status": "reconnected"}))
-            else:
-                reconnect_fail.set()
-                await websocket.send(
-                    json.dumps({"status": "error", "message": "Failed to reconnect"})
-                )
-        else:
-            pass
-
-        await asyncio.sleep(0.1)
-
-
-async def _cleanup_handler(websocket, pm_serial: PacemakerMPSerial):
     while True:
-        if pm_serial.cleanup_flag.value:
-            main_logger.debug(
-                "[CLEANUP_HANDLER] Pacemaker disconnected, cleaning up..."
+        if (
+            pm_serial
+            and not pm_serial.connected.value
+            and pm_serial.connecting.value
+            and not first_connection.is_set()
+            and not reconnect_fail.is_set()
+        ):
+            await websocket.send(
+                json.dumps({"type": "reconnect", "status": "reconnecting"})
             )
-            pm_serial.close()
-            pm_serial.cleanup_flag.set(False)
-            await websocket.send(json.dumps({"status": "disconnected"}))
-            break
+            try:
+                pm_serial.close()
+                pm_serial = PacemakerMPSerial(baudrate=112500, msg_size=82)
+                pm_serial.set_pm_id(12697)
+                res = pm_serial.search_and_connect(mode="reconnect")
 
-        await asyncio.sleep(0.1)
-
-
-async def consumer_handler(websocket, pm_serial: PacemakerMPSerial):
-    global reconnect_task
-    global reconnect_fail
-
-    try:
-        while not reconnect_fail.is_set():
-            async for message in websocket:
-                if reconnect_fail.is_set():
-                    await websocket.send(json.dumps({"status": "disconnected"}))
-                    break
-
-                data = json.loads(message)
-
-                if data["type"] == "init":
-                    pm_id = data.get("pm_id", None)
-
-                    if pm_id is None:
-                        await websocket.send(
-                            json.dumps(
-                                {"status": "error", "message": "Missing pacemaker ID"}
-                            )
-                        )
-                        continue
-
-                    pm_serial.set_pm_id(pm_id)
-                    res = pm_serial.search_and_connect(mode="init")
-
-                    if res.status == PMPSerialMsgType.SUCCESS:
-                        reconnect_task = asyncio.create_task(
-                            _reconnect_handler(websocket, pm_serial)
-                        )
-                        await websocket.send(json.dumps({"status": "success"}))
-                    else:
-                        await websocket.send(
-                            json.dumps(
-                                {
-                                    "status": "error",
-                                    "message": "Failed to connect to pacemaker",
-                                }
-                            )
-                        )
-                elif data["type"] == "send_parameters":
-                    if not pm_serial.connected.value:
-                        await websocket.send(
-                            json.dumps(
-                                {
-                                    "status": "error",
-                                    "message": "Not connected to pacemaker",
-                                }
-                            )
-                        )
-                        continue
-
-                    parameters = data.get("parameters", None)
-
-                    if parameters is None:
-                        await websocket.send(
-                            json.dumps(
-                                {
-                                    "status": "error",
-                                    "message": "Missing parameters object",
-                                }
-                            )
-                        )
-                        continue
-
-                    params = PMParameters(
-                        mode=parameters.get("mode", 0),
-                        lrl=parameters.get("lrl", 0),
-                        url=parameters.get("url", 0),
-                        arp=parameters.get("arp", 0),
-                        vrp=parameters.get("vrp", 0),
-                        apw=parameters.get("apw", 0),
-                        vpw=parameters.get("vpw", 0),
-                        aamp=parameters.get("aamp", 0),
-                        vamp=parameters.get("vamp", 0),
-                        asens=parameters.get("asens", 0),
-                        vsens=parameters.get("vsens", 0),
+                if res.status == PMPSerialMsgType.SUCCESS:
+                    main_logger.debug("[RECONNECT] Reconnected to pacemaker")
+                    await websocket.send(
+                        json.dumps({"type": "reconnect", "status": "success"})
+                    )
+                else:
+                    main_logger.error("[RECONNECT] Failed to reconnect to pacemaker")
+                    reconnect_fail.set()
+                    pm_serial.close()
+                    pm_serial = None
+                    first_connection.set()
+                    await websocket.send(
+                        json.dumps({"type": "reconnect", "status": "failed"})
                     )
 
-                    try:
-                        res = await asyncio.to_thread(pm_serial.send_parameters, params)
+            except Exception as e:
+                main_logger.error(f"[RECONNECT] Error: {e}")
+                reconnect_fail.set()
+                pm_serial.close()
+                pm_serial = None
+                first_connection.set()
+                await websocket.send(
+                    json.dumps({"type": "reconnect", "status": "failed"})
+                )
 
-                        if res.status == PMPSerialMsgType.SUCCESS:
-                            await websocket.send(json.dumps({"status": "success"}))
-                        else:
-                            await websocket.send(
-                                json.dumps(
-                                    {
-                                        "status": "error",
-                                        "message": "Failed to send parameters",
-                                    }
-                                )
-                            )
-                    except Exception as e:
-                        main_logger.error(f"[CONSUMER_HANDLER] {e}")
-                        await websocket.send(
-                            json.dumps(
-                                {
-                                    "status": "error",
-                                    "message": "Failed to send parameters",
-                                }
-                            )
-                        )
-                elif data["type"] == "toggle_egram":
-                    if not pm_serial.connected.value:
-                        await websocket.send(
-                            json.dumps(
-                                {
-                                    "status": "error",
-                                    "message": "Not connected to pacemaker",
-                                }
-                            )
-                        )
-                        continue
+        await asyncio.sleep(0.1)
 
-                    pm_serial.toggle_egram()
-                    await websocket.send(json.dumps({"status": "success"}))
-                elif data["type"] == "disconnect":
-                    pm_serial.close()
-                    await websocket.send(json.dumps({"status": "disconnected"}))
-                else:
+
+async def _consumer_handler(websocket):
+    global pm_serial
+    global main_logger
+    global reconnect_fail
+    global first_connection
+
+    async for message in websocket:
+        data = json.loads(message)
+
+        if data["type"] == "initialize":
+            if first_connection.is_set():
+                pm_id = data.get("pm_id", None)
+
+                if not pm_id:
+                    main_logger.error("[MAIN] No pacemaker ID provided")
                     await websocket.send(
                         json.dumps(
-                            {
-                                "status": "error",
-                                "message": "Invalid message type",
-                            }
+                            {"type": "error", "message": "No pacemaker ID provided"}
                         )
                     )
+                    continue
 
-                await asyncio.sleep(0.1)
-    finally:
-        if reconnect_task:
-            reconnect_task.cancel()
-            await reconnect_task
+                pm_serial = PacemakerMPSerial(baudrate=112500, msg_size=82)
+                pm_serial.set_pm_id(pm_id)
+                res = pm_serial.search_and_connect(mode="init")
 
-        pm_serial.close()
-        main_logger.debug("[MAIN] Disconnected from pacemaker")
-
-
-async def producer_handler(websocket, pm_serial: PacemakerMPSerial):
-    global reconnect_fail
-
-    while not reconnect_fail.is_set():
-        if pm_serial.connected.value:
-            egram_data = pm_serial.consume_egram_data()
-            if egram_data == {}:
-                await asyncio.sleep(0.1)
+                if res.status == PMPSerialMsgType.SUCCESS:
+                    main_logger.debug("[MAIN] Connected to pacemaker")
+                    first_connection.clear()
+                    reconnect_fail.clear()
+                    await websocket.send(
+                        json.dumps({"type": "initialize", "status": "success"})
+                    )
+                else:
+                    main_logger.error("[MAIN] Failed to connect to pacemaker")
+                    pm_serial.close()
+                    pm_serial = None
+                    reconnect_fail.set()
+                    await websocket.send(
+                        json.dumps({"type": "initialize", "status": "failed"})
+                    )
+                    break
+            else:
+                main_logger.error("[MAIN] Already connected to pacemaker")
+                await websocket.send(
+                    json.dumps({"type": "error", "message": "Already connected"})
+                )
+        elif data["type"] == "disconnect":
+            if reconnect_fail.is_set():
+                main_logger.error("[MAIN] Already disconnected from pacemaker")
+                await websocket.send(
+                    json.dumps({"type": "error", "message": "Already disconnected"})
+                )
                 continue
 
-            res = json.dumps(
-                {
-                    "type": "egram",
-                    "data": [
-                        {
-                            "time": x,
-                            "values": {
-                                "atrialSense": y.atrialSense,
-                                "ventricularSense": y.ventricularSense,
-                            },
-                        }
-                        for x, y in egram_data.items()
-                    ],
-                }
+            if pm_serial:
+                pm_serial.close()
+                pm_serial = None
+                first_connection.set()
+                main_logger.debug("[MAIN] Disconnected from pacemaker")
+                await websocket.send(
+                    json.dumps({"type": "disconnect", "status": "success"})
+                )
+            else:
+                main_logger.error("[MAIN] Not connected to pacemaker")
+                await websocket.send(
+                    json.dumps({"type": "error", "message": "Not connected"})
+                )
+        elif data["type"] == "send_parameters":
+            if not pm_serial or reconnect_fail.is_set():
+                main_logger.error("[MAIN] Not connected to pacemaker")
+                await websocket.send(
+                    json.dumps({"type": "error", "message": "Not connected"})
+                )
+                continue
+
+            params = data.get("parameters", None)
+
+            if not params:
+                main_logger.error("[MAIN] No parameters provided")
+                await websocket.send(
+                    json.dumps({"type": "error", "message": "No parameters provided"})
+                )
+                continue
+
+            req = PMParameters(
+                mode=params.get("mode", 0),
+                lrl=params.get("lrl", 0),
+                url=params.get("url", 0),
+                arp=params.get("arp", 0),
+                vrp=params.get("vrp", 0),
+                apw=params.get("apw", 0),
+                vpw=params.get("vpw", 0),
+                aamp=params.get("aamp", 0),
+                vamp=params.get("vamp", 0),
+                asens=params.get("asens", 0),
+                vsens=params.get("vsens", 0),
             )
-            await websocket.send(res)
+
+            res = pm_serial.send_parameters(req)
+
+            if res.status == PMPSerialMsgType.SUCCESS:
+                main_logger.debug("[MAIN] Parameters sent successfully")
+                await websocket.send(
+                    json.dumps({"type": "send_parameters", "status": "success"})
+                )
+            else:
+                main_logger.error("[MAIN] Failed to send parameters")
+                await websocket.send(
+                    json.dumps({"type": "send_parameters", "status": "failed"})
+                )
+        elif data["type"] == "toggle_egram":
+            if not pm_serial or reconnect_fail.is_set():
+                main_logger.error("[MAIN] Not connected to pacemaker")
+                await websocket.send(
+                    json.dumps({"type": "error", "message": "Not connected"})
+                )
+                continue
+
+            res = pm_serial.toggle_egram()
+
+            if res.status == PMPSerialMsgType.SUCCESS:
+                main_logger.debug("[MAIN] Egram toggled")
+                await websocket.send(
+                    json.dumps({"type": "toggle_egram", "status": "success"})
+                )
+            else:
+                main_logger.error("[MAIN] Failed to toggle egram")
+                await websocket.send(
+                    json.dumps({"type": "toggle_egram", "status": "failed"})
+                )
+        else:
+            main_logger.error(f"[MAIN] Unknown message type: {data['type']}")
+            await websocket.send(
+                json.dumps({"type": "error", "message": "Unknown message type"})
+            )
+
+
+async def _producer_handler(websocket):
+    global pm_serial
+    global main_logger
+    global reconnect_fail
+
+    while True:
+        if pm_serial and pm_serial.connected.value and not reconnect_fail.is_set():
+            data = pm_serial.consume_egram_data()
+
+            return_data = {}
+
+            if data != {}:
+                for timestamp, egram_data in data.items():
+                    return_data[timestamp] = {
+                        "atrial": egram_data.atrialSense,
+                        "ventrical": egram_data.ventricularSense,
+                    }
+
+                await websocket.send(
+                    json.dumps({"type": "egram_data", "data": return_data})
+                )
 
         await asyncio.sleep(0.1)
 
 
 async def handler(websocket):
     global reconnect_fail
+    global first_connection
+    global pm_serial
+    global main_logger
 
-    pm_serial = PacemakerMPSerial(baudrate=112500, msg_size=82)
+    first_connection.set()
+    reconnect_task = asyncio.create_task(_reconnect(websocket))
+    consumer_task = asyncio.create_task(_consumer_handler(websocket))
+    producer_task = asyncio.create_task(_producer_handler(websocket))
 
-    consumer_task = asyncio.create_task(consumer_handler(websocket, pm_serial))
-    producer_task = asyncio.create_task(producer_handler(websocket, pm_serial))
-    cleanup_task = asyncio.create_task(_cleanup_handler(websocket, pm_serial))
-
-    done, pending = await asyncio.wait(
-        [consumer_task, producer_task, cleanup_task],
+    _, pending = await asyncio.wait(
+        [consumer_task, producer_task],
         return_when=asyncio.FIRST_COMPLETED,
     )
 
     for task in pending:
         task.cancel()
 
-    pm_serial.close()
+    reconnect_task.cancel()
     reconnect_fail.clear()
+
+    if pm_serial:
+        pm_serial.close()
+        pm_serial = None
 
 
 async def main():
+    global main_logger
+
     async with serve(handler, "localhost", 8765) as server:
-        await server.serve_forever()
+        main_logger.info("[MAIN] Websocket server started")
+        try:
+            while True:
+                await asyncio.sleep(0.1)
+        except asyncio.CancelledError:
+            main_logger.info("[MAIN] Websocket server stopping...")
+            server.close()
+        finally:
+            main_logger.info("[MAIN] Websocket server stopped")
+            return
 
 
 if __name__ == "__main__":
-    print("Starting webserver...")
-    asyncio.run(main())
-    print("Webserver stopped")
+    try:
+        asyncio.run(main())
+    finally:
+        main_logger.info("[MAIN] Gracefully exited.")
+        file_handler.close()
+        logging.shutdown()

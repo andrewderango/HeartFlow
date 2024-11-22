@@ -68,7 +68,6 @@ class PacemakerMPSerial:
         self.poll_running = self.manager.Value("b", False)
         self.connected = self.manager.Value("b", False)
         self.connecting = self.manager.Value("b", True)
-        self.cleanup_flag = self.manager.Value("b", False)
         self.msg_log: Dict[int, Msg] = self.manager.dict()
         self.egram_msg_log: Dict[int, Msg] = self.manager.dict()
         self.egram_running: bool = False
@@ -149,7 +148,6 @@ class PacemakerMPSerial:
                     logger.debug("[poll_process] Polling failed: No data received")
                     connected.set(False)
                     connecting.set(True)
-                    self.cleanup_flag.set(True)
                     continue
 
                 res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
@@ -164,7 +162,6 @@ class PacemakerMPSerial:
                     logger.debug(f"[poll_process] Polling failed: {res_bytearray}")
                     connected.set(False)
                     connecting.set(True)
-                    self.cleanup_flag.set(True)
             else:
                 logger.debug("[poll_process] Waiting for connection...")
 
@@ -217,24 +214,29 @@ class PacemakerMPSerial:
 
         return return_list
 
-    def __serial_connect(self, port: str) -> None:
-        self.serial_port = serial.Serial(
-            port=port,
-            baudrate=self.baudrate,
-        )
-        self.read_process = multiprocessing.Process(
-            target=self.__read_process,
-            args=(self.read_running, self.msg_log, self.egram_msg_log),
-        )
-        self.poll_process = multiprocessing.Process(
-            target=self.__poll_process,
-            args=(self.poll_running, self.connected, self.connecting),
-        )
-        self.read_running.value = True
-        self.poll_running.value = True
-        self.read_process.start()
-        self.poll_process.start()
-        logger.debug(f"[serial_connect] Connected to port: {port}")
+    def __serial_connect(self, port: str) -> bool:
+        try:
+            self.serial_port = serial.Serial(
+                port=port,
+                baudrate=self.baudrate,
+            )
+            self.read_process = multiprocessing.Process(
+                target=self.__read_process,
+                args=(self.read_running, self.msg_log, self.egram_msg_log),
+            )
+            self.poll_process = multiprocessing.Process(
+                target=self.__poll_process,
+                args=(self.poll_running, self.connected, self.connecting),
+            )
+            self.read_running.value = True
+            self.poll_running.value = True
+            self.read_process.start()
+            self.poll_process.start()
+            logger.debug(f"[serial_connect] Connected to port: {port}")
+            return True
+        except Exception as e:
+            logger.debug(f"[serial_connect] Critical failure: {e}")
+            return False
 
     def __serial_close(self) -> None:
         self.read_running.value = False
@@ -247,6 +249,8 @@ class PacemakerMPSerial:
             self.serial_port.close()
         self.serial_port = None
         self.serial_port_name = None
+        self.connected.set(False)
+        self.connecting.set(True)
         logger.debug("[serial_close] Serial port closed")
 
     def __send_raw(self, payload: bytearray) -> None:
@@ -278,7 +282,7 @@ class PacemakerMPSerial:
             self.egram_msg_log.clear()
             return egram_data
 
-    def search_and_connect(self, mode: str, timeout: int = 3) -> PMPSerialMsg:
+    def search_and_connect(self, mode: str, timeout: int = 10) -> PMPSerialMsg:
         if mode == "init":
             while True:
                 ports = self.__scan_ports()
@@ -295,7 +299,13 @@ class PacemakerMPSerial:
                     logger.debug(
                         f"[search_and_connect] Attempting handshake on port: {port}"
                     )
-                    self.__serial_connect(port)
+                    open_status = self.__serial_connect(port)
+                    if not open_status:
+                        logger.debug(
+                            f"[search_and_connect] Failed to open port: {port}"
+                        )
+                        continue
+
                     self.__send_raw(req)
 
                     res = self.__block_until_fulfilled(msg_id, timeout=2)
@@ -343,7 +353,13 @@ class PacemakerMPSerial:
                     logger.debug(
                         f"[search_and_connect] Attempting reconnect handshake on port: {port}"
                     )
-                    self.__serial_connect(port)
+                    open_status = self.__serial_connect(port)
+                    if not open_status:
+                        logger.debug(
+                            f"[search_and_connect] Failed to open port: {port}"
+                        )
+                        continue
+
                     self.__send_raw(req)
 
                     res = self.__block_until_fulfilled(msg_id)

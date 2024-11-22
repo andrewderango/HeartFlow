@@ -29,6 +29,7 @@
     "lucide-react": "^0.453.0",
     "react-router-dom": "^6.27.0",
     "uuid": "^10.0.0",
+    "ws": "^8.18.0",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
@@ -62,7 +63,7 @@
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.1",
     "postcss": "^8.4.47",
-    "postcss-color-function": "^4.1.0",
+    "postcss-color-function": "^1.2.0",
     "postcss-import": "^16.1.0",
     "postcss-mixins": "^11.0.3",
     "postcss-nested": "^6.2.0",
