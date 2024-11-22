@@ -126,21 +126,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     }
   }, [view])
 
-  useEffect(() => {
-    const parameterContainer = document.querySelector('.parameter-container');
-    const handleScroll = () => {
-      if (parameterContainer.scrollTop === 0) {
-        parameterContainer.classList.add('shadow-top');
-      } else {
-        parameterContainer.classList.remove('shadow-top');
-      }
-    };
-    parameterContainer.addEventListener('scroll', handleScroll);
-    return () => {
-      parameterContainer.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   const handleViewChange = (newView: 'PARAMETERS' | 'REPORTS') => {
     setView(newView)
   }
@@ -256,7 +241,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             )}
             <div className="input-row">
-              <div className={`input-container ${atriumAmpError ? 'validation-error' : ''}`}>
+              <div className={`input-container-triple ${atriumAmpError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -265,9 +250,33 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialAmplitude ?? '')}
                   name="atriumAmp"
                 />
-                <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium AMP</label>
+                <label className={isAtriumDisabled ? 'disabled-label' : ''}>AAMP</label>
               </div>
-              <div className={`input-container ${ventricleAmpError ? 'validation-error' : ''}`}>
+              <div className={`input-container-triple ${atrialPWError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAtriumDisabled}
+                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialPulseWidth ?? '')}
+                  name="atrialPW"
+                />
+                <label className={isAtriumDisabled ? 'disabled-label' : ''}>APW</label>
+              </div>
+              <div className={`input-container-triple ${atrialRPError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAtriumDisabled}
+                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialRefractoryPeriod ?? '')}
+                  name="atrialRP"
+                />
+                <label className={isAtriumDisabled ? 'disabled-label' : ''}>ARP</label>
+              </div>
+            </div>
+            <div className="input-row">
+              <div className={`input-container-triple ${ventricleAmpError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -278,22 +287,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   }
                   name="ventricleAmp"
                 />
-                <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle AMP</label>
+                <label className={isVentricleDisabled ? 'disabled-label' : ''}>VAMP</label>
               </div>
-            </div>
-            <div className="input-row">
-              <div className={`input-container ${atrialPWError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isAtriumDisabled}
-                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialPulseWidth ?? '')}
-                  name="atrialPW"
-                />
-                <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium PW</label>
-              </div>
-              <div className={`input-container ${ventriclePWError ? 'validation-error' : ''}`}>
+              <div className={`input-container-triple ${ventriclePWError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -304,22 +300,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   }
                   name="ventriclePW"
                 />
-                <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle PW</label>
+                <label className={isVentricleDisabled ? 'disabled-label' : ''}>VPW</label>
               </div>
-            </div>
-            <div className="input-row">
-              <div className={`input-container ${atrialRPError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isAtriumDisabled}
-                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialRefractoryPeriod ?? '')}
-                  name="atrialRP"
-                />
-                <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrial RP</label>
-              </div>
-              <div className={`input-container ${ventricleRPError ? 'validation-error' : ''}`}>
+              <div className={`input-container-triple ${ventricleRPError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -332,13 +315,22 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   }
                   name="ventricleRP"
                 />
-                <label className={isVentricleDisabled ? 'disabled-label' : ''}>
-                  Ventricular RP
-                </label>
+                <label className={isVentricleDisabled ? 'disabled-label' : ''}>VRP</label>
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container-quad ${upperRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
+                  name="upperRateLimit"
+                />
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>URL</label>
+              </div>
+              <div className={`input-container-quad ${lowerRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -347,13 +339,48 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   value={isRateLimitDisabled ? '' : (modes[currentMode]?.lowerRateLimit ?? '')}
                   name="lowerRateLimit"
                 />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
-                  Lower Rate Limit
-                </label>
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>LRL</label>
               </div>
-              <div className={`input-container ${upperRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container-quad ${avDelayError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAvDelayDisabled}
+                  value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
+                  name="avDelay"
+                />
+                <label className={isAvDelayDisabled ? 'disabled-label' : ''}>AVD</label>
+              </div>
+              <div className={`input-container-quad ${rateFactorError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateFactorDisabled}
+                  value={isRateFactorDisabled ? '' : (modes[currentMode]?.rateFactor ?? '')}
+                  name="rateFactor"
+                />
+                <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RF</label>
+              </div>
+            </div>
+            <div className="input-row">
+              <div className={`input-container-double ${upperRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="text"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
+                  name="upperRateLimit"
+                />
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
+                  Upper Rate Limit
+                </label>
+              </div>
+              <div className={`input-container-double ${upperRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="text"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isRateLimitDisabled}
@@ -366,63 +393,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container ${rateFactorError ? 'validation-error' : ''}`}>
-                  <input
-                    type="number"
-                    className="input-field"
-                    onChange={handleInputChange}
-                    disabled={isRateFactorDisabled}
-                    value={isRateFactorDisabled ? '' : (modes[currentMode]?.rateFactor ?? '')}
-                    name="rateFactor"
-                  />
-                  <label className={isRateFactorDisabled ? 'disabled-label' : ''}>
-                    Rate Factor
-                  </label>
-                </div>
-              <div className={`input-container ${avDelayError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isAvDelayDisabled}
-                  value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
-                  name="avDelay"
-                />
-                <label className={isAvDelayDisabled ? 'disabled-label' : ''}>
-                  AV Delay
-                </label>
-              </div>
-            </div>
-            <div className="input-row">
-              <div className={`input-container ${rateFactorError ? 'validation-error' : ''}`}>
-                  <input
-                    type="number"
-                    className="input-field"
-                    onChange={handleInputChange}
-                    disabled={isRateFactorDisabled}
-                    value={isRateFactorDisabled ? '' : (modes[currentMode]?.rateFactor ?? '')}
-                    name="rateFactor"
-                  />
-                  <label className={isRateFactorDisabled ? 'disabled-label' : ''}>
-                    Rate Factor
-                  </label>
-                </div>
-              <div className={`input-container ${avDelayError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isAvDelayDisabled}
-                  value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
-                  name="avDelay"
-                />
-                <label className={isAvDelayDisabled ? 'disabled-label' : ''}>
-                  AV Delay
-                </label>
-              </div>
-            </div>
-          </div>
-            {/* <div className="input-row">
               <div className={`input-container-long ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="text"
@@ -436,7 +406,23 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   Upper Rate Limit
                 </label>
               </div>
-            </div> */}
+            </div>
+            <div className="input-row">
+              <div className={`input-container-long ${upperRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="text"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
+                  name="upperRateLimit"
+                />
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
+                  Upper Rate Limit
+                </label>
+              </div>
+            </div>
+          </div>
 
           {/* Submit and Discard Buttons */}
           <div className="button-container">

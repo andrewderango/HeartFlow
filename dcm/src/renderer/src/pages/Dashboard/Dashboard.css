@@ -328,11 +328,22 @@ hr {
   justify-content: space-between;
   width: 100%;
   margin-top: 35px;
+  flex-wrap: wrap;
 }
 
-.input-container {
+.input-container-double {
   position: relative;
   width: 48%;
+}
+
+.input-container-triple {
+  position: relative;
+  width: 30%;
+}
+
+.input-container-quad {
+  position: relative;
+  width: 23%;
 }
 
 .input-container.validation-error .input-field {
@@ -653,7 +664,6 @@ h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
 }
 
 .button-grid {
@@ -780,19 +790,4 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.parameter-container.scrollable {
-  overflow-y: auto;
-  margin: 0 -15px 0 -15px;
-  padding: 0 15px 0 15px;
-  box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.5), inset 0 -10px 10px -10px rgba(0, 0, 0, 0.5);
-}
-
-.parameter-container.shadow-top {
-  box-shadow: inset 0 -10px 10px -10px rgba(0, 0, 0, 0.5);
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
 }
