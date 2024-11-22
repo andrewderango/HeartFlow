@@ -52,6 +52,8 @@ interface PacemakerState {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
       avDelay: number
     }
     DDD: {
@@ -72,6 +74,8 @@ interface PacemakerState {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     AAIR: {
       atrialAmplitude: number
@@ -80,6 +84,8 @@ interface PacemakerState {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     VOOR: {
       ventricularAmplitude: number
@@ -88,6 +94,8 @@ interface PacemakerState {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     VVIR: {
       ventricularAmplitude: number
@@ -96,6 +104,8 @@ interface PacemakerState {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
   }
   telemetry: {
@@ -218,6 +228,8 @@ const useStore = create<
       lowerRateLimit: 0,
       upperRateLimit: 0,
       rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
       avDelay: 0,
     },
     DDD: {
@@ -238,6 +250,8 @@ const useStore = create<
       lowerRateLimit: 0,
       upperRateLimit: 0,
       rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
     },
     AAIR: {
       atrialAmplitude: 0,
@@ -246,6 +260,8 @@ const useStore = create<
       lowerRateLimit: 0,
       upperRateLimit: 0,
       rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
     },
     VOOR: {
       ventricularAmplitude: 0,
@@ -254,6 +270,8 @@ const useStore = create<
       lowerRateLimit: 0,
       upperRateLimit: 0,
       rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
     },
     VVIR: {
       ventricularAmplitude: 0,
@@ -262,6 +280,8 @@ const useStore = create<
       lowerRateLimit: 0,
       upperRateLimit: 0,
       rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
     },
   },
   telemetry: {

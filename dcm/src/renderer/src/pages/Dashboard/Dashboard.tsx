@@ -65,6 +65,8 @@ function Dashboard(): JSX.Element {
   const [lowerRateLimitError, setLowerRateLimitError] = useState<boolean>(false)
   const [upperRateLimitError, setUpperRateLimitError] = useState<boolean>(false)
   const [rateFactorError, setRateFactorError] = useState<boolean>(false)
+  const [reactionTimeError, setReactionTimeError] = useState<boolean>(false)
+  const [recoveryTimeError, setRecoveryTimeError] = useState<boolean>(false)
   const [avDelayError, setAvDelayError] = useState<boolean>(false)
 
   // have to convert the variables to state variables to force a rerender
@@ -146,6 +148,8 @@ function Dashboard(): JSX.Element {
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
     setRateFactorError(false)
+    setReactionTimeError(false)
+    setRecoveryTimeError(false)
     setAvDelayError(false)
   }
 
@@ -277,6 +281,24 @@ function Dashboard(): JSX.Element {
           },
         })
         break
+      case 'reactionTime':
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { reactionTime: parseFloat(normalizedValue) || 0 },
+          },
+        })
+        break
+      case 'recoveryTime':
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { recoveryTime: parseFloat(normalizedValue) || 0 },
+          },
+        })
+        break
       default:
         break
     }
@@ -294,6 +316,8 @@ function Dashboard(): JSX.Element {
     setLowerRateLimitError(false)
     setUpperRateLimitError(false)
     setRateFactorError(false)
+    setReactionTimeError(false)
+    setRecoveryTimeError(false)
     setAvDelayError(false)
 
     // just set the values back to previous values based on the submitted mode
@@ -394,6 +418,8 @@ function Dashboard(): JSX.Element {
               lowerRateLimit: aoorSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: aoorSettings.settings?.upperRateLimit ?? 0,
               rateFactor: aoorSettings.settings?.rateFactor ?? 0,
+              reactionTime: aoorSettings.settings?.reactionTime ?? 0,
+              recoveryTime: aoorSettings.settings?.recoveryTime ?? 0,
             },
           },
         })
@@ -414,7 +440,9 @@ function Dashboard(): JSX.Element {
               ventricularRefractoryPeriod: voorSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: voorSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: voorSettings.settings?.upperRateLimit ?? 0,
-              rateFactor: voorSettings.settings?.rateFactor
+              rateFactor: voorSettings.settings?.rateFactor ?? 0,
+              reactionTime: voorSettings.settings?.reactionTime ?? 0,
+              recoveryTime: voorSettings.settings?.recoveryTime ?? 0,
             },
           },
         })
@@ -436,6 +464,8 @@ function Dashboard(): JSX.Element {
               lowerRateLimit: aairSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: aairSettings.settings?.upperRateLimit ?? 0,
               rateFactor: aairSettings.settings?.rateFactor ?? 0,
+              reactionTime: aairSettings.settings?.reactionTime ?? 0,
+              recoveryTime: aairSettings.settings?.recoveryTime ?? 0,
             },
           },
         })
@@ -457,6 +487,8 @@ function Dashboard(): JSX.Element {
               lowerRateLimit: vvirSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: vvirSettings.settings?.upperRateLimit ?? 0,
               rateFactor: vvirSettings.settings?.rateFactor ?? 0,
+              reactionTime: vvirSettings.settings?.reactionTime ?? 0,
+              recoveryTime: vvirSettings.settings?.recoveryTime ?? 0,
             },
           },
         })
@@ -482,6 +514,8 @@ function Dashboard(): JSX.Element {
               upperRateLimit: dddrSettings.settings?.upperRateLimit ?? 0,
               rateFactor: dddrSettings.settings?.rateFactor ?? 0,
               avDelay: dddrSettings.settings?.avDelay ?? 0,
+              reactionTime: dddrSettings.settings?.reactionTime ?? 0,
+              recoveryTime: dddrSettings.settings?.recoveryTime ?? 0,
             },
           },
         })
@@ -609,6 +643,20 @@ function Dashboard(): JSX.Element {
         isValid = false
       } else {
         setRateFactorError(false)
+      }
+      if (modes[currentMode].reactionTime < 10 || modes[currentMode].reactionTime > 50) {
+        addToast('Reaction Time must be between 10 and 50 s', 'error')
+        setReactionTimeError(true)
+        isValid = false
+      } else {
+        setReactionTimeError(false)
+      }
+      if (modes[currentMode].recoveryTime < 10 || modes[currentMode].recoveryTime > 240) {
+        addToast('Recovery Time must be between 10 and 240 s', 'error')
+        setRecoveryTimeError(true)
+        isValid = false
+      } else {
+        setRecoveryTimeError(false)
       }
     }
     if (currentMode === 'DDDR' || currentMode === 'DDD') {
@@ -764,7 +812,9 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
           modes[currentMode].upperRateLimit !== 0 && 
-          modes[currentMode].rateFactor !== 0
+          modes[currentMode].rateFactor !== 0 &&
+          modes[currentMode].reactionTime !== 0 &&
+          modes[currentMode].recoveryTime !== 0
         ) {
           window.api.setUser(username, 'AOOR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -773,6 +823,8 @@ function Dashboard(): JSX.Element {
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
             rateFactor: modes[currentMode].rateFactor,
+            reactionTime: modes[currentMode].reactionTime,
+            recoveryTime: modes[currentMode].recoveryTime,
           })
         }
         setSubmittedMode('AOOR')
@@ -785,7 +837,9 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
           modes[currentMode].upperRateLimit !== 0 &&
-          modes[currentMode].rateFactor !== 0
+          modes[currentMode].rateFactor !== 0 &&
+          modes[currentMode].reactionTime !== 0 &&
+          modes[currentMode].recoveryTime !== 0
         ) {
           window.api.setUser(username, 'VOOR', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
@@ -794,6 +848,8 @@ function Dashboard(): JSX.Element {
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
             rateFactor: modes[currentMode].rateFactor,
+            reactionTime: modes[currentMode].reactionTime,
+            recoveryTime: modes[currentMode].recoveryTime,
           })
         }
         setSubmittedMode('VOOR')
@@ -806,7 +862,9 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
           modes[currentMode].upperRateLimit !== 0 &&
-          modes[currentMode].rateFactor !== 0
+          modes[currentMode].rateFactor !== 0 &&
+          modes[currentMode].reactionTime !== 0 &&
+          modes[currentMode].recoveryTime !== 0
         ) {
           window.api.setUser(username, 'AAIR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -815,6 +873,8 @@ function Dashboard(): JSX.Element {
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
             rateFactor: modes[currentMode].rateFactor,
+            reactionTime: modes[currentMode].reactionTime,
+            recoveryTime: modes[currentMode].recoveryTime,
           })
         }
         setSubmittedMode('AAIR')
@@ -827,7 +887,9 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
           modes[currentMode].upperRateLimit !== 0 &&
-          modes[currentMode].rateFactor !== 0
+          modes[currentMode].rateFactor !== 0 &&
+          modes[currentMode].reactionTime !== 0 &&
+          modes[currentMode].recoveryTime !== 0
         ) {
           window.api.setUser(username, 'VVIR', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
@@ -836,6 +898,8 @@ function Dashboard(): JSX.Element {
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
             rateFactor: modes[currentMode].rateFactor,
+            reactionTime: modes[currentMode].reactionTime,
+            recoveryTime: modes[currentMode].recoveryTime,
           })
         }
         setSubmittedMode('VVIR')
@@ -852,7 +916,9 @@ function Dashboard(): JSX.Element {
           modes[currentMode].lowerRateLimit !== 0 &&
           modes[currentMode].upperRateLimit !== 0 &&
           modes[currentMode].rateFactor !== 0 &&
-          modes[currentMode].avDelay !== 0
+          modes[currentMode].avDelay !== 0 &&
+          modes[currentMode].reactionTime !== 0 &&
+          modes[currentMode].recoveryTime !== 0
         ) {
           window.api.setUser(username, 'DDDR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -865,6 +931,8 @@ function Dashboard(): JSX.Element {
             upperRateLimit: modes[currentMode].upperRateLimit,
             rateFactor: modes[currentMode].rateFactor,
             avDelay: modes[currentMode].avDelay,
+            reactionTime: modes[currentMode].reactionTime,
+            recoveryTime: modes[currentMode].recoveryTime,
           })
         }
         setSubmittedMode('DDDR')
@@ -933,6 +1001,8 @@ function Dashboard(): JSX.Element {
     modes[currentMode]?.upperRateLimit,
     modes[currentMode]?.rateFactor,
     modes[currentMode]?.avDelay,
+    modes[currentMode]?.reactionTime,
+    modes[currentMode]?.recoveryTime,
     currentMode,
   ])
 
@@ -1025,6 +1095,8 @@ function Dashboard(): JSX.Element {
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
                   rateFactor: settings?.rateFactor ?? 0,
+                  reactionTime: settings?.reactionTime ?? 0,
+                  recoveryTime: settings?.recoveryTime ?? 0,
                 },
               },
             })
@@ -1042,6 +1114,8 @@ function Dashboard(): JSX.Element {
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
                   rateFactor: settings?.rateFactor ?? 0,
+                  reactionTime: settings?.reactionTime ?? 0,
+                  recoveryTime: settings?.recoveryTime ?? 0,
                 },
               },
             })
@@ -1059,6 +1133,8 @@ function Dashboard(): JSX.Element {
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
                   rateFactor: settings?.rateFactor ?? 0,
+                  reactionTime: settings?.reactionTime ?? 0,
+                  recoveryTime: settings?.recoveryTime ?? 0,
                 },
               },
             })
@@ -1076,6 +1152,8 @@ function Dashboard(): JSX.Element {
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
                   rateFactor: settings?.rateFactor ?? 0,
+                  reactionTime: settings?.reactionTime ?? 0,
+                  recoveryTime: settings?.recoveryTime ?? 0,
                 },
               },
             })
@@ -1097,6 +1175,8 @@ function Dashboard(): JSX.Element {
                   upperRateLimit: settings?.upperRateLimit ?? 0,
                   rateFactor: settings?.rateFactor ?? 0,
                   avDelay: settings?.avDelay ?? 0,
+                  reactionTime: settings?.reactionTime ?? 0,
+                  recoveryTime: settings?.recoveryTime ?? 0,
                 },
               },
             })
@@ -1169,6 +1249,8 @@ function Dashboard(): JSX.Element {
         lowerRateLimitError={lowerRateLimitError}
         upperRateLimitError={upperRateLimitError}
         rateFactorError={rateFactorError}
+        reactionTimeError={reactionTimeError}
+        recoveryTimeError={recoveryTimeError}
         avDelayError={avDelayError}
         isAtriumDisabled={isAtriumDisabled}
         isVentricleDisabled={isVentricleDisabled}

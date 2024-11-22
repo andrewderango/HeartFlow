@@ -30,6 +30,8 @@ interface RightSidebarProps {
   lowerRateLimitError: boolean
   upperRateLimitError: boolean
   rateFactorError: boolean
+  reactionTimeError: boolean
+  recoveryTimeError: boolean
   avDelayError: boolean
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
@@ -69,6 +71,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   lowerRateLimitError,
   upperRateLimitError,
   rateFactorError,
+  reactionTimeError,
+  recoveryTimeError,
   avDelayError,
   isAtriumDisabled,
   isVentricleDisabled,
@@ -347,38 +351,27 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container-quad ${upperRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container-quad ${reactionTimeError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
                   onChange={handleInputChange}
-                  disabled={isRateLimitDisabled}
-                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
-                  name="upperRateLimit"
+                  disabled={isRateFactorDisabled}
+                  value={isRateFactorDisabled ? '' : (modes[currentMode]?.reactionTime ?? '')}
+                  name="reactionTime"
                 />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>URL</label>
+                <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RXNT</label>
               </div>
-              <div className={`input-container-quad ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container-quad ${recoveryTimeError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
                   onChange={handleInputChange}
-                  disabled={isRateLimitDisabled}
-                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.lowerRateLimit ?? '')}
-                  name="lowerRateLimit"
+                  disabled={isRateFactorDisabled}
+                  value={isRateFactorDisabled ? '' : (modes[currentMode]?.recoveryTime ?? '')}
+                  name="recoveryTime"
                 />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>LRL</label>
-              </div>
-              <div className={`input-container-quad ${avDelayError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isAvDelayDisabled}
-                  value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
-                  name="avDelay"
-                />
-                <label className={isAvDelayDisabled ? 'disabled-label' : ''}>AVD</label>
+                <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RCVT</label>
               </div>
               <div className={`input-container-quad ${rateFactorError ? 'validation-error' : ''}`}>
                 <input
@@ -390,6 +383,17 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="rateFactor"
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RF</label>
+              </div>
+              <div className={`input-container-quad ${avDelayError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAvDelayDisabled}
+                  value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
+                  name="avDelay"
+                />
+                <label className={isAvDelayDisabled ? 'disabled-label' : ''}>AVD</label>
               </div>
             </div>
             <div className="input-row">

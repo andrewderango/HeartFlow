@@ -62,6 +62,8 @@ export interface User {
       upperRateLimit: number
       rateFactor: number
       avDelay: number
+      reactionTime: number
+      recoveryTime: number
     }
     DDD: {
       atrialAmplitude: number
@@ -81,6 +83,8 @@ export interface User {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     AAIR: {
       atrialAmplitude: number
@@ -89,6 +93,8 @@ export interface User {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     VOOR: {
       ventricularAmplitude: number
@@ -97,6 +103,8 @@ export interface User {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     VVIR: {
       ventricularAmplitude: number
@@ -108,6 +116,8 @@ export interface User {
       lowerRateLimit: number
       upperRateLimit: number
       rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
   }
   lastUsedMode?: Mode
@@ -159,6 +169,8 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         upperRateLimit: 0,
         rateFactor: 0,
         avDelay: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
       },
       DDD: {
         atrialAmplitude: 0,
@@ -170,6 +182,8 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         lowerRateLimit: 0,
         upperRateLimit: 0,
         avDelay: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
       },
       AOOR: {
         atrialAmplitude: 0,
@@ -178,6 +192,8 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         lowerRateLimit: 0,
         upperRateLimit: 0,
         rateFactor: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
       },
       AAIR: {
         atrialAmplitude: 0,
@@ -186,6 +202,8 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         lowerRateLimit: 0,
         upperRateLimit: 0,
         rateFactor: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
       },
       VOOR: {
         ventricularAmplitude: 0,
@@ -194,6 +212,8 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         lowerRateLimit: 0,
         upperRateLimit: 0,
         rateFactor: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
       },
       VVIR: {
         ventricularAmplitude: 0,
@@ -205,6 +225,8 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         lowerRateLimit: 0,
         upperRateLimit: 0,
         rateFactor: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
       },
     },
     lastUsedMode: 'OFF',
