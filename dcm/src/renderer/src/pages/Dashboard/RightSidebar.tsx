@@ -126,6 +126,21 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     }
   }, [view])
 
+  useEffect(() => {
+    const parameterContainer = document.querySelector('.parameter-container');
+    const handleScroll = () => {
+      if (parameterContainer.scrollTop === 0) {
+        parameterContainer.classList.add('shadow-top');
+      } else {
+        parameterContainer.classList.remove('shadow-top');
+      }
+    };
+    parameterContainer.addEventListener('scroll', handleScroll);
+    return () => {
+      parameterContainer.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   const handleViewChange = (newView: 'PARAMETERS' | 'REPORTS') => {
     setView(newView)
   }
