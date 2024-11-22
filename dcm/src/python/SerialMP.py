@@ -52,6 +52,11 @@ class PMParameters(NamedTuple):
     vamp: float  # ventricular amplitude
     asens: float  # atrial sensitivity
     vsens: float  # ventricular sensitivity
+    av_delay: int # av delay
+    rate_fac: int # rate factor
+    act_thresh: int # activity threshold
+    react_time: int # reaction time
+    recov_time: int # recovery time
 
 
 class PacemakerMPSerial:
@@ -295,6 +300,8 @@ class PacemakerMPSerial:
                     req = bytearray(82)
                     req[0] = msg_id
                     req[1] = 0x01
+                    sw_val = [b'H', b'e', b'a', b'r', b't', b'F', b'l', b'o', b'w']
+                    req[2:11] = struct.pack("<" + "c" * 9, *sw_val)
 
                     logger.debug(
                         f"[search_and_connect] Attempting handshake on port: {port}"
@@ -412,6 +419,11 @@ class PacemakerMPSerial:
         req[15:19] = struct.pack("<f", parameters.vamp)
         req[19:23] = struct.pack("<f", parameters.asens)
         req[23:27] = struct.pack("<f", parameters.vsens)
+        req[27:29] = struct.pack("<H", parameters.av_delay)
+        req[29] = parameters.rate_fac
+        req[30] = parameters.act_thresh
+        req[31] = parameters.react_time
+        req[32] = parameters.recov_time
 
         for _ in range(retry_limit):
             # explicitly check for connection status

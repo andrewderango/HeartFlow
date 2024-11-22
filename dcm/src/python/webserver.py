@@ -191,6 +191,11 @@ async def _consumer_handler(websocket):
                 vamp=params.get("vamp", 0),
                 asens=params.get("asens", 0),
                 vsens=params.get("vsens", 0),
+                av_delay=params.get("av_delay", 0),
+                rate_fac=params.get("rate_fac", 0),
+                act_thresh=params.get("act_thresh", 0),
+                react_time=params.get("react_time", 0),
+                recov_time=params.get("recov_time", 0),
             )
 
             res = pm_serial.send_parameters(req)
@@ -254,7 +259,7 @@ async def _producer_handler(websocket):
                     json.dumps({"type": "egram_data", "data": return_data})
                 )
 
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
 
 
 async def handler(websocket):
