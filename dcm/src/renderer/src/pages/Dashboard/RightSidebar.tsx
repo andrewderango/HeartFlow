@@ -247,7 +247,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             <div className="input-row">
               <div className={`input-container double ${lowerRateLimitError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isRateLimitDisabled}
@@ -260,7 +260,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
               <div className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isRateLimitDisabled}
@@ -399,12 +399,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             <div className="input-row">
               <div className={`input-container long ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="range"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isRateLimitDisabled}
                   value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
                   name="upperRateLimit"
+                  min="1"
+                  max="7"
                 />
                 <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Activity Threshold
