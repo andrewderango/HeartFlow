@@ -89,6 +89,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const [view, setView] = useState<'PARAMETERS' | 'REPORTS'>('PARAMETERS')
   const [menuOpen, setMenuOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
+  const [activityThreshold, setActivityThreshold] = useState(modes[currentMode]?.activityThreshold ?? 1)
   const menuRef = useRef<HTMLDivElement>(null)
   const helpRef = useRef<HTMLDivElement>(null)
 
@@ -132,9 +133,23 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     }
   }, [view])
 
+  useEffect(() => {
+    setActivityThreshold(modes[currentMode]?.activityThreshold ?? 1);
+  }, [currentMode, modes]);
+
   const handleViewChange = (newView: 'PARAMETERS' | 'REPORTS') => {
     setView(newView)
   }
+
+  const activityThresholdLabels = [
+    'Very Low',
+    'Low',
+    'Low Medium',
+    'Medium',
+    'Medium High',
+    'High',
+    'Very High',
+  ];
 
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
@@ -403,16 +418,20 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 <input
                   type="range"
                   className="input-field"
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setActivityThreshold(e.target.value);
+                  }}
                   disabled={isRateFactorDisabled}
-                  value={isRateFactorDisabled ? '' : (modes[currentMode]?.activityThreshold ?? '')}
+                  value={isRateFactorDisabled ? '' : activityThreshold}
                   name="activityThreshold"
                   min="1"
                   max="7"
                 />
-                <label className={isRateFactorDisabled ? 'disabled-label' : ''}>
+                <label className={isRateFactorDisabled ? 'disabled-label-slider' : ''}>
                   Activity Threshold
                 </label>
+                <span className="slider-value">{isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}</span>
               </div>
             </div>
           </div>

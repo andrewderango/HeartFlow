@@ -417,6 +417,24 @@ hr {
   transition: background 0.3s;
 }
 
+.input-field[type="range"]:disabled {
+  background: rgba(255, 255, 255, 0.025);
+  cursor: not-allowed;
+}
+
+.input-field[type="range"]:disabled::-webkit-slider-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  cursor: not-allowed
+}
+
+.slider-value {
+  position: absolute;
+  top: -20px;
+  right: 5px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
