@@ -414,6 +414,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
+              <label className={`label-slider ${isRateFactorDisabled ? 'disabled' : ''}`}>
+                Activity Threshold
+              </label>
               <div className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}>
                 <input
                   type="range"
@@ -428,9 +431,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   min="1"
                   max="7"
                 />
-                <label className={isRateFactorDisabled ? 'disabled-label-slider' : ''}>
-                  Activity Threshold
-                </label>
                 <span className="slider-value">{isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}</span>
               </div>
             </div>
