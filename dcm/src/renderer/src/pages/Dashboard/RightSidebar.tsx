@@ -241,6 +241,34 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             )}
             <div className="input-row">
+              <div className={`input-container-double ${lowerRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="text"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.lowerRateLimit ?? '')}
+                  name="lowerRateLimit"
+                />
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
+                  Lower Rate Limit
+                </label>
+              </div>
+              <div className={`input-container-double ${upperRateLimitError ? 'validation-error' : ''}`}>
+                <input
+                  type="text"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateLimitDisabled}
+                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
+                  name="upperRateLimit"
+                />
+                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
+                  Upper Rate Limit
+                </label>
+              </div>
+            </div>
+            <div className="input-row">
               <div className={`input-container-triple ${atriumAmpError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
@@ -362,49 +390,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="rateFactor"
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RF</label>
-              </div>
-            </div>
-            <div className="input-row">
-              <div className={`input-container-double ${upperRateLimitError ? 'validation-error' : ''}`}>
-                <input
-                  type="text"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isRateLimitDisabled}
-                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
-                  name="upperRateLimit"
-                />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
-                  Upper Rate Limit
-                </label>
-              </div>
-              <div className={`input-container-double ${upperRateLimitError ? 'validation-error' : ''}`}>
-                <input
-                  type="text"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isRateLimitDisabled}
-                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
-                  name="upperRateLimit"
-                />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
-                  Upper Rate Limit
-                </label>
-              </div>
-            </div>
-            <div className="input-row">
-              <div className={`input-container-long ${upperRateLimitError ? 'validation-error' : ''}`}>
-                <input
-                  type="text"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isRateLimitDisabled}
-                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
-                  name="upperRateLimit"
-                />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
-                  Upper Rate Limit
-                </label>
               </div>
             </div>
             <div className="input-row">
