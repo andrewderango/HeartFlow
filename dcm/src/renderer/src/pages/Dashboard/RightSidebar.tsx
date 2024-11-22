@@ -32,6 +32,7 @@ interface RightSidebarProps {
   rateFactorError: boolean
   reactionTimeError: boolean
   recoveryTimeError: boolean
+  activityThresholdError: boolean
   avDelayError: boolean
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
@@ -73,6 +74,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   rateFactorError,
   reactionTimeError,
   recoveryTimeError,
+  activityThresholdError,
   avDelayError,
   isAtriumDisabled,
   isVentricleDisabled,
@@ -397,18 +399,18 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container long ${upperRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}>
                 <input
                   type="range"
                   className="input-field"
                   onChange={handleInputChange}
-                  disabled={isRateLimitDisabled}
-                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
-                  name="upperRateLimit"
+                  disabled={isRateFactorDisabled}
+                  value={isRateFactorDisabled ? '' : (modes[currentMode]?.activityThreshold ?? '')}
+                  name="activityThreshold"
                   min="1"
                   max="7"
                 />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
+                <label className={isRateFactorDisabled ? 'disabled-label' : ''}>
                   Activity Threshold
                 </label>
               </div>
