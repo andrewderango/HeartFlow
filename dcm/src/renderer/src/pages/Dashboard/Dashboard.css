@@ -331,19 +331,24 @@ hr {
   flex-wrap: wrap;
 }
 
-.input-container-double {
+.input-container {
   position: relative;
+}
+
+.input-container.double {
   width: 48.5%;
 }
 
-.input-container-triple {
-  position: relative;
+.input-container.triple {
   width: 31.5%;
 }
 
-.input-container-quad {
-  position: relative;
+.input-container.quad {
   width: 23%;
+}
+
+.input-container.long {
+  width: 100%;
 }
 
 .input-container.validation-error .input-field {
@@ -351,19 +356,6 @@ hr {
 }
 
 .input-container.validation-error label {
-  color: #f44336;
-}
-
-.input-container-long {
-  position: relative;
-  width: 100%;
-}
-
-.input-container-long.validation-error .input-field {
-  outline: #f44336 1px solid;
-}
-
-.input-container-long.validation-error label {
   color: #f44336;
 }
 

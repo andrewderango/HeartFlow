@@ -245,7 +245,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             )}
             <div className="input-row">
-              <div className={`input-container-double ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container double ${lowerRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="text"
                   className="input-field"
@@ -258,7 +258,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   Lower Rate Limit
                 </label>
               </div>
-              <div className={`input-container-double ${upperRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="text"
                   className="input-field"
@@ -273,7 +273,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container-triple ${atriumAmpError ? 'validation-error' : ''}`}>
+              <div className={`input-container triple ${atriumAmpError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -284,7 +284,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>AAMP</label>
               </div>
-              <div className={`input-container-triple ${atrialPWError ? 'validation-error' : ''}`}>
+              <div className={`input-container triple ${atrialPWError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -295,7 +295,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>APW</label>
               </div>
-              <div className={`input-container-triple ${atrialRPError ? 'validation-error' : ''}`}>
+              <div className={`input-container triple ${atrialRPError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -308,7 +308,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container-triple ${ventricleAmpError ? 'validation-error' : ''}`}>
+              <div className={`input-container triple ${ventricleAmpError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -321,7 +321,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VAMP</label>
               </div>
-              <div className={`input-container-triple ${ventriclePWError ? 'validation-error' : ''}`}>
+              <div className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -334,7 +334,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VPW</label>
               </div>
-              <div className={`input-container-triple ${ventricleRPError ? 'validation-error' : ''}`}>
+              <div className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -351,7 +351,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container-quad ${reactionTimeError ? 'validation-error' : ''}`}>
+              <div className={`input-container quad ${reactionTimeError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -362,7 +362,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RXNT</label>
               </div>
-              <div className={`input-container-quad ${recoveryTimeError ? 'validation-error' : ''}`}>
+              <div className={`input-container quad ${recoveryTimeError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -373,7 +373,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RCVT</label>
               </div>
-              <div className={`input-container-quad ${rateFactorError ? 'validation-error' : ''}`}>
+              <div className={`input-container quad ${rateFactorError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -384,7 +384,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RF</label>
               </div>
-              <div className={`input-container-quad ${avDelayError ? 'validation-error' : ''}`}>
+              <div className={`input-container quad ${avDelayError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -397,7 +397,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container-long ${upperRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container long ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="text"
                   className="input-field"
@@ -407,7 +407,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="upperRateLimit"
                 />
                 <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
-                  Upper Rate Limit
+                  Activity Threshold
                 </label>
               </div>
             </div>
