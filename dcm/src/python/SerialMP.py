@@ -319,6 +319,14 @@ class PacemakerMPSerial:
                     res_msg_id = res.msg_id
                     res_msg_type = res.msg_type
                     res_bytearray = res.msg
+
+                    if res_bytearray is None:
+                        self.__serial_close()
+                        logger.debug(
+                            f"[search_and_connect] Failed handshake on port: {port}"
+                        )
+                        continue
+
                     res_pm_id = struct.unpack("<H", res_bytearray[0:2])[0]
 
                     if (

@@ -14,7 +14,9 @@ pm_serial: PacemakerMPSerial = None
 
 # -- logging setup --
 
-logging.basicConfig(level=logging.DEBUG, format="%(message)s")
+# todo: we need a way to send logs to frontend
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 main_logger = logging.getLogger("main")
 
 today = datetime.datetime.now()
@@ -111,7 +113,7 @@ async def _consumer_handler(websocket):
                     main_logger.error("[MAIN] No pacemaker ID provided")
                     await websocket.send(
                         json.dumps(
-                            {"type": "error", "message": "No pacemaker ID provided"}
+                            {"type": "initialize", "status": "failed", "message": "No pacemaker ID provided"}
                         )
                     )
                     continue
@@ -139,13 +141,13 @@ async def _consumer_handler(websocket):
             else:
                 main_logger.error("[MAIN] Already connected to pacemaker")
                 await websocket.send(
-                    json.dumps({"type": "error", "message": "Already connected"})
+                    json.dumps({"type": "initialize", "status": "failed", "message": "Already connected"})
                 )
         elif data["type"] == "disconnect":
             if reconnect_fail.is_set():
                 main_logger.error("[MAIN] Already disconnected from pacemaker")
                 await websocket.send(
-                    json.dumps({"type": "error", "message": "Already disconnected"})
+                    json.dumps({"type": "disconnect", "status": "failed", "message": "Already disconnected"})
                 )
                 continue
 
@@ -160,13 +162,13 @@ async def _consumer_handler(websocket):
             else:
                 main_logger.error("[MAIN] Not connected to pacemaker")
                 await websocket.send(
-                    json.dumps({"type": "error", "message": "Not connected"})
+                    json.dumps({"type": "disconnect", "status": "failed", "message": "Not connected"})
                 )
         elif data["type"] == "send_parameters":
             if not pm_serial or reconnect_fail.is_set():
                 main_logger.error("[MAIN] Not connected to pacemaker")
                 await websocket.send(
-                    json.dumps({"type": "error", "message": "Not connected"})
+                    json.dumps({"type": "send_parameters", "status": "failed", "message": "Not connected"})
                 )
                 continue
 
@@ -175,7 +177,7 @@ async def _consumer_handler(websocket):
             if not params:
                 main_logger.error("[MAIN] No parameters provided")
                 await websocket.send(
-                    json.dumps({"type": "error", "message": "No parameters provided"})
+                    json.dumps({"type": "send_parameters", "status": "failed", "message": "No parameters provided"})
                 )
                 continue
 
@@ -208,13 +210,13 @@ async def _consumer_handler(websocket):
             else:
                 main_logger.error("[MAIN] Failed to send parameters")
                 await websocket.send(
-                    json.dumps({"type": "send_parameters", "status": "failed"})
+                    json.dumps({"type": "send_parameters", "status": "failed", "message": "Failed to send parameters"})
                 )
         elif data["type"] == "toggle_egram":
             if not pm_serial or reconnect_fail.is_set():
                 main_logger.error("[MAIN] Not connected to pacemaker")
                 await websocket.send(
-                    json.dumps({"type": "error", "message": "Not connected"})
+                    json.dumps({"type": "toggle_egram", "status": "failed", "message": "Not connected"})
                 )
                 continue
 

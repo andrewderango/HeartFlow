@@ -7,6 +7,7 @@ import type {
   SetUserResponse,
   LoginUserResponse,
   ModeSettingResponse,
+  PacemakerParameters,
 } from '../common/types'
 
 // custom api functions
@@ -36,6 +37,50 @@ const api = {
   getSettingsForMode: async (username: string, mode: string): Promise<ModeSettingResponse> => {
     const result = await ipcRenderer.invoke('get-settings-for-mode', username, mode)
     return result
+  },
+  serialInitialize: async (pm_id: number): Promise<void> => {
+    await ipcRenderer.invoke('initialize', pm_id)
+  },
+  serialDisconnect: async (): Promise<void> => {
+    await ipcRenderer.invoke('disconnect')
+  },
+  serialSendParameters: async (parameters: PacemakerParameters): Promise<void> => {
+    await ipcRenderer.invoke('send_parameters', parameters)
+  },
+  serialToggleEgram: async (): Promise<void> => {
+    await ipcRenderer.invoke('toggle_egram')
+  },
+  onSerialConnectionMessage: (callback: (message: any) => void): void => {
+    ipcRenderer.on('serial-connection', (_, message) => {
+      callback(message)
+    })
+  },
+  removeSerialConnectionMessageListener: (): void => {
+    ipcRenderer.removeAllListeners('serial-connection')
+  },
+  onSerialActionMessage: (callback: (message: any) => void): void => {
+    ipcRenderer.on('serial-action', (_, message) => {
+      callback(message)
+    })
+  },
+  removeSerialActionMessageListener: (): void => {
+    ipcRenderer.removeAllListeners('serial-action')
+  },
+  onSerialDataMessage: (callback: (message: any) => void): void => {
+    ipcRenderer.on('serial-data', (_, message) => {
+      callback(message)
+    })
+  },
+  removeSerialDataMessageListener: (): void => {
+    ipcRenderer.removeAllListeners('serial-data')
+  },
+  onSerialErrorMessage: (callback: (message: any) => void): void => {
+    ipcRenderer.on('serial-error', (_, message) => {
+      callback(message)
+    })
+  },
+  removeSerialErrorMessageListener: (): void => {
+    ipcRenderer.removeAllListeners('serial-error')
   },
 }
 
