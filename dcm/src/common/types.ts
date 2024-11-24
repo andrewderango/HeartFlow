@@ -60,6 +60,11 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      avDelay: number
+      reactionTime: number
+      recoveryTime: number
+      activityThreshold: number
     }
     DDD: {
       atrialAmplitude: number
@@ -70,6 +75,7 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      avDelay: number
     }
     AOOR: {
       atrialAmplitude: number
@@ -77,6 +83,10 @@ export interface User {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
+      activityThreshold: number
     }
     AAIR: {
       atrialAmplitude: number
@@ -84,6 +94,10 @@ export interface User {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
+      activityThreshold: number
     }
     VOOR: {
       ventricularAmplitude: number
@@ -91,6 +105,10 @@ export interface User {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
+      activityThreshold: number
     }
     VVIR: {
       ventricularAmplitude: number
@@ -101,6 +119,10 @@ export interface User {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
+      activityThreshold: number
     }
   }
   lastUsedMode?: Mode
@@ -150,6 +172,11 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
+        avDelay: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
+        activityThreshold: 4,
       },
       DDD: {
         atrialAmplitude: 0,
@@ -160,6 +187,7 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        avDelay: 0,
       },
       AOOR: {
         atrialAmplitude: 0,
@@ -167,6 +195,10 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
+        activityThreshold: 4,
       },
       AAIR: {
         atrialAmplitude: 0,
@@ -174,6 +206,10 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
+        activityThreshold: 4,
       },
       VOOR: {
         ventricularAmplitude: 0,
@@ -181,6 +217,10 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         ventricularRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
+        activityThreshold: 4,
       },
       VVIR: {
         ventricularAmplitude: 0,
@@ -191,6 +231,10 @@ export const createUser = (overrides: Partial<User> = {}): User =>
         atrialRefractoryPeriod: 0,
         lowerRateLimit: 0,
         upperRateLimit: 0,
+        rateFactor: 0,
+        reactionTime: 0,
+        recoveryTime: 0,
+        activityThreshold: 4,
       },
     },
     lastUsedMode: 'OFF',

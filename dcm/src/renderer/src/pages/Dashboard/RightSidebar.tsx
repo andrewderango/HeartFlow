@@ -29,8 +29,15 @@ interface RightSidebarProps {
   ventricleRPError: boolean
   lowerRateLimitError: boolean
   upperRateLimitError: boolean
+  rateFactorError: boolean
+  reactionTimeError: boolean
+  recoveryTimeError: boolean
+  activityThresholdError: boolean
+  avDelayError: boolean
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
+  isRateFactorDisabled: boolean
+  isAvDelayDisabled: boolean
   isRateLimitDisabled: boolean
   telemetryStatus: string
   currentMode:
@@ -64,8 +71,15 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   ventricleRPError,
   lowerRateLimitError,
   upperRateLimitError,
+  rateFactorError,
+  reactionTimeError,
+  recoveryTimeError,
+  activityThresholdError,
+  avDelayError,
   isAtriumDisabled,
   isVentricleDisabled,
+  isRateFactorDisabled,
+  isAvDelayDisabled,
   isRateLimitDisabled,
   telemetryStatus,
   currentMode,
@@ -75,6 +89,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const [view, setView] = useState<'PARAMETERS' | 'REPORTS'>('PARAMETERS')
   const [menuOpen, setMenuOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
+  const [activityThreshold, setActivityThreshold] = useState(modes[currentMode]?.activityThreshold ?? 1)
   const menuRef = useRef<HTMLDivElement>(null)
   const helpRef = useRef<HTMLDivElement>(null)
 
@@ -103,7 +118,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         input.classList.remove('filled')
       }
     })
-  }, [isAtriumDisabled, isVentricleDisabled, isRateLimitDisabled])
+  }, [isAtriumDisabled, isVentricleDisabled, isAvDelayDisabled, isRateFactorDisabled, isRateLimitDisabled])
 
   useEffect(() => {
     if (view === 'PARAMETERS') {
@@ -118,9 +133,23 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     }
   }, [view])
 
+  useEffect(() => {
+    setActivityThreshold(modes[currentMode]?.activityThreshold ?? 1);
+  }, [currentMode, modes]);
+
   const handleViewChange = (newView: 'PARAMETERS' | 'REPORTS') => {
     setView(newView)
   }
+
+  const activityThresholdLabels = [
+    'Very Low',
+    'Low',
+    'Low Medium',
+    'Medium',
+    'Medium High',
+    'High',
+    'Very High',
+  ];
 
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
@@ -191,14 +220,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             </div>
           </div>
 
+          <div className="header-with-help">
+            <h3>Continuous Parameters</h3>
+            <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
+              <Info size={14} />
+            </button>
+          </div>
           {/* Continuous Parameters */}
-          <div className="parameter-container">
-            <div className="header-with-help">
-              <h3>Continuous Parameters</h3>
-              <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
-                <Info size={14} />
-              </button>
-            </div>
+          <div className="parameter-container scrollable no-scrollbar">
             {helpOpen && (
               <div className="help-popup" ref={helpRef}>
                 <div className="help-header">
@@ -233,89 +262,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             )}
             <div className="input-row">
-              <div className={`input-container ${atriumAmpError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isAtriumDisabled}
-                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialAmplitude ?? '')}
-                  name="atriumAmp"
-                />
-                <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium AMP</label>
-              </div>
-              <div className={`input-container ${ventricleAmpError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isVentricleDisabled}
-                  value={
-                    isVentricleDisabled ? '' : (modes[currentMode]?.ventricularAmplitude ?? '')
-                  }
-                  name="ventricleAmp"
-                />
-                <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle AMP</label>
-              </div>
-            </div>
-            <div className="input-row">
-              <div className={`input-container ${atrialPWError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isAtriumDisabled}
-                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialPulseWidth ?? '')}
-                  name="atrialPW"
-                />
-                <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrium PW</label>
-              </div>
-              <div className={`input-container ${ventriclePWError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isVentricleDisabled}
-                  value={
-                    isVentricleDisabled ? '' : (modes[currentMode]?.ventricularPulseWidth ?? '')
-                  }
-                  name="ventriclePW"
-                />
-                <label className={isVentricleDisabled ? 'disabled-label' : ''}>Ventricle PW</label>
-              </div>
-            </div>
-            <div className="input-row">
-              <div className={`input-container ${atrialRPError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isAtriumDisabled}
-                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialRefractoryPeriod ?? '')}
-                  name="atrialRP"
-                />
-                <label className={isAtriumDisabled ? 'disabled-label' : ''}>Atrial RP</label>
-              </div>
-              <div className={`input-container ${ventricleRPError ? 'validation-error' : ''}`}>
-                <input
-                  type="number"
-                  className="input-field"
-                  onChange={handleInputChange}
-                  disabled={isVentricleDisabled}
-                  value={
-                    isVentricleDisabled
-                      ? ''
-                      : (modes[currentMode]?.ventricularRefractoryPeriod ?? '')
-                  }
-                  name="ventricleRP"
-                />
-                <label className={isVentricleDisabled ? 'disabled-label' : ''}>
-                  Ventricular RP
-                </label>
-              </div>
-            </div>
-            <div className="input-row">
-              <div className={`input-container ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container double ${lowerRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -328,7 +275,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   Lower Rate Limit
                 </label>
               </div>
-              <div className={`input-container ${upperRateLimitError ? 'validation-error' : ''}`}>
+              <div className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -342,21 +289,151 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 </label>
               </div>
             </div>
-            {/* <div className="input-row">
-              <div className={`input-container-long ${upperRateLimitError ? 'validation-error' : ''}`}>
+            <div className="input-row">
+              <div className={`input-container triple ${atriumAmpError ? 'validation-error' : ''}`}>
                 <input
-                  type="text"
+                  type="number"
                   className="input-field"
                   onChange={handleInputChange}
-                  disabled={isRateLimitDisabled}
-                  value={isRateLimitDisabled ? '' : (modes[currentMode]?.upperRateLimit ?? '')}
-                  name="upperRateLimit"
+                  disabled={isAtriumDisabled}
+                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialAmplitude ?? '')}
+                  name="atriumAmp"
                 />
-                <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
-                  Upper Rate Limit
-                </label>
+                <label className={isAtriumDisabled ? 'disabled-label' : ''}>AAMP</label>
               </div>
-            </div> */}
+              <div className={`input-container triple ${atrialPWError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAtriumDisabled}
+                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialPulseWidth ?? '')}
+                  name="atrialPW"
+                />
+                <label className={isAtriumDisabled ? 'disabled-label' : ''}>APW</label>
+              </div>
+              <div className={`input-container triple ${atrialRPError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAtriumDisabled}
+                  value={isAtriumDisabled ? '' : (modes[currentMode]?.atrialRefractoryPeriod ?? '')}
+                  name="atrialRP"
+                />
+                <label className={isAtriumDisabled ? 'disabled-label' : ''}>ARP</label>
+              </div>
+            </div>
+            <div className="input-row">
+              <div className={`input-container triple ${ventricleAmpError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isVentricleDisabled}
+                  value={
+                    isVentricleDisabled ? '' : (modes[currentMode]?.ventricularAmplitude ?? '')
+                  }
+                  name="ventricleAmp"
+                />
+                <label className={isVentricleDisabled ? 'disabled-label' : ''}>VAMP</label>
+              </div>
+              <div className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isVentricleDisabled}
+                  value={
+                    isVentricleDisabled ? '' : (modes[currentMode]?.ventricularPulseWidth ?? '')
+                  }
+                  name="ventriclePW"
+                />
+                <label className={isVentricleDisabled ? 'disabled-label' : ''}>VPW</label>
+              </div>
+              <div className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isVentricleDisabled}
+                  value={
+                    isVentricleDisabled
+                      ? ''
+                      : (modes[currentMode]?.ventricularRefractoryPeriod ?? '')
+                  }
+                  name="ventricleRP"
+                />
+                <label className={isVentricleDisabled ? 'disabled-label' : ''}>VRP</label>
+              </div>
+            </div>
+            <div className="input-row">
+              <div className={`input-container quad ${reactionTimeError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateFactorDisabled}
+                  value={isRateFactorDisabled ? '' : (modes[currentMode]?.reactionTime ?? '')}
+                  name="reactionTime"
+                />
+                <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RXNT</label>
+              </div>
+              <div className={`input-container quad ${recoveryTimeError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateFactorDisabled}
+                  value={isRateFactorDisabled ? '' : (modes[currentMode]?.recoveryTime ?? '')}
+                  name="recoveryTime"
+                />
+                <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RCVT</label>
+              </div>
+              <div className={`input-container quad ${rateFactorError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isRateFactorDisabled}
+                  value={isRateFactorDisabled ? '' : (modes[currentMode]?.rateFactor ?? '')}
+                  name="rateFactor"
+                />
+                <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RF</label>
+              </div>
+              <div className={`input-container quad ${avDelayError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAvDelayDisabled}
+                  value={isAvDelayDisabled ? '' : (modes[currentMode]?.avDelay ?? '')}
+                  name="avDelay"
+                />
+                <label className={isAvDelayDisabled ? 'disabled-label' : ''}>AVD</label>
+              </div>
+            </div>
+            <div className="input-row">
+              <label className={`label-slider ${isRateFactorDisabled ? 'disabled' : ''}`}>
+                Activity Threshold
+              </label>
+              <div className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}>
+                <input
+                  type="range"
+                  className="input-field"
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setActivityThreshold(e.target.value);
+                  }}
+                  disabled={isRateFactorDisabled}
+                  value={isRateFactorDisabled ? '' : activityThreshold}
+                  name="activityThreshold"
+                  min="1"
+                  max="7"
+                />
+                <span className="slider-value">{isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}</span>
+              </div>
+            </div>
           </div>
 
           {/* Submit and Discard Buttons */}

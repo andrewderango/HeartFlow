@@ -51,6 +51,10 @@ interface PacemakerState {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
+      avDelay: number
     }
     DDD: {
       atrialAmplitude: number
@@ -61,6 +65,7 @@ interface PacemakerState {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      avDelay: number
     }
     AOOR: {
       atrialAmplitude: number
@@ -68,6 +73,9 @@ interface PacemakerState {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     AAIR: {
       atrialAmplitude: number
@@ -75,6 +83,9 @@ interface PacemakerState {
       atrialRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     VOOR: {
       ventricularAmplitude: number
@@ -82,6 +93,9 @@ interface PacemakerState {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
     VVIR: {
       ventricularAmplitude: number
@@ -89,6 +103,9 @@ interface PacemakerState {
       ventricularRefractoryPeriod: number
       lowerRateLimit: number
       upperRateLimit: number
+      rateFactor: number
+      reactionTime: number
+      recoveryTime: number
     }
   }
   telemetry: {
@@ -210,6 +227,10 @@ const useStore = create<
       ventricularRefractoryPeriod: 0,
       lowerRateLimit: 0,
       upperRateLimit: 0,
+      rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
+      avDelay: 0,
     },
     DDD: {
       atrialAmplitude: 0,
@@ -220,6 +241,7 @@ const useStore = create<
       ventricularRefractoryPeriod: 0,
       lowerRateLimit: 0,
       upperRateLimit: 0,
+      avDelay: 0,
     },
     AOOR: {
       atrialAmplitude: 0,
@@ -227,6 +249,9 @@ const useStore = create<
       atrialRefractoryPeriod: 0,
       lowerRateLimit: 0,
       upperRateLimit: 0,
+      rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
     },
     AAIR: {
       atrialAmplitude: 0,
@@ -234,6 +259,9 @@ const useStore = create<
       atrialRefractoryPeriod: 0,
       lowerRateLimit: 0,
       upperRateLimit: 0,
+      rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
     },
     VOOR: {
       ventricularAmplitude: 0,
@@ -241,6 +269,9 @@ const useStore = create<
       ventricularRefractoryPeriod: 0,
       lowerRateLimit: 0,
       upperRateLimit: 0,
+      rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
     },
     VVIR: {
       ventricularAmplitude: 0,
@@ -248,6 +279,9 @@ const useStore = create<
       ventricularRefractoryPeriod: 0,
       lowerRateLimit: 0,
       upperRateLimit: 0,
+      rateFactor: 0,
+      reactionTime: 0,
+      recoveryTime: 0,
     },
   },
   telemetry: {

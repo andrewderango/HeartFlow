@@ -18,14 +18,14 @@ interface MainContentProps {
     | 'DDD'
     | null
   telemetry: { heartRate: number }
-  pacemakerBPM: number
+  telemetryRate: number
   isRightSidebarVisible: boolean
 }
 
 const MainContent: React.FC<MainContentProps> = ({
   submittedMode,
   telemetry,
-  pacemakerBPM,
+  telemetryRate,
   isRightSidebarVisible,
 }) => {
   const NUM_POINTS = 5000
@@ -130,8 +130,8 @@ const MainContent: React.FC<MainContentProps> = ({
           <p>{submittedMode}</p>
         </div>
         <div className="stat-box">
-          <h3>Refresh Rate</h3>
-          <p>{pacemakerBPM} Hz</p>
+          <h3>Telemetry Rate</h3>
+          <p>{telemetryRate} Hz</p>
         </div>
         <div className="stat-box">
           <h3>Heart BPM</h3>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Chart, registerables } from 'chart.js/auto'
 import './RealTimeChart.css'
 import type { ChartPoint } from 'src/common/types'
@@ -25,6 +25,7 @@ interface RealTimeChartProps {
 const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, height }) => {
   const chartRef = useRef<HTMLCanvasElement>(null)
   const chartInstanceRef = useRef<Chart | null>(null)
+  const [hiddenDatasets, setHiddenDatasets] = useState<number[]>([])
 
   const xWidth = Math.max(series1.xWidth, series2 ? series2.xWidth : 0)
   const yMin = Math.min(series1.yMin, series2 ? series2.yMin : 0)
@@ -87,6 +88,12 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
             plugins: {
               legend: {
                 position: 'bottom',
+                onClick: (e, legendItem) => {
+                  const index = legendItem.datasetIndex
+                  setHiddenDatasets((prev) =>
+                    prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+                  )
+                },
               },
             },
           },
@@ -126,9 +133,12 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
         chartInstanceRef.current.options.scales.y.min = yMin
         chartInstanceRef.current.options.scales.y.max = yMax
       }
+      chartInstanceRef.current.data.datasets.forEach((dataset, index) => {
+        dataset.hidden = hiddenDatasets.includes(index)
+      })
       chartInstanceRef.current.update()
     }
-  }, [series1, series2])
+  }, [series1, series2, hiddenDatasets])
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>
