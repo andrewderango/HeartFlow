@@ -28,38 +28,56 @@ const MainContent: React.FC<MainContentProps> = ({
   telemetryRate,
   isRightSidebarVisible,
 }) => {
-  const [series1, setSeries1] = useState<ChartPoint[]>([])
-  const [series2, setSeries2] = useState<ChartPoint[]>([])
+  const NUM_POINTS = 5000
+  const [series1, setSeries1] = useState<ChartPoint[]>(() => {
+    return Array.from({ length: NUM_POINTS }, (_, index) => ({ x: index * 0.002, y: 0 }))
+  })
+  const [series2, setSeries2] = useState<ChartPoint[]>(() => {
+    return Array.from({ length: NUM_POINTS }, (_, index) => ({ x: index * 0.002, y: 0 }))
+  })
   const [isEgramHidden, setIsEgramHidden] = useState(false)
-  let time = 0
+  const [rootTime, setRootTime] = useState(0)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      time += 1
-      const cosVal = 50 * Math.cos(5 * time * (Math.PI / 180))
-      const newVal1 = Math.max(-100, Math.min(100, cosVal))
+    const handleSerialDataMessage = (message: any): void => {
+      if (message.type === 'data' && message.dataType === 'egram') {
+        const newSeries1: ChartPoint[] = []
+        const newSeries2: ChartPoint[] = []
 
-      const sinVal = 50 * Math.sin(5 * time * (Math.PI / 180))
-      const newVal2 = Math.max(-100, Math.min(100, sinVal))
+        Object.entries(message.data).forEach(([timestamp, egramData]) => {
+          const baseTimestamp = parseInt(timestamp, 10)
+          if (rootTime === 0) {
+            setRootTime(baseTimestamp)
+          }
 
-      setSeries1((prev) => {
-        const newVals = [...prev, { x: time, y: newVal1 }]
-        if (newVals.length > 300) {
-          newVals.shift()
-        }
-        return newVals
-      })
-      setSeries2((prev) => {
-        const newVals = [...prev, { x: time, y: newVal2 }]
-        if (newVals.length > 300) {
-          newVals.shift()
-        }
-        return newVals
-      })
-    }, 10)
+          const time = (baseTimestamp - rootTime) / 1000
 
-    return () => clearInterval(interval)
-  }, [])
+          egramData.atrial.forEach((value: number, index: number) => {
+            newSeries1.push({ x: time + index * 0.002, y: value })
+          })
+          egramData.ventrical.forEach((value: number, index: number) => {
+            newSeries2.push({ x: time + index * 0.002, y: value })
+          })
+        })
+
+        setSeries1((prev) => {
+          const updatedSeries = [...prev, ...newSeries1]
+          return updatedSeries.slice(-NUM_POINTS)
+        })
+
+        setSeries2((prev) => {
+          const updatedSeries = [...prev, ...newSeries2]
+          return updatedSeries.slice(-NUM_POINTS)
+        })
+      }
+    }
+
+    window.api.onSerialDataMessage(handleSerialDataMessage)
+
+    return (): void => {
+      window.api.removeSerialDataMessageListener()
+    }
+  }, [rootTime, setRootTime])
 
   useEffect(() => {
     const handleHideEgram = () => {
@@ -89,16 +107,16 @@ const MainContent: React.FC<MainContentProps> = ({
               series1={{
                 data: series1,
                 title: 'Atrium',
-                xWidth: 100,
-                yMin: -100,
-                yMax: 100,
+                xWidth: NUM_POINTS,
+                yMin: -1,
+                yMax: 1,
               }}
               series2={{
                 data: series2,
                 title: 'Ventricle',
-                xWidth: 100,
-                yMin: -100,
-                yMax: 100,
+                xWidth: NUM_POINTS,
+                yMin: -1,
+                yMax: 1,
               }}
               width={isRightSidebarVisible ? 550 : 900}
               height={500}

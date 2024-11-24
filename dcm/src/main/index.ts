@@ -10,17 +10,21 @@ import {
   loginUser,
   getSettingsForMode,
 } from './userService'
+import { establishWebsocket } from './websockets'
 import { usersFilePath } from '../common/constants'
 import type {
   RegisterUserResponse,
   SetUserResponse,
   LoginUserResponse,
   ModeSettingResponse,
+  PacemakerParameters,
 } from '../common/types'
 import { resolve } from 'path'
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
+import { WebSocket } from 'ws'
 
 let pythonProcess: ReturnType<typeof spawn> | null = null
+let ws: WebSocket | null = null
 
 export const spawnPythonProcess = (
   pythonPath: string,
@@ -92,8 +96,12 @@ app.whenReady().then(async () => {
   // when the app is ready, ensure the users file exists
   await ensureUsersFile(usersFilePath)
 
-  const pythonPath = resolve(__dirname, '../../src/python/pyEnv/bin/python')
-  const scriptPath = resolve(__dirname, '../../src/python/mainProcess.py')
+  let pythonPath = resolve(__dirname, '../../src/python/pyEnv/bin/python')
+  const scriptPath = resolve(__dirname, '../../src/python/webserver.py')
+
+  if (process.platform === 'win32' || process.platform === 'darwin') {
+    pythonPath = 'python'
+  }
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -111,6 +119,7 @@ app.whenReady().then(async () => {
   }
 
   createWindow()
+  ws = await establishWebsocket(BrowserWindow.getAllWindows()[0])
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -119,17 +128,21 @@ app.whenReady().then(async () => {
   })
 })
 
+app.on('before-quit', () => {
+  if (pythonProcess) {
+    pythonProcess.kill('SIGINT')
+  }
+  if (ws) {
+    ws.close()
+  }
+})
+
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
-  }
-
-  // Kill the python process
-  if (pythonProcess) {
-    pythonProcess.kill()
   }
 })
 
@@ -211,4 +224,75 @@ ipcMain.handle('get-settings-for-mode', async (_, username: string, mode: string
   } catch (error) {
     return { success: false, message: (error as Error).message } as ModeSettingResponse
   }
+})
+
+// ipc for serial
+
+ipcMain.handle('initialize', async (_, pm_id: number) => {
+  ws.send(JSON.stringify({ type: 'initialize', pm_id }))
+})
+
+ipcMain.handle('disconnect', async () => {
+  ws.send(JSON.stringify({ type: 'disconnect' }))
+})
+
+ipcMain.handle('send_parameters', async (_, parameters: PacemakerParameters) => {
+  const parametersToSend = {}
+  switch (parameters.mode) {
+    case 'AOO':
+      parametersToSend['mode'] = 100
+      break
+    case 'VOO':
+      parametersToSend['mode'] = 200
+      break
+    case 'AAI':
+      parametersToSend['mode'] = 111
+      break
+    case 'VVI':
+      parametersToSend['mode'] = 211
+      break
+    case 'AOOR':
+      parametersToSend['mode'] = 109
+      break
+    case 'VOOR':
+      parametersToSend['mode'] = 209
+      break
+    case 'AAIR':
+      parametersToSend['mode'] = 120
+      break
+    case 'VVIR':
+      parametersToSend['mode'] = 220
+      break
+    case 'DDD':
+      parametersToSend['mode'] = 33
+      break
+    case 'DDDR':
+      parametersToSend['mode'] = 42
+      break
+    default:
+      console.error('Invalid mode')
+      return
+  }
+
+  parametersToSend['lrl'] = parameters.lowerRateLimit
+  parametersToSend['url'] = parameters.upperRateLimit
+  parametersToSend['arp'] = parameters.atrialRefractoryPeriod
+  parametersToSend['vrp'] = parameters.ventricularRefractoryPeriod
+  parametersToSend['apw'] = parameters.atrialPulseWidth
+  parametersToSend['vpw'] = parameters.ventricularPulseWidth
+  parametersToSend['aamp'] = parameters.atrialAmplitude
+  parametersToSend['vamp'] = parameters.ventricularAmplitude
+  parametersToSend['asens'] = parameters.atrialSensitivity
+  parametersToSend['vsens'] = parameters.ventricularSensitivity
+  parametersToSend['av_delay'] = parameters.avDelay
+  parametersToSend['rate_fac'] = parameters.rateFactor
+  parametersToSend['act_thresh'] = parameters.activityThreshold
+  parametersToSend['react_time'] = parameters.reactionTime
+  parametersToSend['recov_time'] = parameters.recoveryTime
+
+  ws.send(JSON.stringify({ type: 'send_parameters', parameters: parametersToSend }))
+})
+
+ipcMain.handle('toggle_egram', async () => {
+  ws.send(JSON.stringify({ type: 'toggle_egram' }))
 })
