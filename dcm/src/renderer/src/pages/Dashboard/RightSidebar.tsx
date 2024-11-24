@@ -89,7 +89,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const [view, setView] = useState<'PARAMETERS' | 'REPORTS'>('PARAMETERS')
   const [menuOpen, setMenuOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
-  const [activityThreshold, setActivityThreshold] = useState(modes[currentMode]?.activityThreshold ?? 1)
+  const [activityThreshold, setActivityThreshold] = useState(
+    modes[currentMode]?.activityThreshold ?? 1,
+  )
   const menuRef = useRef<HTMLDivElement>(null)
   const helpRef = useRef<HTMLDivElement>(null)
 
@@ -118,7 +120,13 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         input.classList.remove('filled')
       }
     })
-  }, [isAtriumDisabled, isVentricleDisabled, isAvDelayDisabled, isRateFactorDisabled, isRateLimitDisabled])
+  }, [
+    isAtriumDisabled,
+    isVentricleDisabled,
+    isAvDelayDisabled,
+    isRateFactorDisabled,
+    isRateLimitDisabled,
+  ])
 
   useEffect(() => {
     if (view === 'PARAMETERS') {
@@ -134,8 +142,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   }, [view])
 
   useEffect(() => {
-    setActivityThreshold(modes[currentMode]?.activityThreshold ?? 1);
-  }, [currentMode, modes]);
+    setActivityThreshold(modes[currentMode]?.activityThreshold ?? 1)
+  }, [currentMode, modes])
 
   const handleViewChange = (newView: 'PARAMETERS' | 'REPORTS') => {
     setView(newView)
@@ -149,7 +157,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     'Medium High',
     'High',
     'Very High',
-  ];
+  ]
 
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
@@ -262,7 +270,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             )}
             <div className="input-row">
-              <div className={`input-container double ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container double ${lowerRateLimitError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -275,7 +285,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   Lower Rate Limit
                 </label>
               </div>
-              <div className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -325,7 +337,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container triple ${ventricleAmpError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container triple ${ventricleAmpError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -338,7 +352,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VAMP</label>
               </div>
-              <div className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -351,7 +367,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VPW</label>
               </div>
-              <div className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -368,7 +386,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container quad ${reactionTimeError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container quad ${reactionTimeError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -379,7 +399,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RXNT</label>
               </div>
-              <div className={`input-container quad ${recoveryTimeError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container quad ${recoveryTimeError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -417,13 +439,15 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               <label className={`label-slider ${isRateFactorDisabled ? 'disabled' : ''}`}>
                 Activity Threshold
               </label>
-              <div className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="range"
                   className="input-field"
                   onChange={(e) => {
-                    handleInputChange(e);
-                    setActivityThreshold(e.target.value);
+                    handleInputChange(e)
+                    setActivityThreshold(e.target.value)
                   }}
                   disabled={isRateFactorDisabled}
                   value={isRateFactorDisabled ? '' : activityThreshold}
@@ -431,7 +455,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   min="1"
                   max="7"
                 />
-                <span className="slider-value">{isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}</span>
+                <span className="slider-value">
+                  {isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}
+                </span>
               </div>
             </div>
           </div>
