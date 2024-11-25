@@ -69,7 +69,7 @@ async function addUserToHistory(username: string, serialNumber: string): Promise
   const data = await fs.readFile(parameterHistoryPath, 'utf-8')
   const history = JSON.parse(data)
   const registrationDate = new Date().toISOString()
-  history.push({ username, serialNumber, registrationDate, loginHistory: [] })
+  history.push({ username, serialNumber, registrationDate, loginHistory: [], parameterChanges: [] })
   await fs.writeFile(parameterHistoryPath, JSON.stringify(history, null, 2))
 }
 
@@ -82,6 +82,20 @@ async function logUserLogin(username: string): Promise<void> {
   if (userHistory) {
     const loginDate = new Date().toISOString()
     userHistory.loginHistory.push({ loginDate })
+    await fs.writeFile(parameterHistoryPath, JSON.stringify(history, null, 2))
+  }
+}
+
+// log user parameter change
+async function logUserParameterChange(username: string, mode: string, settings: Record<string, number>): Promise<void> {
+  await ensureParameterHistoryFile(parameterHistoryPath)
+  const data = await fs.readFile(parameterHistoryPath, 'utf-8')
+  const history = JSON.parse(data)
+  const userHistory = history.find((entry: { username: string }) => entry.username === username)
+  if (userHistory) {
+    const changeDate = new Date().toISOString()
+    userHistory.parameterChanges = userHistory.parameterChanges || []
+    userHistory.parameterChanges.push({ changeDate, mode, settings })
     await fs.writeFile(parameterHistoryPath, JSON.stringify(history, null, 2))
   }
 }
@@ -120,6 +134,7 @@ export async function registerUser(
 // - finds the user by username
 // - sets the mode settings and last used mode
 // - writes the updated user to disk
+// - logs the parameter change
 // - otherwise throws an error that is caught by the ipc handler
 export async function setUser(
   username: string,
@@ -135,6 +150,7 @@ export async function setUser(
   user.modes[mode] = settings
   user.lastUsedMode = mode
   await saveUser(users)
+  await logUserParameterChange(username, mode, settings)
 }
 
 // login a user
