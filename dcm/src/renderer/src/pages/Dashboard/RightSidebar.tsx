@@ -444,24 +444,26 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <label className={`label-slider ${isRateFactorDisabled ? 'disabled' : ''}`}>
-                Activity Threshold
-              </label>
-              <div className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}>
-                <input
-                  type="range"
-                  className="input-field"
-                  onChange={(e) => {
-                    handleInputChange(e);
-                    setActivityThreshold(e.target.value);
-                  }}
-                  disabled={isRateFactorDisabled}
-                  value={isRateFactorDisabled ? '' : activityThreshold}
-                  name="activityThreshold"
-                  min="1"
-                  max="7"
-                />
-                <span className="slider-value">{isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}</span>
+              <div className="activity-threshold-container">
+                <label className={`label-slider ${isRateFactorDisabled ? 'disabled' : ''}`}>
+                  Activity Threshold
+                </label>
+                <div className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}>
+                  <input
+                    type="range"
+                    className="input-field"
+                    onChange={(e) => {
+                      handleInputChange(e);
+                      setActivityThreshold(e.target.value);
+                    }}
+                    disabled={isRateFactorDisabled}
+                    value={isRateFactorDisabled ? '' : activityThreshold}
+                    name="activityThreshold"
+                    min="1"
+                    max="7"
+                  />
+                  <span className="slider-value">{isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}</span>
+                </div>
               </div>
             </div>
           </div>
