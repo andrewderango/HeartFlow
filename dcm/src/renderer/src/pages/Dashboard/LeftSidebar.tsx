@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import HideEgramData from '../../components/HideEgram/HideEgram'
 import LogoutButton from '../../components/LogOut/LogOut'
+import ConnectButton from '../../components/ConnectButton/ConnectButton'
 import useStore from '@renderer/store/mainStore'
 import { useToast } from '../../context/ToastContext'
 import heartflowLogo from '../../assets/heartflow.png'
-import { Activity, XCircle } from 'lucide-react'
+import { Cable, Unplug, RefreshCcw } from 'lucide-react'
 
 interface LeftSidebarProps {
   handleEgramHiding: () => void
@@ -15,6 +16,8 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
   const { addToast } = useToast()
   const [currentTime, setCurrentTime] = useState(new Date())
 
+  console.log('connectionStatus:', connectionStatus)
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date())
@@ -23,17 +26,23 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
   }, [])
 
   const getStatusIcon = (): JSX.Element => {
-    return connectionStatus === 'CONNECTED' ? (
-      <Activity size={16} className="activity-icon" />
-    ) : (
-      <XCircle size={16} className="disconnected-icon" />
-    )
+    if (connectionStatus === 'CONNECTED') {
+      return <Cable size={20} className="activity-icon" />
+    } else if (connectionStatus === 'DISCONNECTED') {
+      return <Unplug size={20} className="activity-icon" />
+    } else {
+      return <RefreshCcw size={20} className="acitivity-icon" />
+    }
   }
 
   const getStatusClass = (): string => {
-    return connectionStatus === 'CONNECTED'
-      ? 'communication-status'
-      : 'communication-status disconnected'
+    if (connectionStatus === 'CONNECTED') {
+      return 'communication-status'
+    } else if (connectionStatus === 'DISCONNECTED') {
+      return 'communication-status disconnected'
+    } else {
+      return 'communication-status reconnecting'
+    }
   }
 
   return (
@@ -80,6 +89,9 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
         <div className="sidebar-versions">
           <p>HeartFlow Release: v2.0.0</p>
           {serialNumber && <p>Serial Number: {serialNumber}</p>}
+        </div>
+        <div className="connect-button-container">
+          <ConnectButton />
         </div>
         <div className="egram-button-container">
           <HideEgramData />

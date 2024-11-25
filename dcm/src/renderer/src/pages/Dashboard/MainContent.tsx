@@ -53,10 +53,14 @@ const MainContent: React.FC<MainContentProps> = ({
           const time = (baseTimestamp - rootTime) / 1000
 
           egramData.atrial.forEach((value: number, index: number) => {
-            newSeries1.push({ x: time + index * 0.002, y: value })
+            if (index % 10 === 0) {
+              newSeries1.push({ x: time + index * 0.002, y: value })
+            }
           })
           egramData.ventrical.forEach((value: number, index: number) => {
-            newSeries2.push({ x: time + index * 0.002, y: value })
+            if (index % 10 === 0) {
+              newSeries2.push({ x: time + index * 0.002, y: value })
+            }
           })
         })
 
@@ -80,13 +84,13 @@ const MainContent: React.FC<MainContentProps> = ({
   }, [rootTime, setRootTime])
 
   useEffect(() => {
-    const handleHideEgram = () => {
+    const handleHideEgram = (): void => {
       setIsEgramHidden((prev) => !prev)
     }
 
     window.addEventListener('hideEgram', handleHideEgram)
 
-    return () => {
+    return (): void => {
       window.removeEventListener('hideEgram', handleHideEgram)
     }
   }, [])

@@ -100,7 +100,13 @@ function Dashboard(): JSX.Element {
         currentMode === 'AAIR',
     )
     setIsAvDelayDisabled(currentMode !== 'DDDR' && currentMode !== 'DDD')
-    setIsRateFactorDisabled(currentMode !== 'DDDR' && currentMode !== 'AOOR' && currentMode !== 'AAIR' && currentMode !== 'VOOR' && currentMode !== 'VVIR')
+    setIsRateFactorDisabled(
+      currentMode !== 'DDDR' &&
+        currentMode !== 'AOOR' &&
+        currentMode !== 'AAIR' &&
+        currentMode !== 'VOOR' &&
+        currentMode !== 'VVIR',
+    )
     setIsRateLimitDisabled(currentMode === 'OFF')
   }, [currentMode])
 
@@ -118,8 +124,6 @@ function Dashboard(): JSX.Element {
     if (lastUsedMode) {
       setSubmittedMode(lastUsedMode)
       dispatch({ type: 'UPDATE_CURRENT_MODE', payload: lastUsedMode })
-      dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })
-      dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
     }
   }, [lastUsedMode])
 
@@ -155,22 +159,6 @@ function Dashboard(): JSX.Element {
     setRecoveryTimeError(false)
     setActivityThresholdError(false)
     setAvDelayError(false)
-  }
-
-  // helper function to get appropriate icon based on communication status
-  const getStatusIcon = (): JSX.Element => {
-    return connectionStatus === 'CONNECTED' ? (
-      <Activity size={16} className="activity-icon" />
-    ) : (
-      <XCircle size={16} className="disconnected-icon" />
-    )
-  }
-
-  // helper function to get appropriate class based on communication status
-  const getStatusClass = (): string => {
-    return connectionStatus === 'CONNECTED'
-      ? 'communication-status'
-      : 'communication-status disconnected'
   }
 
   const normalizeInput = (value: string) => {
@@ -655,7 +643,13 @@ function Dashboard(): JSX.Element {
         setVentricleRPError(false)
       }
     }
-    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
+    if (
+      currentMode === 'AOOR' ||
+      currentMode === 'VOOR' ||
+      currentMode === 'AAIR' ||
+      currentMode === 'VVIR' ||
+      currentMode === 'DDDR'
+    ) {
       if (modes[currentMode].rateFactor < 1 || modes[currentMode].rateFactor > 16) {
         addToast('Rate Factor must be between 1 and 16', 'error')
         setRateFactorError(true)
@@ -837,7 +831,7 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0 && 
+          modes[currentMode].upperRateLimit !== 0 &&
           modes[currentMode].rateFactor !== 0 &&
           modes[currentMode].reactionTime !== 0 &&
           modes[currentMode].recoveryTime !== 0 &&
@@ -1259,56 +1253,6 @@ function Dashboard(): JSX.Element {
   const handleEgramHiding = (): void => {
     console.log('Electrogram hidden')
   }
-
-  // to test serial
-  const delay = (ms: number): Promise<void> => new Promise((res) => setTimeout(res, ms))
-
-  useEffect(() => {
-    window.api.onSerialConnectionMessage((message: string) => {
-      console.log(message)
-    })
-    window.api.onSerialActionMessage((message: string) => {
-      console.log(message)
-    })
-    window.api.onSerialErrorMessage((message: string) => {
-      console.log(message)
-    })
-
-    const testSerial = async (): Promise<void> => {
-      window.api.serialInitialize(parseInt(serialNumber, 10))
-      const params: PacemakerParameters = {
-        mode: 'AOO',
-        lowerRateLimit: 0,
-        upperRateLimit: 0,
-        atrialRefractoryPeriod: 0,
-        ventricularRefractoryPeriod: 0,
-        atrialAmplitude: 0,
-        ventricularAmplitude: 0,
-        atrialPulseWidth: 0,
-        ventricularPulseWidth: 0,
-        atrialSensitivity: 0,
-        ventricularSensitivity: 0,
-        avDelay: 0,
-        rateFactor: 0,
-        activityThreshold: 0,
-        reactionTime: 0,
-        recoveryTime: 0,
-      }
-      window.api.serialSendParameters(params)
-      window.api.serialToggleEgram()
-      await delay(30000)
-      window.api.serialToggleEgram()
-      window.api.serialDisconnect()
-    }
-
-    testSerial()
-
-    return (): void => {
-      window.api.removeSerialConnectionMessageListener()
-      window.api.removeSerialActionMessageListener()
-      window.api.removeSerialErrorMessageListener()
-    }
-  }, [])
 
   // Return the actual JSX component
   return (
