@@ -321,7 +321,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   Lower Rate Limit
                 </label>
                 {!isRateLimitDisabled && (
-                  <button className="info-button" title={`${inputInfo.lowerRateLimit.name}: ${inputInfo.lowerRateLimit.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.lowerRateLimit.name}: ${inputInfo.lowerRateLimit.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -339,7 +339,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   Upper Rate Limit
                 </label>
                 {!isRateLimitDisabled && (
-                  <button className="info-button" title={`${inputInfo.upperRateLimit.name}: ${inputInfo.upperRateLimit.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.upperRateLimit.name}: ${inputInfo.upperRateLimit.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -357,7 +357,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>AAMP</label>
                 {!isAtriumDisabled && (
-                  <button className="info-button" title={`${inputInfo.atriumAmp.name}: ${inputInfo.atriumAmp.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.atriumAmp.name}: ${inputInfo.atriumAmp.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -373,7 +373,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>APW</label>
                 {!isAtriumDisabled && (
-                  <button className="info-button" title={`${inputInfo.atrialPW.name}: ${inputInfo.atrialPW.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.atrialPW.name}: ${inputInfo.atrialPW.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -389,7 +389,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>ARP</label>
                 {!isAtriumDisabled && (
-                  <button className="info-button" title={`${inputInfo.atrialRP.name}: ${inputInfo.atrialRP.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.atrialRP.name}: ${inputInfo.atrialRP.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -409,7 +409,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VAMP</label>
                 {!isVentricleDisabled && (
-                  <button className="info-button" title={`${inputInfo.ventricleAmp.name}: ${inputInfo.ventricleAmp.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.ventricleAmp.name}: ${inputInfo.ventricleAmp.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -427,7 +427,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VPW</label>
                 {!isVentricleDisabled && (
-                  <button className="info-button" title={`${inputInfo.ventriclePW.name}: ${inputInfo.ventriclePW.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.ventriclePW.name}: ${inputInfo.ventriclePW.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -447,7 +447,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VRP</label>
                 {!isVentricleDisabled && (
-                  <button className="info-button" title={`${inputInfo.ventricleRP.name}: ${inputInfo.ventricleRP.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.ventricleRP.name}: ${inputInfo.ventricleRP.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -465,7 +465,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RXNT</label>
                 {!isRateFactorDisabled && (
-                  <button className="info-button" title={`${inputInfo.reactionTime.name}: ${inputInfo.reactionTime.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.reactionTime.name}: ${inputInfo.reactionTime.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -481,7 +481,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RCVT</label>
                 {!isRateFactorDisabled && (
-                  <button className="info-button" title={`${inputInfo.recoveryTime.name}: ${inputInfo.recoveryTime.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.recoveryTime.name}: ${inputInfo.recoveryTime.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -497,7 +497,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RF</label>
                 {!isRateFactorDisabled && (
-                  <button className="info-button" title={`${inputInfo.rateFactor.name}: ${inputInfo.rateFactor.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.rateFactor.name}: ${inputInfo.rateFactor.range}`}>
                     <Info size={12} />
                   </button>
                 )}
@@ -513,7 +513,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isAvDelayDisabled ? 'disabled-label' : ''}>AVD</label>
                 {!isAvDelayDisabled && (
-                  <button className="info-button" title={`${inputInfo.avDelay.name}: ${inputInfo.avDelay.range}`}>
+                  <button className="info-button" data-title={`${inputInfo.avDelay.name}: ${inputInfo.avDelay.range}`}>
                     <Info size={12} />
                   </button>
                 )}

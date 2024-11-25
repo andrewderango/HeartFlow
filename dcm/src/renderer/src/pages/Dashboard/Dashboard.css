@@ -876,6 +876,36 @@ h3 {
   position: absolute;
   top: -18px;
   right: -5px;
+  transition: color 0.1s;
+  position: relative;
+}
+
+.info-button:hover {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.info-button:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.info-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  position: absolute;
+  top: -18px;
+  right: -5px;
   transition: color 0.3s;
 }
 
