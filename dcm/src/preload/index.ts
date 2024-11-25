@@ -41,6 +41,10 @@ const api = {
     const result = await ipcRenderer.invoke('download-parameter-log', username)
     return result
   },
+  downloadLoginHistory: async (username: string): Promise<{ success: boolean; directory?: string; message?: string }> => {
+    const result = await ipcRenderer.invoke('download-login-history', username)
+    return result
+  },
 }
 
 // electron boilerplate for exposing APIs based on context isolation

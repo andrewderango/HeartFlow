@@ -238,3 +238,23 @@ ipcMain.handle('download-parameter-log', async (_, username: string) => {
     return { success: false, message: (error as Error).message }
   }
 })
+
+ipcMain.handle('download-login-history', async (_, username: string) => {
+  try {
+    const data = await fs.readFile(parameterHistoryPath, 'utf-8')
+    const history = JSON.parse(data)
+    const userHistory = history.find((entry: { username: string }) => entry.username === username)
+    if (!userHistory) {
+      throw new Error('User not found')
+    }
+
+    const csv = parse(userHistory.loginHistory)
+    const directory = app.getPath('downloads')
+    const filePath = path.join(directory, `${username}_login_history.csv`)
+    await fs.writeFile(filePath, csv)
+
+    return { success: true, directory }
+  } catch (error) {
+    return { success: false, message: (error as Error).message }
+  }
+})
