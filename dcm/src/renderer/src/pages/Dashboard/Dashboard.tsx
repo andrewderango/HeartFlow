@@ -186,12 +186,24 @@ function Dashboard(): JSX.Element {
     const { name, value } = e.target
     const normalizedValue = normalizeInput(value)
     e.target.value = normalizedValue
-    // check if only numbers and decimals are entered w/ regex
-    if (!/^\d*\.?\d*$/.test(normalizedValue)) {
+  
+    // check if only numbers are entered for lower and upper rate limits
+    if ((name === 'lowerRateLimit' || name === 'upperRateLimit') && !/^\d*$/.test(normalizedValue)) {
       return
     }
-    // set the appropriate state variable based on the input field name from
-    // the event
+  
+    // check if only numbers and decimals are entered for other inputs
+    if (
+      name !== 'lowerRateLimit' && 
+      name !== 'upperRateLimit' && 
+      name !== 'reactionTime' &&
+      name !== 'recoveryTime' &&
+      name !== 'rateFactor' &&
+      name !== 'avDelay' &&
+      !/^\d*\.?\d*$/.test(normalizedValue)) {
+      return
+    }
+  
     switch (name) {
       case 'atriumAmp':
         dispatch({
@@ -252,7 +264,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { lowerRateLimit: parseFloat(normalizedValue) || 0 },
+            settings: { lowerRateLimit: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -261,7 +273,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { upperRateLimit: parseFloat(normalizedValue) || 0 },
+            settings: { upperRateLimit: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -270,7 +282,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { rateFactor: parseFloat(normalizedValue) || 0 },
+            settings: { rateFactor: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -279,7 +291,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { avDelay: parseFloat(normalizedValue) || 0 },
+            settings: { avDelay: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -288,7 +300,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { reactionTime: parseFloat(normalizedValue) || 0 },
+            settings: { reactionTime: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -297,7 +309,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { recoveryTime: parseFloat(normalizedValue) || 0 },
+            settings: { recoveryTime: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -306,7 +318,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { activityThreshold: parseFloat(normalizedValue) || 0 },
+            settings: { activityThreshold: parseInt(normalizedValue) || 0 },
           },
         })
         break
