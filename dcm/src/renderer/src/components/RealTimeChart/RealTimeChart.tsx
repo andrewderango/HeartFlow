@@ -74,6 +74,10 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
                 title: {
                   display: true,
                   text: 'Time (s)',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                },
+                ticks: {
+                  color: 'rgba(255, 255, 255, 0.6)',
                 },
               },
               y: {
@@ -82,6 +86,10 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
                 title: {
                   display: true,
                   text: 'Potential Difference (mV)',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                },
+                ticks: {
+                  color: 'rgba(255, 255, 255, 0.6)',
                 },
               },
             },
@@ -93,6 +101,9 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
                   setHiddenDatasets((prev) =>
                     prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
                   )
+                },
+                labels: {
+                  color: 'rgba(255, 255, 255, 0.6)',
                 },
               },
             },
