@@ -1,6 +1,8 @@
-## What changes were made?
+## Describe the Changes Made
 
-## Describe any tests done
+## Describe Any Known Errors, Issues, or Bugs
+
+## Describe Any Tests Done
 
 ## Checklist Before Requesting Review
 

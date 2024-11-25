@@ -7,6 +7,8 @@ import RightSidebar from './RightSidebar'
 import MainContent from './MainContent'
 import './Dashboard.css'
 
+import { PacemakerParameters } from '../../../../common/types'
+
 function Dashboard(): JSX.Element {
   // set up states for the following:
   // - the current user via the UserContext
@@ -98,7 +100,13 @@ function Dashboard(): JSX.Element {
         currentMode === 'AAIR',
     )
     setIsAvDelayDisabled(currentMode !== 'DDDR' && currentMode !== 'DDD')
-    setIsRateFactorDisabled(currentMode !== 'DDDR' && currentMode !== 'AOOR' && currentMode !== 'AAIR' && currentMode !== 'VOOR' && currentMode !== 'VVIR')
+    setIsRateFactorDisabled(
+      currentMode !== 'DDDR' &&
+        currentMode !== 'AOOR' &&
+        currentMode !== 'AAIR' &&
+        currentMode !== 'VOOR' &&
+        currentMode !== 'VVIR',
+    )
     setIsRateLimitDisabled(currentMode === 'OFF')
   }, [currentMode])
 
@@ -116,8 +124,6 @@ function Dashboard(): JSX.Element {
     if (lastUsedMode) {
       setSubmittedMode(lastUsedMode)
       dispatch({ type: 'UPDATE_CURRENT_MODE', payload: lastUsedMode })
-      dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })
-      dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
     }
   }, [lastUsedMode])
 
@@ -153,22 +159,6 @@ function Dashboard(): JSX.Element {
     setRecoveryTimeError(false)
     setActivityThresholdError(false)
     setAvDelayError(false)
-  }
-
-  // helper function to get appropriate icon based on communication status
-  const getStatusIcon = (): JSX.Element => {
-    return connectionStatus === 'CONNECTED' ? (
-      <Activity size={16} className="activity-icon" />
-    ) : (
-      <XCircle size={16} className="disconnected-icon" />
-    )
-  }
-
-  // helper function to get appropriate class based on communication status
-  const getStatusClass = (): string => {
-    return connectionStatus === 'CONNECTED'
-      ? 'communication-status'
-      : 'communication-status disconnected'
   }
 
   const normalizeInput = (value: string) => {
@@ -849,7 +839,7 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0 && 
+          modes[currentMode].upperRateLimit !== 0 &&
           modes[currentMode].rateFactor !== 0 &&
           modes[currentMode].reactionTime !== 0 &&
           modes[currentMode].recoveryTime !== 0 &&

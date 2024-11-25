@@ -13,7 +13,7 @@ export type Mode =
   | 'VOOR'
   | 'VVIR'
 
-export type ConnectionStatus = 'CONNECTED' | 'DISCONNECTED' | 'CONNECTING'
+export type ConnectionStatus = 'CONNECTED' | 'DISCONNECTED' | 'CONNECTING' | 'RECONNECTING'
 
 export type TelemetryStatus = 'ON' | 'OFF'
 
@@ -301,4 +301,53 @@ export interface Toast {
 export interface ChartPoint {
   x: number
   y: number
+}
+
+// interface for parameters to send to pacemaker
+export interface PacemakerParameters {
+  mode: Mode
+  lowerRateLimit: number
+  upperRateLimit: number
+  atrialRefractoryPeriod: number
+  ventricularRefractoryPeriod: number
+  atrialPulseWidth: number
+  ventricularPulseWidth: number
+  atrialAmplitude: number
+  ventricularAmplitude: number
+  atrialSensitivity: number
+  ventricularSensitivity: number
+  avDelay: number
+  rateFactor: number
+  activityThreshold: number
+  reactionTime: number
+  recoveryTime: number
+}
+
+// for IPC messages pertaining to serial
+export interface SerialResponse {
+  type: 'connection' | 'action' | 'data' | 'error'
+}
+
+export interface SerialConnectionResponse extends SerialResponse {
+  type: 'connection'
+  status: ConnectionStatus
+  message?: string
+}
+
+export interface SerialActionResponse extends SerialResponse {
+  type: 'action'
+  action: 'send_parameters' | 'toggle_egram'
+  status: 'success' | 'error'
+  message?: string
+}
+
+export interface SerialDataResponse extends SerialResponse {
+  type: 'data'
+  dataType: 'egram' // only one for now
+  data: string
+}
+
+export interface SerialErrorResponse extends SerialResponse {
+  type: 'error'
+  error: string
 }

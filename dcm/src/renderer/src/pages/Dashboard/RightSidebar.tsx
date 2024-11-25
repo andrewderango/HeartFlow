@@ -92,7 +92,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const [view, setView] = useState<'PARAMETERS' | 'REPORTS'>('PARAMETERS')
   const [menuOpen, setMenuOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
-  const [activityThreshold, setActivityThreshold] = useState(modes[currentMode]?.activityThreshold ?? 1)
+  const [activityThreshold, setActivityThreshold] = useState(
+    modes[currentMode]?.activityThreshold ?? 1,
+  )
   const menuRef = useRef<HTMLDivElement>(null)
   const helpRef = useRef<HTMLDivElement>(null)
   const { addToast } = useToast()
@@ -138,7 +140,13 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         input.classList.remove('filled')
       }
     })
-  }, [isAtriumDisabled, isVentricleDisabled, isAvDelayDisabled, isRateFactorDisabled, isRateLimitDisabled])
+  }, [
+    isAtriumDisabled,
+    isVentricleDisabled,
+    isAvDelayDisabled,
+    isRateFactorDisabled,
+    isRateLimitDisabled,
+  ])
 
   useEffect(() => {
     if (view === 'PARAMETERS') {
@@ -154,8 +162,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   }, [view])
 
   useEffect(() => {
-    setActivityThreshold(modes[currentMode]?.activityThreshold ?? 1);
-  }, [currentMode, modes]);
+    setActivityThreshold(modes[currentMode]?.activityThreshold ?? 1)
+  }, [currentMode, modes])
 
   const handleViewChange = (newView: 'PARAMETERS' | 'REPORTS') => {
     setView(newView)
@@ -169,7 +177,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     'Medium High',
     'High',
     'Very High',
-  ];
+  ]
 
   const downloadParameterLog = async () => {
     if (!username) {
@@ -308,7 +316,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             )}
             <div className="input-row">
-              <div className={`input-container double ${lowerRateLimitError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container double ${lowerRateLimitError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -326,7 +336,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -396,7 +408,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container triple ${ventricleAmpError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container triple ${ventricleAmpError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -414,7 +428,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -432,7 +448,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -454,7 +472,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container quad ${reactionTimeError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container quad ${reactionTimeError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
@@ -470,7 +490,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div className={`input-container quad ${recoveryTimeError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container quad ${recoveryTimeError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
