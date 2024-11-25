@@ -69,8 +69,21 @@ async function addUserToHistory(username: string, serialNumber: string): Promise
   const data = await fs.readFile(parameterHistoryPath, 'utf-8')
   const history = JSON.parse(data)
   const registrationDate = new Date().toISOString()
-  history.push({ username, serialNumber, registrationDate })
+  history.push({ username, serialNumber, registrationDate, loginHistory: [] })
   await fs.writeFile(parameterHistoryPath, JSON.stringify(history, null, 2))
+}
+
+// log user login time
+async function logUserLogin(username: string): Promise<void> {
+  await ensureParameterHistoryFile(parameterHistoryPath)
+  const data = await fs.readFile(parameterHistoryPath, 'utf-8')
+  const history = JSON.parse(data)
+  const userHistory = history.find((entry: { username: string }) => entry.username === username)
+  if (userHistory) {
+    const loginDate = new Date().toISOString()
+    userHistory.loginHistory.push({ loginDate })
+    await fs.writeFile(parameterHistoryPath, JSON.stringify(history, null, 2))
+  }
 }
 
 // register a new user
@@ -129,6 +142,7 @@ export async function setUser(
 // - finds the user by username
 // - verifies the password with argon2
 // - returns the public user object if all checks pass
+// - logs the login time
 // - otherwise throws an error that is caught by the ipc handler
 export async function loginUser(username: string, password: string): Promise<PublicUser> {
   const users = await getUsers(usersFilePath)
@@ -140,6 +154,8 @@ export async function loginUser(username: string, password: string): Promise<Pub
   if (!(await argon2.verify(user.passwordHash, password))) {
     throw new Error('Incorrect password')
   }
+
+  await logUserLogin(username)
 
   return { username, serialNumber: user.serialNumber, lastUsedMode: user.lastUsedMode }
 }
