@@ -8,7 +8,7 @@ import {
   registerUser,
   setUser,
   loginUser,
-  getSettingsForMode,
+  getSettingsForMode
 } from './userService'
 import { usersFilePath } from '../common/constants'
 import type {
