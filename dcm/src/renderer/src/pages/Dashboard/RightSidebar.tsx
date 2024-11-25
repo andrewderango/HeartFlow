@@ -320,9 +320,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Lower Rate Limit
                 </label>
-                <button className="info-button" title={`${inputInfo.lowerRateLimit.name}: ${inputInfo.lowerRateLimit.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isRateLimitDisabled && (
+                  <button className="info-button" title={`${inputInfo.lowerRateLimit.name}: ${inputInfo.lowerRateLimit.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}>
                 <input
@@ -336,9 +338,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Upper Rate Limit
                 </label>
-                <button className="info-button" title={`${inputInfo.upperRateLimit.name}: ${inputInfo.upperRateLimit.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isRateLimitDisabled && (
+                  <button className="info-button" title={`${inputInfo.upperRateLimit.name}: ${inputInfo.upperRateLimit.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
             </div>
             <div className="input-row">
@@ -352,9 +356,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="atriumAmp"
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>AAMP</label>
-                <button className="info-button" title={`${inputInfo.atriumAmp.name}: ${inputInfo.atriumAmp.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isAtriumDisabled && (
+                  <button className="info-button" title={`${inputInfo.atriumAmp.name}: ${inputInfo.atriumAmp.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container triple ${atrialPWError ? 'validation-error' : ''}`}>
                 <input
@@ -366,9 +372,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="atrialPW"
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>APW</label>
-                <button className="info-button" title={`${inputInfo.atrialPW.name}: ${inputInfo.atrialPW.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isAtriumDisabled && (
+                  <button className="info-button" title={`${inputInfo.atrialPW.name}: ${inputInfo.atrialPW.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container triple ${atrialRPError ? 'validation-error' : ''}`}>
                 <input
@@ -380,9 +388,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="atrialRP"
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>ARP</label>
-                <button className="info-button" title={`${inputInfo.atrialRP.name}: ${inputInfo.atrialRP.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isAtriumDisabled && (
+                  <button className="info-button" title={`${inputInfo.atrialRP.name}: ${inputInfo.atrialRP.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
             </div>
             <div className="input-row">
@@ -398,9 +408,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="ventricleAmp"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VAMP</label>
-                <button className="info-button" title={`${inputInfo.ventricleAmp.name}: ${inputInfo.ventricleAmp.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isVentricleDisabled && (
+                  <button className="info-button" title={`${inputInfo.ventricleAmp.name}: ${inputInfo.ventricleAmp.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}>
                 <input
@@ -414,9 +426,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="ventriclePW"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VPW</label>
-                <button className="info-button" title={`${inputInfo.ventriclePW.name}: ${inputInfo.ventriclePW.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isVentricleDisabled && (
+                  <button className="info-button" title={`${inputInfo.ventriclePW.name}: ${inputInfo.ventriclePW.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}>
                 <input
@@ -432,9 +446,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="ventricleRP"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VRP</label>
-                <button className="info-button" title={`${inputInfo.ventricleRP.name}: ${inputInfo.ventricleRP.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isVentricleDisabled && (
+                  <button className="info-button" title={`${inputInfo.ventricleRP.name}: ${inputInfo.ventricleRP.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
             </div>
             <div className="input-row">
@@ -448,9 +464,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="reactionTime"
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RXNT</label>
-                <button className="info-button" title={`${inputInfo.reactionTime.name}: ${inputInfo.reactionTime.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isRateFactorDisabled && (
+                  <button className="info-button" title={`${inputInfo.reactionTime.name}: ${inputInfo.reactionTime.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container quad ${recoveryTimeError ? 'validation-error' : ''}`}>
                 <input
@@ -462,9 +480,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="recoveryTime"
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RCVT</label>
-                <button className="info-button" title={`${inputInfo.recoveryTime.name}: ${inputInfo.recoveryTime.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isRateFactorDisabled && (
+                  <button className="info-button" title={`${inputInfo.recoveryTime.name}: ${inputInfo.recoveryTime.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container quad ${rateFactorError ? 'validation-error' : ''}`}>
                 <input
@@ -476,9 +496,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="rateFactor"
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RF</label>
-                <button className="info-button" title={`${inputInfo.rateFactor.name}: ${inputInfo.rateFactor.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isRateFactorDisabled && (
+                  <button className="info-button" title={`${inputInfo.rateFactor.name}: ${inputInfo.rateFactor.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container quad ${avDelayError ? 'validation-error' : ''}`}>
                 <input
@@ -490,9 +512,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="avDelay"
                 />
                 <label className={isAvDelayDisabled ? 'disabled-label' : ''}>AVD</label>
-                <button className="info-button" title={`${inputInfo.avDelay.name}: ${inputInfo.avDelay.range}`}>
-                  <Info size={12} />
-                </button>
+                {!isAvDelayDisabled && (
+                  <button className="info-button" title={`${inputInfo.avDelay.name}: ${inputInfo.avDelay.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
             </div>
             <div className="input-row">
