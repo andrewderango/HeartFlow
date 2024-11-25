@@ -2,14 +2,45 @@
 
 import { promises as fs } from 'fs'
 import * as argon2 from 'argon2'
+import * as path from 'path'
 import { usersFilePath } from '../common/constants'
 import { createUser } from '../common/types'
 import type { PublicUser, User } from '../common/types'
+
+const parameterHistoryPath = path.join(__dirname, '../../parameterHistory.json')
 
 // ensure the users file exists
 // - if it does not exist, create it
 // - throw an error if we cant or if the error is not ENOENT (error no entry)
 export async function ensureUsersFile(filePath: string): Promise<void> {
+  try {
+    await fs.access(filePath)
+  } catch (error) {
+    if ((error as { code: string }).code === 'ENOENT') {
+      await fs.writeFile(filePath, JSON.stringify([]))
+    } else {
+      throw error
+    }
+  }
+}
+
+// ensure the directory for the parameter history file exists
+async function ensureDirectoryExists(filePath: string): Promise<void> {
+  const dir = path.dirname(filePath)
+  try {
+    await fs.access(dir)
+  } catch (error) {
+    if ((error as { code: string }).code === 'ENOENT') {
+      await fs.mkdir(dir, { recursive: true })
+    } else {
+      throw error
+    }
+  }
+}
+
+// ensure the parameter history file exists
+async function ensureParameterHistoryFile(filePath: string): Promise<void> {
+  await ensureDirectoryExists(filePath)
   try {
     await fs.access(filePath)
   } catch (error) {
@@ -30,6 +61,17 @@ async function getUsers(filePath: string): Promise<User[]> {
 // save the users to the file, stringifying as JSON
 async function saveUser(users: User[]): Promise<void> {
   await fs.writeFile(usersFilePath, JSON.stringify(users, null, 2))
+}
+
+// add user to parameter history
+async function addUserToHistory(username: string, serialNumber: string): Promise<void> {
+  await ensureParameterHistoryFile(parameterHistoryPath)
+  const data = await fs.readFile(parameterHistoryPath, 'utf-8')
+  const history = JSON.parse(data)
+  console.log('Current history:', history) // Add logging
+  history.push({ username, serialNumber })
+  console.log('Updated history:', history) // Add logging
+  await fs.writeFile(parameterHistoryPath, JSON.stringify(history, null, 2))
 }
 
 // register a new user
@@ -58,6 +100,7 @@ export async function registerUser(
 
   users.push(newUser)
   await saveUser(users)
+  await addUserToHistory(username, serialNumber)
 }
 
 // set the user settings
