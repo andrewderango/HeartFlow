@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Info, HardDriveUpload, ClipboardX, Menu, HeartPulse, FileText } from 'lucide-react'
 import { is } from '@electron-toolkit/utils'
+import { useToast } from '../../context/ToastContext'
 
 interface RightSidebarProps {
   showHelp: boolean
@@ -55,6 +56,7 @@ interface RightSidebarProps {
     | null
   modes: any
   isVisible: boolean
+  username: string | null
 }
 
 const RightSidebar: React.FC<RightSidebarProps> = ({
@@ -85,6 +87,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   currentMode,
   modes,
   isVisible,
+  username,
 }) => {
   const [view, setView] = useState<'PARAMETERS' | 'REPORTS'>('PARAMETERS')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -94,6 +97,23 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   )
   const menuRef = useRef<HTMLDivElement>(null)
   const helpRef = useRef<HTMLDivElement>(null)
+  const { addToast } = useToast()
+
+  const inputInfo = {
+    atriumAmp: { name: 'Atrium Amplitude', range: '0.5 - 5 mV' },
+    ventricleAmp: { name: 'Ventricle Amplitude', range: '0.5 - 5 mV' },
+    atrialPW: { name: 'Atrial Pulse Width', range: '0.05 - 1.9 ms' },
+    ventriclePW: { name: 'Ventricular Pulse Width', range: '0.05 - 1.9 ms' },
+    atrialRP: { name: 'Atrial Refractory Period', range: '150 - 500 ms' },
+    ventricleRP: { name: 'Ventricular Refractory Period', range: '150 - 500 ms' },
+    lowerRateLimit: { name: 'Lower Rate Limit', range: '30 - 175 bpm' },
+    upperRateLimit: { name: 'Upper Rate Limit', range: '50 - 175 bpm' },
+    rateFactor: { name: 'Rate Factor', range: '1 - 16' },
+    reactionTime: { name: 'Reaction Time', range: '10 - 50 s' },
+    recoveryTime: { name: 'Recovery Time', range: '10 - 240 s' },
+    activityThreshold: { name: 'Activity Threshold', range: '1 - 7' },
+    avDelay: { name: 'Atrioventricular Delay', range: '30 - 300 ms' },
+  };
 
   const handleClickOutside = (event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -158,6 +178,32 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     'High',
     'Very High',
   ]
+
+  const downloadParameterLog = async () => {
+    if (!username) {
+      addToast('Username is not defined', 'error')
+      return
+    }
+    const result = await window.api.downloadParameterLog(username)
+    if (result.success) {
+      addToast(`Parameter log downloaded to ${result.directory}`, 'success')
+    } else {
+      addToast(result.message ?? 'An unknown error occurred', 'error')
+    }
+  }
+
+  const downloadLoginHistory = async () => {
+    if (!username) {
+      addToast('Username is not defined', 'error')
+      return
+    }
+    const result = await window.api.downloadLoginHistory(username)
+    if (result.success) {
+      addToast(`Login history downloaded to ${result.directory}`, 'success')
+    } else {
+      addToast(result.message ?? 'An unknown error occurred', 'error')
+    }
+  }
 
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
@@ -230,9 +276,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
 
           <div className="header-with-help">
             <h3>Continuous Parameters</h3>
-            <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
+            {/* <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
               <Info size={14} />
-            </button>
+            </button> */}
           </div>
           {/* Continuous Parameters */}
           <div className="parameter-container scrollable no-scrollbar">
@@ -284,6 +330,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Lower Rate Limit
                 </label>
+                {!isRateLimitDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.lowerRateLimit.name}: ${inputInfo.lowerRateLimit.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div
                 className={`input-container double ${upperRateLimitError ? 'validation-error' : ''}`}
@@ -299,6 +350,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 <label className={isRateLimitDisabled ? 'disabled-label' : ''}>
                   Upper Rate Limit
                 </label>
+                {!isRateLimitDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.upperRateLimit.name}: ${inputInfo.upperRateLimit.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
             </div>
             <div className="input-row">
@@ -312,6 +368,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="atriumAmp"
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>AAMP</label>
+                {!isAtriumDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.atriumAmp.name}: ${inputInfo.atriumAmp.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container triple ${atrialPWError ? 'validation-error' : ''}`}>
                 <input
@@ -323,6 +384,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="atrialPW"
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>APW</label>
+                {!isAtriumDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.atrialPW.name}: ${inputInfo.atrialPW.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container triple ${atrialRPError ? 'validation-error' : ''}`}>
                 <input
@@ -334,6 +400,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="atrialRP"
                 />
                 <label className={isAtriumDisabled ? 'disabled-label' : ''}>ARP</label>
+                {!isAtriumDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.atrialRP.name}: ${inputInfo.atrialRP.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
             </div>
             <div className="input-row">
@@ -351,6 +422,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="ventricleAmp"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VAMP</label>
+                {!isVentricleDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.ventricleAmp.name}: ${inputInfo.ventricleAmp.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div
                 className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}
@@ -366,6 +442,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="ventriclePW"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VPW</label>
+                {!isVentricleDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.ventriclePW.name}: ${inputInfo.ventriclePW.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div
                 className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}
@@ -383,6 +464,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="ventricleRP"
                 />
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VRP</label>
+                {!isVentricleDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.ventricleRP.name}: ${inputInfo.ventricleRP.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
             </div>
             <div className="input-row">
@@ -398,6 +484,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="reactionTime"
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RXNT</label>
+                {!isRateFactorDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.reactionTime.name}: ${inputInfo.reactionTime.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div
                 className={`input-container quad ${recoveryTimeError ? 'validation-error' : ''}`}
@@ -411,6 +502,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="recoveryTime"
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RCVT</label>
+                {!isRateFactorDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.recoveryTime.name}: ${inputInfo.recoveryTime.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container quad ${rateFactorError ? 'validation-error' : ''}`}>
                 <input
@@ -422,6 +518,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="rateFactor"
                 />
                 <label className={isRateFactorDisabled ? 'disabled-label' : ''}>RF</label>
+                {!isRateFactorDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.rateFactor.name}: ${inputInfo.rateFactor.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
               <div className={`input-container quad ${avDelayError ? 'validation-error' : ''}`}>
                 <input
@@ -433,31 +534,34 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   name="avDelay"
                 />
                 <label className={isAvDelayDisabled ? 'disabled-label' : ''}>AVD</label>
+                {!isAvDelayDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.avDelay.name}: ${inputInfo.avDelay.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
               </div>
             </div>
             <div className="input-row">
-              <label className={`label-slider ${isRateFactorDisabled ? 'disabled' : ''}`}>
-                Activity Threshold
-              </label>
-              <div
-                className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}
-              >
-                <input
-                  type="range"
-                  className="input-field"
-                  onChange={(e) => {
-                    handleInputChange(e)
-                    setActivityThreshold(e.target.value)
-                  }}
-                  disabled={isRateFactorDisabled}
-                  value={isRateFactorDisabled ? '' : activityThreshold}
-                  name="activityThreshold"
-                  min="1"
-                  max="7"
-                />
-                <span className="slider-value">
-                  {isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}
-                </span>
+              <div className="activity-threshold-container">
+                <label className={`label-slider ${isRateFactorDisabled ? 'disabled' : ''}`}>
+                  Activity Threshold
+                </label>
+                <div className={`input-container long ${activityThresholdError ? 'validation-error' : ''}`}>
+                  <input
+                    type="range"
+                    className="input-field"
+                    onChange={(e) => {
+                      handleInputChange(e);
+                      setActivityThreshold(e.target.value);
+                    }}
+                    disabled={isRateFactorDisabled}
+                    value={isRateFactorDisabled ? '' : activityThreshold}
+                    name="activityThreshold"
+                    min="1"
+                    max="7"
+                  />
+                  <span className="slider-value">{isRateFactorDisabled ? '' : activityThresholdLabels[activityThreshold - 1]}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -480,16 +584,20 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
       {view === 'REPORTS' && (
         <div className="reports-container full-height">
           <button className="full-height-button electrogram-report" type="button">
-            Electrogram Report
+            <span className="report-title">Electrogram Report</span>
             <span className="report-subtitle">Detailed tabular electrogram data</span>
           </button>
-          <button className="full-height-button parameter-log" type="button">
-            Parameter Log
-            <span className="report-subtitle">Log of mode and parameter changes</span>
+          <button className="full-height-button parameter-log" type="button" onClick={downloadParameterLog}>
+            <span className="report-title">Parameter Log</span>
+            <span className="report-subtitle">Full history of mode and parameter changes</span>
           </button>
           <button className="full-height-button serial-log" type="button">
-            Serial Log
+            <span className="report-title">Serial Log</span>
             <span className="report-subtitle">Log of serial communication transmissions</span>
+          </button>
+          <button className="full-height-button activity-log" type="button" onClick={downloadLoginHistory}>
+            <span className="report-title">Activity Log</span>
+            <span className="report-subtitle">Full history of user account activity</span>
           </button>
         </div>
       )}

@@ -167,3 +167,4 @@ compiled_binaries
 READ_ME_BEFORE_RUNNING.txt
 adr-tests
 pyEnv
+parameterHistory.json

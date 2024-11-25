@@ -476,7 +476,7 @@ label {
 }
 
 .label-slider {
-  top: 622px;
+  top: -10px;
   left: 22px;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.7);
@@ -803,7 +803,8 @@ h3 {
 
 .full-height-button.electrogram-report::before,
 .full-height-button.parameter-log::before,
-.full-height-button.serial-log::before {
+.full-height-button.serial-log::before,
+.full-height-button.activity-log::before {
   content: '';
   position: absolute;
   top: 0;
@@ -812,7 +813,7 @@ h3 {
   height: 100%;
   background-size: cover;
   background-position: center;
-  opacity: 0.05;
+  opacity: 0.10;
   z-index: 0;
   border-radius: 5px;
 }
@@ -829,9 +830,28 @@ h3 {
   background-image: url('../../assets/images/pacemaker.png');
 }
 
+.full-height-button.activity-log::before {
+  background-image: url('../../assets/images/computer.jpg');
+}
+
+.report-title {
+  position: absolute;
+  top: 32.5%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 1.0);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .report-subtitle {
   position: absolute;
-  top: 60%;
+  top: 55%;
   left: 50%;
   transform: translateX(-50%);
   font-size: 14px;
@@ -847,5 +867,63 @@ h3 {
   height: 92.5%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
+}
+
+.activity-threshold-container {
+  position: relative;
+  width: 100%;
+}
+
+.label-slider {
+  position: absolute;
+  top: -20px;
+  left: 5px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.info-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  position: absolute;
+  top: -18px;
+  right: -5px;
+  transition: color 0.1s;
+  position: relative;
+}
+
+.info-button:hover {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.info-button:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.info-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  position: absolute;
+  top: -18px;
+  right: -5px;
+  transition: color 0.3s;
+}
+
+.info-button:hover {
+  color: rgba(255, 255, 255, 0.4);
 }

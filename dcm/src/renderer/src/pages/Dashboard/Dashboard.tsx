@@ -176,12 +176,24 @@ function Dashboard(): JSX.Element {
     const { name, value } = e.target
     const normalizedValue = normalizeInput(value)
     e.target.value = normalizedValue
-    // check if only numbers and decimals are entered w/ regex
-    if (!/^\d*\.?\d*$/.test(normalizedValue)) {
+  
+    // check if only numbers are entered for lower and upper rate limits
+    if ((name === 'lowerRateLimit' || name === 'upperRateLimit') && !/^\d*$/.test(normalizedValue)) {
       return
     }
-    // set the appropriate state variable based on the input field name from
-    // the event
+  
+    // check if only numbers and decimals are entered for other inputs
+    if (
+      name !== 'lowerRateLimit' && 
+      name !== 'upperRateLimit' && 
+      name !== 'reactionTime' &&
+      name !== 'recoveryTime' &&
+      name !== 'rateFactor' &&
+      name !== 'avDelay' &&
+      !/^\d*\.?\d*$/.test(normalizedValue)) {
+      return
+    }
+  
     switch (name) {
       case 'atriumAmp':
         dispatch({
@@ -242,7 +254,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { lowerRateLimit: parseFloat(normalizedValue) || 0 },
+            settings: { lowerRateLimit: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -251,7 +263,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { upperRateLimit: parseFloat(normalizedValue) || 0 },
+            settings: { upperRateLimit: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -260,7 +272,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { rateFactor: parseFloat(normalizedValue) || 0 },
+            settings: { rateFactor: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -269,7 +281,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { avDelay: parseFloat(normalizedValue) || 0 },
+            settings: { avDelay: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -278,7 +290,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { reactionTime: parseFloat(normalizedValue) || 0 },
+            settings: { reactionTime: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -287,7 +299,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { recoveryTime: parseFloat(normalizedValue) || 0 },
+            settings: { recoveryTime: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -296,7 +308,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { activityThreshold: parseFloat(normalizedValue) || 0 },
+            settings: { activityThreshold: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -571,6 +583,19 @@ function Dashboard(): JSX.Element {
     // make sure the values are within the acceptable ranges
     // if not, set the error state to true and display a toast
     // otherwise, set the error state to false
+    if (currentMode !== 'OFF') {
+      if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
+        addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
+        setLowerRateLimitError(true)
+        isValid = false
+      }
+
+      if (modes[currentMode].upperRateLimit < 50 || modes[currentMode].upperRateLimit > 175) {
+        addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
+        setUpperRateLimitError(true)
+        isValid = false
+      }
+    }
     if (
       currentMode === 'AOO' ||
       currentMode === 'AAI' ||
@@ -643,20 +668,7 @@ function Dashboard(): JSX.Element {
         setVentricleRPError(false)
       }
     }
-    if (
-      currentMode === 'AOOR' ||
-      currentMode === 'VOOR' ||
-      currentMode === 'AAIR' ||
-      currentMode === 'VVIR' ||
-      currentMode === 'DDDR'
-    ) {
-      if (modes[currentMode].rateFactor < 1 || modes[currentMode].rateFactor > 16) {
-        addToast('Rate Factor must be between 1 and 16', 'error')
-        setRateFactorError(true)
-        isValid = false
-      } else {
-        setRateFactorError(false)
-      }
+    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
       if (modes[currentMode].reactionTime < 10 || modes[currentMode].reactionTime > 50) {
         addToast('Reaction Time must be between 10 and 50 s', 'error')
         setReactionTimeError(true)
@@ -671,12 +683,12 @@ function Dashboard(): JSX.Element {
       } else {
         setRecoveryTimeError(false)
       }
-      if (modes[currentMode].activityThreshold < 1 || modes[currentMode].activityThreshold > 7) {
-        addToast('Activity Threshold must be between 1 and 7', 'error')
-        setActivityThresholdError(true)
+      if (modes[currentMode].rateFactor < 1 || modes[currentMode].rateFactor > 16) {
+        addToast('Rate Factor must be between 1 and 16', 'error')
+        setRateFactorError(true)
         isValid = false
       } else {
-        setActivityThresholdError(false)
+        setRateFactorError(false)
       }
     }
     if (currentMode === 'DDDR' || currentMode === 'DDD') {
@@ -688,17 +700,13 @@ function Dashboard(): JSX.Element {
         setAvDelayError(false)
       }
     }
-    if (currentMode !== 'OFF') {
-      if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
-        addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
-        setLowerRateLimitError(true)
+    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
+      if (modes[currentMode].activityThreshold < 1 || modes[currentMode].activityThreshold > 7) {
+        addToast('Activity Threshold must be between 1 and 7', 'error')
+        setActivityThresholdError(true)
         isValid = false
-      }
-
-      if (modes[currentMode].upperRateLimit < 50 || modes[currentMode].upperRateLimit > 175) {
-        addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
-        setUpperRateLimitError(true)
-        isValid = false
+      } else {
+        setActivityThresholdError(false)
       }
     }
 
@@ -1328,6 +1336,7 @@ function Dashboard(): JSX.Element {
         currentMode={currentMode}
         modes={modes}
         isVisible={isRightSidebarVisible}
+        username={username}
       />
       <div
         className={`toggle-sidebar-spot ${isRightSidebarVisible ? 'visible' : 'hidden'}`}

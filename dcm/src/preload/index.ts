@@ -38,6 +38,15 @@ const api = {
     const result = await ipcRenderer.invoke('get-settings-for-mode', username, mode)
     return result
   },
+  downloadParameterLog: async (username: string): Promise<{ success: boolean; directory?: string; message?: string }> => {
+    const result = await ipcRenderer.invoke('download-parameter-log', username)
+    return result
+  },
+  downloadLoginHistory: async (username: string): Promise<{ success: boolean; directory?: string; message?: string }> => {
+    const result = await ipcRenderer.invoke('download-login-history', username)
+    return result
+  },
+  
   serialInitialize: async (pm_id: number): Promise<void> => {
     await ipcRenderer.invoke('initialize', pm_id)
   },
