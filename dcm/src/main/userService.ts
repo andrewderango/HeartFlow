@@ -68,9 +68,8 @@ async function addUserToHistory(username: string, serialNumber: string): Promise
   await ensureParameterHistoryFile(parameterHistoryPath)
   const data = await fs.readFile(parameterHistoryPath, 'utf-8')
   const history = JSON.parse(data)
-  console.log('Current history:', history) // Add logging
-  history.push({ username, serialNumber })
-  console.log('Updated history:', history) // Add logging
+  const registrationDate = new Date().toISOString()
+  history.push({ username, serialNumber, registrationDate })
   await fs.writeFile(parameterHistoryPath, JSON.stringify(history, null, 2))
 }
 
