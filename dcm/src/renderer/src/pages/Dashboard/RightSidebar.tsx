@@ -110,7 +110,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     reactionTime: { name: 'Reaction Time', range: '10 - 50 s' },
     recoveryTime: { name: 'Recovery Time', range: '10 - 240 s' },
     activityThreshold: { name: 'Activity Threshold', range: '1 - 7' },
-    avDelay: { name: 'AV Delay', range: '30 - 300 ms' },
+    avDelay: { name: 'Atrioventricular Delay', range: '30 - 300 ms' },
   };
 
   const handleClickOutside = (event: MouseEvent) => {
