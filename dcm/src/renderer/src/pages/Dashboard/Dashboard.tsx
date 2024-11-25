@@ -581,6 +581,19 @@ function Dashboard(): JSX.Element {
     // make sure the values are within the acceptable ranges
     // if not, set the error state to true and display a toast
     // otherwise, set the error state to false
+    if (currentMode !== 'OFF') {
+      if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
+        addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
+        setLowerRateLimitError(true)
+        isValid = false
+      }
+
+      if (modes[currentMode].upperRateLimit < 50 || modes[currentMode].upperRateLimit > 175) {
+        addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
+        setUpperRateLimitError(true)
+        isValid = false
+      }
+    }
     if (
       currentMode === 'AOO' ||
       currentMode === 'AAI' ||
@@ -654,13 +667,6 @@ function Dashboard(): JSX.Element {
       }
     }
     if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
-      if (modes[currentMode].rateFactor < 1 || modes[currentMode].rateFactor > 16) {
-        addToast('Rate Factor must be between 1 and 16', 'error')
-        setRateFactorError(true)
-        isValid = false
-      } else {
-        setRateFactorError(false)
-      }
       if (modes[currentMode].reactionTime < 10 || modes[currentMode].reactionTime > 50) {
         addToast('Reaction Time must be between 10 and 50 s', 'error')
         setReactionTimeError(true)
@@ -675,12 +681,12 @@ function Dashboard(): JSX.Element {
       } else {
         setRecoveryTimeError(false)
       }
-      if (modes[currentMode].activityThreshold < 1 || modes[currentMode].activityThreshold > 7) {
-        addToast('Activity Threshold must be between 1 and 7', 'error')
-        setActivityThresholdError(true)
+      if (modes[currentMode].rateFactor < 1 || modes[currentMode].rateFactor > 16) {
+        addToast('Rate Factor must be between 1 and 16', 'error')
+        setRateFactorError(true)
         isValid = false
       } else {
-        setActivityThresholdError(false)
+        setRateFactorError(false)
       }
     }
     if (currentMode === 'DDDR' || currentMode === 'DDD') {
@@ -692,17 +698,13 @@ function Dashboard(): JSX.Element {
         setAvDelayError(false)
       }
     }
-    if (currentMode !== 'OFF') {
-      if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
-        addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
-        setLowerRateLimitError(true)
+    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
+      if (modes[currentMode].activityThreshold < 1 || modes[currentMode].activityThreshold > 7) {
+        addToast('Activity Threshold must be between 1 and 7', 'error')
+        setActivityThresholdError(true)
         isValid = false
-      }
-
-      if (modes[currentMode].upperRateLimit < 50 || modes[currentMode].upperRateLimit > 175) {
-        addToast('Upper Rate Limit must be between 50 and 175 bpm', 'error')
-        setUpperRateLimitError(true)
-        isValid = false
+      } else {
+        setActivityThresholdError(false)
       }
     }
 
