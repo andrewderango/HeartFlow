@@ -1302,6 +1302,7 @@ function Dashboard(): JSX.Element {
         currentMode={currentMode}
         modes={modes}
         isVisible={isRightSidebarVisible}
+        username={username}
       />
       <div
         className={`toggle-sidebar-spot ${isRightSidebarVisible ? 'visible' : 'hidden'}`}

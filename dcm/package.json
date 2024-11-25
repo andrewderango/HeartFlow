@@ -26,6 +26,7 @@
     "argon2": "^0.41.1",
     "chart.js": "^4.4.5",
     "electron-updater": "^6.3.9",
+    "json2csv": "^6.0.0-alpha.2",
     "lucide-react": "^0.453.0",
     "react-router-dom": "^6.27.0",
     "uuid": "^10.0.0",
