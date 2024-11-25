@@ -471,16 +471,20 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
       {view === 'REPORTS' && (
         <div className="reports-container full-height">
           <button className="full-height-button electrogram-report" type="button">
-            Electrogram Report
+            <span className="report-title">Electrogram Report</span>
             <span className="report-subtitle">Detailed tabular electrogram data</span>
           </button>
           <button className="full-height-button parameter-log" type="button" onClick={downloadParameterLog}>
-            Parameter Log
-            <span className="report-subtitle">Log of mode and parameter changes</span>
+            <span className="report-title">Parameter Log</span>
+            <span className="report-subtitle">Full history of mode and parameter changes</span>
           </button>
           <button className="full-height-button serial-log" type="button">
-            Serial Log
+            <span className="report-title">Serial Log</span>
             <span className="report-subtitle">Log of serial communication transmissions</span>
+          </button>
+          <button className="full-height-button activity-log" type="button">
+            <span className="report-title">Activity Log</span>
+            <span className="report-subtitle">Full history of user account activity</span>
           </button>
         </div>
       )}
