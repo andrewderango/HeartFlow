@@ -862,8 +862,23 @@ h3 {
 
 .label-slider {
   position: absolute;
-  top: -20px; /* Adjusted to position it 10px above the slider */
-  left: 0;
+  top: -20px;
+  left: 5px;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.info-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  position: absolute;
+  top: -18px;
+  right: -5px;
+  transition: color 0.3s;
+}
+
+.info-button:hover {
+  color: rgba(255, 255, 255, 0.4);
 }
