@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Info, HardDriveUpload, ClipboardX, Menu, HeartPulse, FileText } from 'lucide-react'
 import { is } from '@electron-toolkit/utils'
+import { useToast } from '../../context/ToastContext'
 
 interface RightSidebarProps {
   showHelp: boolean
@@ -55,6 +56,7 @@ interface RightSidebarProps {
     | null
   modes: any
   isVisible: boolean
+  username: string | null
 }
 
 const RightSidebar: React.FC<RightSidebarProps> = ({
@@ -85,6 +87,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   currentMode,
   modes,
   isVisible,
+  username,
 }) => {
   const [view, setView] = useState<'PARAMETERS' | 'REPORTS'>('PARAMETERS')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -92,6 +95,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const [activityThreshold, setActivityThreshold] = useState(modes[currentMode]?.activityThreshold ?? 1)
   const menuRef = useRef<HTMLDivElement>(null)
   const helpRef = useRef<HTMLDivElement>(null)
+  const { addToast } = useToast()
 
   const handleClickOutside = (event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -150,6 +154,19 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     'High',
     'Very High',
   ];
+
+  const downloadParameterLog = async () => {
+    if (!username) {
+      addToast('Username is not defined', 'error')
+      return
+    }
+    const result = await window.api.downloadParameterLog(username)
+    if (result.success) {
+      addToast(`Parameter log downloaded to ${result.directory}`, 'success')
+    } else {
+      addToast(result.message ?? 'An unknown error occurred', 'error')
+    }
+  }
 
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
@@ -457,7 +474,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             Electrogram Report
             <span className="report-subtitle">Detailed tabular electrogram data</span>
           </button>
-          <button className="full-height-button parameter-log" type="button">
+          <button className="full-height-button parameter-log" type="button" onClick={downloadParameterLog}>
             Parameter Log
             <span className="report-subtitle">Log of mode and parameter changes</span>
           </button>

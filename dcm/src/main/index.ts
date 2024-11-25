@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import iconIco from '../../resources/icon.ico?asset'
 import iconPng from '../../resources/icon.png?asset'
@@ -17,8 +17,13 @@ import type {
   LoginUserResponse,
   ModeSettingResponse,
 } from '../common/types'
-import { resolve } from 'path'
+import { join, resolve } from 'path'
+import * as path from 'path'
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
+import { promises as fs } from 'fs'
+import { parse } from 'json2csv'
+
+const parameterHistoryPath = resolve(__dirname, '../../parameterHistory.json')
 
 let pythonProcess: ReturnType<typeof spawn> | null = null
 
@@ -211,5 +216,25 @@ ipcMain.handle('get-settings-for-mode', async (_, username: string, mode: string
     return { success: true, settings } as ModeSettingResponse
   } catch (error) {
     return { success: false, message: (error as Error).message } as ModeSettingResponse
+  }
+})
+
+ipcMain.handle('download-parameter-log', async (_, username: string) => {
+  try {
+    const data = await fs.readFile(parameterHistoryPath, 'utf-8')
+    const history = JSON.parse(data)
+    const userHistory = history.find((entry: { username: string }) => entry.username === username)
+    if (!userHistory) {
+      throw new Error('User not found')
+    }
+
+    const csv = parse(userHistory.parameterChanges)
+    const directory = app.getPath('downloads')
+    const filePath = path.join(directory, `${username}_parameter_log.csv`)
+    await fs.writeFile(filePath, csv)
+
+    return { success: true, directory }
+  } catch (error) {
+    return { success: false, message: (error as Error).message }
   }
 })

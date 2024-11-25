@@ -37,6 +37,10 @@ const api = {
     const result = await ipcRenderer.invoke('get-settings-for-mode', username, mode)
     return result
   },
+  downloadParameterLog: async (username: string): Promise<{ success: boolean; directory?: string; message?: string }> => {
+    const result = await ipcRenderer.invoke('download-parameter-log', username)
+    return result
+  },
 }
 
 // electron boilerplate for exposing APIs based on context isolation
