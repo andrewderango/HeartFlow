@@ -330,7 +330,8 @@ export interface SerialResponse {
 
 export interface SerialConnectionResponse extends SerialResponse {
   type: 'connection'
-  status: ConnectionStatus
+  connectionType: 'initialize' | 'disconnect' | 'reconnect'
+  status: 'reconnecting' | 'success' | 'failed'
   message?: string
 }
 

@@ -43,6 +43,7 @@ export async function establishWebsocket(
   }
 
   ws = await connect()
+  mainWindow.webContents.setMaxListeners(0)
 
   ws.on('message', (data) => {
     try {
@@ -65,6 +66,7 @@ export async function establishWebsocket(
         case 'reconnect': {
           const response: SerialConnectionResponse = {
             type: 'connection',
+            connectionType: message.type,
             status: message.status,
             ...(message.message && { message: message.message }),
           }

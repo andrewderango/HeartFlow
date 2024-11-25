@@ -1,80 +1,62 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useStore from '@renderer/store/mainStore'
 import { useToast } from '../../context/ToastContext'
 import './ConnectButton.css'
+import type { SerialConnectionResponse } from 'src/common/types'
 
 const ConnectButton: React.FC = () => {
   const { connectionStatus, serialNumber, dispatch } = useStore()
-  const [serialConnectionStatus, setSerialConnectionStatus] = useState<string | null>(null)
-  const [connecting, setConnecting] = useState(false)
+  const [buttonClass, setButtonClass] = useState<string>('connect-button')
   const { addToast } = useToast()
 
-  window.api.onSerialConnectionMessage((message) => {
+  window.api.onSerialConnectionMessage((message: SerialConnectionResponse) => {
     if (message.type === 'connection') {
-      setSerialConnectionStatus(message.status)
+      if (message.connectionType === 'initialize' && message.status === 'success') {
+        addToast('Connected to device', 'success')
+        dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
+      } else if (message.connectionType === 'initialize' && message.status === 'failed') {
+        addToast('Failed to connect to device', 'error')
+        dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
+      } else if (message.connectionType === 'reconnect' && message.status === 'reconnecting') {
+        addToast('Reconnecting to device', 'info')
+        dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'RECONNECTING' })
+      } else if (message.connectionType === 'reconnect' && message.status === 'success') {
+        addToast('Reconnected to device', 'success')
+        dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
+      } else if (message.connectionType === 'reconnect' && message.status === 'failed') {
+        addToast('Failed to reconnect to device', 'error')
+        dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
+      } else if (message.connectionType === 'disconnect' && message.status === 'success') {
+        addToast('Disconnected from device', 'success')
+        dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'DISCONNECTED' })
+      } else if (message.connectionType === 'disconnect' && message.status === 'failed') {
+        addToast('Failed to disconnect from device', 'error')
+      }
     }
   })
 
-  window.api.onSerialDataMessage((message) => {
-    if (message.type === 'connection' && message.status === 'RECONNECTING') {
-      setConnecting(true)
-    } else if (message.type === 'connection' && message.status === 'CONNECTED') {
-      setConnecting(false)
-    }
-  })
-
-  const awaitConnectionStatusChange = async (): void => {
-    return new Promise((resolve) => {
-      const interval = setInterval(() => {
-        if (connectionStatus !== null) {
-          clearInterval(interval)
-          resolve()
-        }
-      }, 100)
-    })
-  }
-
-  const handleConnect = async (): void => {
-    if (connectionStatus === 'CONNECTED') {
+  const handleButtonLogic = (): void => {
+    if (connectionStatus === 'DISCONNECTED') {
+      window.api.serialInitialize(parseInt(serialNumber, 10))
+    } else if (connectionStatus === 'CONNECTED') {
       window.api.serialDisconnect()
-      await awaitConnectionStatusChange()
-      if (serialConnectionStatus === 'success') {
-        addToast('Disconnected successfully', 'success')
-        dispatch({ type: 'SET_CONNECTION_STATUS', payload: 'DISCONNECTED' })
-      } else {
-        addToast('Failed to disconnect', 'error')
-      }
-    } else if (connectionStatus === 'DISCONNECTED') {
-      addToast('Connecting...', 'info')
-      window.api.serialConnect(serialNumber)
-      setConnecting(true)
-      await awaitConnectionStatusChange()
-      if (serialConnectionStatus === 'success') {
-        addToast('Connected successfully', 'success')
-        dispatch({ type: 'SET_CONNECTION_STATUS', payload: 'CONNECTED' })
-      } else {
-        addToast('Failed to connect', 'error')
-      }
-      setConnecting(false)
     }
   }
 
-  const getButtonClass = (): string => {
+  useEffect(() => {
     if (connectionStatus === 'CONNECTED') {
-      return 'disconnect'
+      setButtonClass('disconnect')
     } else if (connectionStatus === 'DISCONNECTED') {
-      return 'connect'
+      setButtonClass('connect-button')
+    } else if (connectionStatus === 'RECONNECTING') {
+      setButtonClass('reconnecting')
     } else {
-      return 'reconnecting'
+      setButtonClass('')
     }
-  }
+  }, [connectionStatus])
 
   return (
-    <button
-      className={`connect-button ${getButtonClass()}`}
-      onClick={() => handleConnect()}
-      disabled={connecting}
-    >
+    <button className={`connect-button ${buttonClass}`} onClick={handleButtonLogic}>
       {connectionStatus === 'CONNECTED' ? 'Disconnect' : 'Connect'}
     </button>
   )

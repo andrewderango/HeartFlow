@@ -1254,6 +1254,36 @@ function Dashboard(): JSX.Element {
     console.log('Electrogram hidden')
   }
 
+  // for now, serial connect to the pacemaker automatically
+  // useEffect(() => {
+  //   window.api.serialInitialize(parseInt(serialNumber, 10))
+  //   const testParams: PacemakerParameters = {
+  //     mode: 'AOO',
+  //     lowerRateLimit: 0,
+  //     upperRateLimit: 0,
+  //     atrialRefractoryPeriod: 0,
+  //     ventricularRefractoryPeriod: 0,
+  //     atrialAmplitude: 0,
+  //     ventricularAmplitude: 0,
+  //     atrialPulseWidth: 0,
+  //     ventricularPulseWidth: 0,
+  //     atrialSensitivity: 0,
+  //     ventricularSensitivity: 0,
+  //     avDelay: 0,
+  //     rateFactor: 0,
+  //     activityThreshold: 0,
+  //     reactionTime: 0,
+  //     recoveryTime: 0,
+  //   }
+  //   window.api.serialSendParameters(testParams)
+  //   window.api.serialToggleEgram()
+
+  //   return (): void => {
+  //     window.api.serialToggleEgram()
+  //     window.api.serialDisconnect()
+  //   }
+  // }, [])
+
   // Return the actual JSX component
   return (
     <div className="dashboard-container">

@@ -28,12 +28,12 @@ const MainContent: React.FC<MainContentProps> = ({
   telemetryRate,
   isRightSidebarVisible,
 }) => {
-  const NUM_POINTS = 5000
+  const NUM_POINTS = 1000
   const [series1, setSeries1] = useState<ChartPoint[]>(() => {
-    return Array.from({ length: NUM_POINTS }, (_, index) => ({ x: index * 0.002, y: 0 }))
+    return Array.from({ length: NUM_POINTS }, () => ({ x: 0, y: 0 }))
   })
   const [series2, setSeries2] = useState<ChartPoint[]>(() => {
-    return Array.from({ length: NUM_POINTS }, (_, index) => ({ x: index * 0.002, y: 0 }))
+    return Array.from({ length: NUM_POINTS }, () => ({ x: 0, y: 0 }))
   })
   const [isEgramHidden, setIsEgramHidden] = useState(false)
   const [rootTime, setRootTime] = useState(0)
@@ -45,6 +45,10 @@ const MainContent: React.FC<MainContentProps> = ({
         const newSeries2: ChartPoint[] = []
 
         Object.entries(message.data).forEach(([timestamp, egramData]) => {
+          const { atrial, ventrical }: { atrial: number[]; ventrical: number[] } = egramData as {
+            atrial: number[]
+            ventrical: number[]
+          }
           const baseTimestamp = parseInt(timestamp, 10)
           if (rootTime === 0) {
             setRootTime(baseTimestamp)
@@ -52,12 +56,12 @@ const MainContent: React.FC<MainContentProps> = ({
 
           const time = (baseTimestamp - rootTime) / 1000
 
-          egramData.atrial.forEach((value: number, index: number) => {
+          atrial.forEach((value: number, index: number) => {
             if (index % 10 === 0) {
               newSeries1.push({ x: time + index * 0.002, y: value })
             }
           })
-          egramData.ventrical.forEach((value: number, index: number) => {
+          ventrical.forEach((value: number, index: number) => {
             if (index % 10 === 0) {
               newSeries2.push({ x: time + index * 0.002, y: value })
             }
