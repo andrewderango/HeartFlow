@@ -168,6 +168,19 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     }
   }
 
+  const downloadLoginHistory = async () => {
+    if (!username) {
+      addToast('Username is not defined', 'error')
+      return
+    }
+    const result = await window.api.downloadLoginHistory(username)
+    if (result.success) {
+      addToast(`Login history downloaded to ${result.directory}`, 'success')
+    } else {
+      addToast(result.message ?? 'An unknown error occurred', 'error')
+    }
+  }
+
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>
       {/* Menu Button */}
@@ -482,7 +495,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
             <span className="report-title">Serial Log</span>
             <span className="report-subtitle">Log of serial communication transmissions</span>
           </button>
-          <button className="full-height-button activity-log" type="button">
+          <button className="full-height-button activity-log" type="button" onClick={downloadLoginHistory}>
             <span className="report-title">Activity Log</span>
             <span className="report-subtitle">Full history of user account activity</span>
           </button>
