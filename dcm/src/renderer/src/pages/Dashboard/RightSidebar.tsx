@@ -28,6 +28,8 @@ interface RightSidebarProps {
   ventriclePWError: boolean
   atrialRPError: boolean
   ventricleRPError: boolean
+  atrialSensError: boolean
+  ventricularSensError: boolean
   lowerRateLimitError: boolean
   upperRateLimitError: boolean
   rateFactorError: boolean
@@ -37,6 +39,8 @@ interface RightSidebarProps {
   avDelayError: boolean
   isAtriumDisabled: boolean
   isVentricleDisabled: boolean
+  isAtrialSensDisabled: boolean
+  isVentricularSensDisabled: boolean
   isRateFactorDisabled: boolean
   isAvDelayDisabled: boolean
   isRateLimitDisabled: boolean
@@ -71,6 +75,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   ventriclePWError,
   atrialRPError,
   ventricleRPError,
+  atrialSensError,
+  ventricularSensError,
   lowerRateLimitError,
   upperRateLimitError,
   rateFactorError,
@@ -80,6 +86,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   avDelayError,
   isAtriumDisabled,
   isVentricleDisabled,
+  isAtrialSensDisabled,
+  isVentricularSensDisabled,
   isRateFactorDisabled,
   isAvDelayDisabled,
   isRateLimitDisabled,
@@ -100,12 +108,14 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const { addToast } = useToast()
 
   const inputInfo = {
-    atriumAmp: { name: 'Atrium Amplitude', range: '0.5 - 5 mV' },
-    ventricleAmp: { name: 'Ventricle Amplitude', range: '0.5 - 5 mV' },
-    atrialPW: { name: 'Atrial Pulse Width', range: '0.05 - 1.9 ms' },
-    ventriclePW: { name: 'Ventricular Pulse Width', range: '0.05 - 1.9 ms' },
+    atriumAmp: { name: 'Atrium Amplitude', range: '0.5 - 5 V' },
+    ventricleAmp: { name: 'Ventricle Amplitude', range: '0.5 - 5 V' },
+    atrialPW: { name: 'Atrial Pulse Width', range: '1 - 30 ms' },
+    ventriclePW: { name: 'Ventricular Pulse Width', range: '1 - 30 ms' },
     atrialRP: { name: 'Atrial Refractory Period', range: '150 - 500 ms' },
     ventricleRP: { name: 'Ventricular Refractory Period', range: '150 - 500 ms' },
+    atrialSensitivity: { name: 'Atrial Sensitivity', range: '0 - 5 V' },
+    ventricularSensitivity: { name: 'Ventricular Sensitivity', range: '0 - 5 V' },
     lowerRateLimit: { name: 'Lower Rate Limit', range: '30 - 175 bpm' },
     upperRateLimit: { name: 'Upper Rate Limit', range: '50 - 175 bpm' },
     rateFactor: { name: 'Rate Factor', range: '1 - 16' },
@@ -146,6 +156,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     isAvDelayDisabled,
     isRateFactorDisabled,
     isRateLimitDisabled,
+    isAtrialSensDisabled,
+    isVentricularSensDisabled,
   ])
 
   useEffect(() => {
@@ -289,10 +301,10 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 </div>
                 <ul>
                   <li>
-                    <strong>Atrium Amp:</strong> Amplitude of the atrial pulse (mV)
+                    <strong>Atrium Amp:</strong> Amplitude of the atrial pulse (V)
                   </li>
                   <li>
-                    <strong>Ventricle Amp:</strong> Amplitude of the ventricular pulse (mV)
+                    <strong>Ventricle Amp:</strong> Amplitude of the ventricular pulse (V)
                   </li>
                   <li>
                     <strong>Atrial PW:</strong> Pulse width of the atrial pulse (ms)
@@ -358,7 +370,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
               </div>
             </div>
             <div className="input-row">
-              <div className={`input-container triple ${atriumAmpError ? 'validation-error' : ''}`}>
+              <div className={`input-container quad ${atriumAmpError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -374,7 +386,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div className={`input-container triple ${atrialPWError ? 'validation-error' : ''}`}>
+              <div className={`input-container quad ${atrialPWError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -390,7 +402,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div className={`input-container triple ${atrialRPError ? 'validation-error' : ''}`}>
+              <div className={`input-container quad ${atrialRPError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -406,10 +418,26 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
+              <div className={`input-container quad ${atrialSensError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isAtrialSensDisabled}
+                  value={isAtrialSensDisabled ? '' : (modes[currentMode]?.atrialSensitivity ?? '')}
+                  name="atrialSens"
+                />
+                <label className={isAtrialSensDisabled ? 'disabled-label' : ''}>ASN</label>
+                {!isAtrialSensDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.atrialSensitivity.name}: ${inputInfo.atrialSensitivity.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
+              </div>
             </div>
             <div className="input-row">
               <div
-                className={`input-container triple ${ventricleAmpError ? 'validation-error' : ''}`}
+                className={`input-container quad ${ventricleAmpError ? 'validation-error' : ''}`}
               >
                 <input
                   type="number"
@@ -429,7 +457,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 )}
               </div>
               <div
-                className={`input-container triple ${ventriclePWError ? 'validation-error' : ''}`}
+                className={`input-container quad ${ventriclePWError ? 'validation-error' : ''}`}
               >
                 <input
                   type="number"
@@ -449,7 +477,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 )}
               </div>
               <div
-                className={`input-container triple ${ventricleRPError ? 'validation-error' : ''}`}
+                className={`input-container quad ${ventricleRPError ? 'validation-error' : ''}`}
               >
                 <input
                   type="number"
@@ -466,6 +494,22 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 <label className={isVentricleDisabled ? 'disabled-label' : ''}>VRP</label>
                 {!isVentricleDisabled && (
                   <button className="info-button" data-title={`${inputInfo.ventricleRP.name}: ${inputInfo.ventricleRP.range}`}>
+                    <Info size={12} />
+                  </button>
+                )}
+              </div>
+              <div className={`input-container quad ${ventricularSensError ? 'validation-error' : ''}`}>
+                <input
+                  type="number"
+                  className="input-field"
+                  onChange={handleInputChange}
+                  disabled={isVentricularSensDisabled}
+                  value={isVentricularSensDisabled ? '' : (modes[currentMode]?.ventricularSensitivity ?? '')}
+                  name="ventricularSens"
+                />
+                <label className={isVentricularSensDisabled ? 'disabled-label' : ''}>VSN</label>
+                {!isVentricularSensDisabled && (
+                  <button className="info-button" data-title={`${inputInfo.ventricularSensitivity.name}: ${inputInfo.ventricularSensitivity.range}`}>
                     <Info size={12} />
                   </button>
                 )}
