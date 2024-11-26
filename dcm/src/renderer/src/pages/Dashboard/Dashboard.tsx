@@ -668,6 +668,16 @@ function Dashboard(): JSX.Element {
       } else {
         setAtrialRPError(false)
       }
+      if (
+        modes[currentMode].atrialRefractoryPeriod + modes[currentMode].atrialPulseWidth >=
+        60000 / modes[currentMode].upperRateLimit
+      ) {
+        addToast('ARP + APW must be less than 60000 / URL', 'error')
+        setAtrialRPError(true)
+        setAtrialPWError(true)
+        setUpperRateLimitError(true)
+        isValid = false
+      }
     }
     if (
       currentMode === 'VOO' ||
@@ -706,6 +716,16 @@ function Dashboard(): JSX.Element {
         isValid = false
       } else {
         setVentricleRPError(false)
+      }
+      if (
+        modes[currentMode].ventricularRefractoryPeriod + modes[currentMode].ventricularPulseWidth >=
+        60000 / modes[currentMode].upperRateLimit
+      ) {
+        addToast('VRP + VPW must be less than 60000 / URL', 'error')
+        setVentricleRPError(true)
+        setVentriclePWError(true)
+        setUpperRateLimitError(true)
+        isValid = false
       }
     }
     if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
