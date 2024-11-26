@@ -764,7 +764,7 @@ function Dashboard(): JSX.Element {
         setVentricularSensitivityError(true)
         isValid = false
       } else {
-        setVentricleAmpError(false)
+        setVentricularSensitivityError(false)
       }
     }
     return isValid
