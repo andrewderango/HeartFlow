@@ -605,6 +605,13 @@ function Dashboard(): JSX.Element {
         setUpperRateLimitError(true)
         isValid = false
       }
+
+      if (modes[currentMode].upperRateLimit < modes[currentMode].lowerRateLimit) {
+        addToast('Upper Rate Limit must be greater than or equal to Lower Rate Limit', 'error')
+        setUpperRateLimitError(true)
+        setLowerRateLimitError(true)
+        isValid = false
+      }
     }
     if (
       currentMode === 'AOO' ||
