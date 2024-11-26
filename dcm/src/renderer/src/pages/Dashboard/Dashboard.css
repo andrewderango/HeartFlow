@@ -554,6 +554,11 @@ input:focus + label {
   width: 100%;
 }
 
+.submit-button:disabled {
+  background: rgba(27, 27, 31, 0.5);
+  cursor: not-allowed;
+}
+
 .discard-button {
   background: rgba(27, 27, 31, 0.85);
   border-radius: 5px;
@@ -813,7 +818,7 @@ h3 {
   height: 100%;
   background-size: cover;
   background-position: center;
-  opacity: 0.10;
+  opacity: 0.1;
   z-index: 0;
   border-radius: 5px;
 }
@@ -841,7 +846,7 @@ h3 {
   transform: translateX(-50%);
   font-size: 24px;
   font-weight: bold;
-  color: rgba(255, 255, 255, 1.0);
+  color: rgba(255, 255, 255, 1);
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
   z-index: 1;
   white-space: nowrap;

@@ -8,7 +8,7 @@ import {
   registerUser,
   setUser,
   loginUser,
-  getSettingsForMode
+  getSettingsForMode,
 } from './userService'
 import { establishWebsocket } from './websockets'
 import { usersFilePath } from '../common/constants'
@@ -283,6 +283,9 @@ ipcMain.handle('disconnect', async () => {
 ipcMain.handle('send_parameters', async (_, parameters: PacemakerParameters) => {
   const parametersToSend = {}
   switch (parameters.mode) {
+    case 'OFF':
+      parametersToSend['mode'] = 0
+      break
     case 'AOO':
       parametersToSend['mode'] = 100
       break
@@ -336,7 +339,10 @@ ipcMain.handle('send_parameters', async (_, parameters: PacemakerParameters) => 
 
   ws.send(JSON.stringify({ type: 'send_parameters', parameters: parametersToSend }))
 })
-
-ipcMain.handle('toggle_egram', async () => {
-  ws.send(JSON.stringify({ type: 'toggle_egram' }))
+ipcMain.handle('toggle_egram', async (_, mode: string | undefined) => {
+  const message = { type: 'toggle_egram' }
+  if (mode !== undefined) {
+    message['mode'] = mode
+  }
+  ws.send(JSON.stringify(message))
 })

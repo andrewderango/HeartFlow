@@ -176,24 +176,28 @@ function Dashboard(): JSX.Element {
     const { name, value } = e.target
     const normalizedValue = normalizeInput(value)
     e.target.value = normalizedValue
-  
+
     // check if only numbers are entered for lower and upper rate limits
-    if ((name === 'lowerRateLimit' || name === 'upperRateLimit') && !/^\d*$/.test(normalizedValue)) {
+    if (
+      (name === 'lowerRateLimit' || name === 'upperRateLimit') &&
+      !/^\d*$/.test(normalizedValue)
+    ) {
       return
     }
-  
+
     // check if only numbers and decimals are entered for other inputs
     if (
-      name !== 'lowerRateLimit' && 
-      name !== 'upperRateLimit' && 
+      name !== 'lowerRateLimit' &&
+      name !== 'upperRateLimit' &&
       name !== 'reactionTime' &&
       name !== 'recoveryTime' &&
       name !== 'rateFactor' &&
       name !== 'avDelay' &&
-      !/^\d*\.?\d*$/.test(normalizedValue)) {
+      !/^\d*\.?\d*$/.test(normalizedValue)
+    ) {
       return
     }
-  
+
     switch (name) {
       case 'atriumAmp':
         dispatch({
@@ -584,6 +588,12 @@ function Dashboard(): JSX.Element {
     // if not, set the error state to true and display a toast
     // otherwise, set the error state to false
     if (currentMode !== 'OFF') {
+      if (modes[currentMode].lowerRateLimit >= modes[currentMode].upperRateLimit) {
+        addToast('Lower Rate Limit must be less than Upper Rate Limit', 'error')
+        setLowerRateLimitError(true)
+        setUpperRateLimitError(true)
+        isValid = false
+      }
       if (modes[currentMode].lowerRateLimit < 30 || modes[currentMode].lowerRateLimit > 175) {
         addToast('Lower Rate Limit must be between 30 and 175 bpm', 'error')
         setLowerRateLimitError(true)
@@ -668,7 +678,13 @@ function Dashboard(): JSX.Element {
         setVentricleRPError(false)
       }
     }
-    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
+    if (
+      currentMode === 'AOOR' ||
+      currentMode === 'VOOR' ||
+      currentMode === 'AAIR' ||
+      currentMode === 'VVIR' ||
+      currentMode === 'DDDR'
+    ) {
       if (modes[currentMode].reactionTime < 10 || modes[currentMode].reactionTime > 50) {
         addToast('Reaction Time must be between 10 and 50 s', 'error')
         setReactionTimeError(true)
@@ -700,7 +716,13 @@ function Dashboard(): JSX.Element {
         setAvDelayError(false)
       }
     }
-    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
+    if (
+      currentMode === 'AOOR' ||
+      currentMode === 'VOOR' ||
+      currentMode === 'AAIR' ||
+      currentMode === 'VVIR' ||
+      currentMode === 'DDDR'
+    ) {
       if (modes[currentMode].activityThreshold < 1 || modes[currentMode].activityThreshold > 7) {
         addToast('Activity Threshold must be between 1 and 7', 'error')
         setActivityThresholdError(true)
@@ -720,23 +742,15 @@ function Dashboard(): JSX.Element {
       return
     }
 
-    // reset error states
-    setAtriumAmpError(false)
-    setVentricleAmpError(false)
-    setAtrialPWError(false)
-    setVentriclePWError(false)
-    setAtrialRPError(false)
-    setVentricleRPError(false)
-    setLowerRateLimitError(false)
-    setUpperRateLimitError(false)
-    setRateFactorError(false)
-    setAvDelayError(false)
+    console.log('got past username check')
 
     // quit early if the input is not valid
     const isValid = validateInput()
     if (!isValid) {
       return
     }
+
+    console.log('got past input validation')
 
     // reset error states
     setAtriumAmpError(false)
@@ -762,8 +776,6 @@ function Dashboard(): JSX.Element {
           modes[currentMode].lowerRateLimit !== 0 &&
           modes[currentMode].upperRateLimit !== 0
         ) {
-          // ipc channel sets the values for the mode for given user
-          // ! we also might wanna fix how we get the values here
           window.api.setUser(username, 'AOO', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
             atrialPulseWidth: modes[currentMode].atrialPulseWidth,
@@ -1010,6 +1022,29 @@ function Dashboard(): JSX.Element {
         console.log('Invalid mode')
         break
     }
+
+    // send the parameters to the serial
+    const valsToSend: PacemakerParameters = {
+      mode: currentMode,
+      lowerRateLimit: modes[currentMode]?.lowerRateLimit ?? 0,
+      upperRateLimit: modes[currentMode]?.upperRateLimit ?? 0,
+      atrialRefractoryPeriod: modes[currentMode]?.atrialRefractoryPeriod ?? 0,
+      ventricularRefractoryPeriod: modes[currentMode]?.ventricularRefractoryPeriod ?? 0,
+      atrialAmplitude: modes[currentMode]?.atrialAmplitude ?? 0,
+      ventricularAmplitude: modes[currentMode]?.ventricularAmplitude ?? 0,
+      atrialPulseWidth: modes[currentMode]?.atrialPulseWidth ?? 0,
+      ventricularPulseWidth: modes[currentMode]?.ventricularPulseWidth ?? 0,
+      atrialSensitivity: modes[currentMode]?.atrialSensitivity ?? 0,
+      ventricularSensitivity: modes[currentMode]?.ventricularSensitivity ?? 0,
+      avDelay: modes[currentMode]?.avDelay ?? 0,
+      rateFactor: modes[currentMode]?.rateFactor ?? 0,
+      activityThreshold: modes[currentMode]?.activityThreshold ?? 0,
+      reactionTime: modes[currentMode]?.reactionTime ?? 0,
+      recoveryTime: modes[currentMode]?.recoveryTime ?? 0,
+    }
+    window.api.serialSendParameters(valsToSend)
+
+    console.log('sent parameters: ' + JSON.stringify(valsToSend))
 
     addToast('Settings sent and saved', 'success')
     dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })

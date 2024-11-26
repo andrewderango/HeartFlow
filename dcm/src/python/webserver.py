@@ -220,7 +220,20 @@ async def _consumer_handler(websocket):
                 )
                 continue
 
-            res = pm_serial.toggle_egram()
+            res = None
+
+            if data["mode"] == "start":
+                res = pm_serial.toggle_egram(use_internal=False, explicit_command=True)
+            elif data["mode"] == "stop":
+                res = pm_serial.toggle_egram(use_internal=False, explicit_command=False)
+            elif data["mode"] == "internal":
+                res = pm_serial.toggle_egram(use_internal=True)
+            else:
+                main_logger.error("[MAIN] Invalid egram mode")
+                await websocket.send(
+                    json.dumps({"type": "toggle_egram", "status": "failed", "message": "Invalid egram mode"})
+                )
+                continue
 
             if res.status == PMPSerialMsgType.SUCCESS:
                 main_logger.debug("[MAIN] Egram toggled")
