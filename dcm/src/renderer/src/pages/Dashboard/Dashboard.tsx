@@ -1416,6 +1416,8 @@ function Dashboard(): JSX.Element {
         recoveryTimeError={recoveryTimeError}
         activityThresholdError={activityThresholdError}
         avDelayError={avDelayError}
+        atrialSensError={atrialSensitivityError}
+        ventricularSensError={ventricularSensitivityError}
         isAtriumDisabled={isAtriumDisabled}
         isVentricleDisabled={isVentricleDisabled}
         isRateFactorDisabled={isRateFactorDisabled}
