@@ -119,8 +119,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
     lowerRateLimit: { name: 'Lower Rate Limit', range: '30 - 175 bpm' },
     upperRateLimit: { name: 'Upper Rate Limit', range: '50 - 175 bpm' },
     rateFactor: { name: 'Rate Factor', range: '1 - 16' },
-    reactionTime: { name: 'Reaction Time', range: '10 - 50 s' },
-    recoveryTime: { name: 'Recovery Time', range: '10 - 240 s' },
+    reactionTime: { name: 'Reaction Time', range: '1 - 50 s' },
+    recoveryTime: { name: 'Recovery Time', range: '1 - 240 s' },
     activityThreshold: { name: 'Activity Threshold', range: '1 - 7' },
     avDelay: { name: 'Atrioventricular Delay', range: '30 - 300 ms' },
   };

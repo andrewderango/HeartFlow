@@ -709,15 +709,15 @@ function Dashboard(): JSX.Element {
       }
     }
     if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
-      if (modes[currentMode].reactionTime < 10 || modes[currentMode].reactionTime > 50) {
-        addToast('Reaction Time must be between 10 and 50 s', 'error')
+      if (modes[currentMode].reactionTime < 1 || modes[currentMode].reactionTime > 50) {
+        addToast('Reaction Time must be between 1 and 50 s', 'error')
         setReactionTimeError(true)
         isValid = false
       } else {
         setReactionTimeError(false)
       }
-      if (modes[currentMode].recoveryTime < 10 || modes[currentMode].recoveryTime > 240) {
-        addToast('Recovery Time must be between 10 and 240 s', 'error')
+      if (modes[currentMode].recoveryTime < 1 || modes[currentMode].recoveryTime > 240) {
+        addToast('Recovery Time must be between 1 and 240 s', 'error')
         setRecoveryTimeError(true)
         isValid = false
       } else {
