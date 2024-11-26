@@ -87,7 +87,11 @@ async function logUserLogin(username: string): Promise<void> {
 }
 
 // log user parameter change
-async function logUserParameterChange(username: string, mode: string, settings: Record<string, number>): Promise<void> {
+async function logUserParameterChange(
+  username: string,
+  mode: string,
+  settings: Record<string, number>,
+): Promise<void> {
   await ensureParameterHistoryFile(parameterHistoryPath)
   const data = await fs.readFile(parameterHistoryPath, 'utf-8')
   const history = JSON.parse(data)

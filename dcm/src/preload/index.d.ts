@@ -30,7 +30,7 @@ declare global {
       serialInitialize: (pm_id: number) => Promise<void>
       serialDisconnect: () => Promise<void>
       serialSendParameters: (parameters: PacemakerParameters) => Promise<void>
-      serialToggleEgram: () => Promise<void>
+      serialToggleEgram: (mode: string | undefined) => Promise<void>
       onSerialConnectionMessage: (callback: (message: any) => void) => void
       removeSerialConnectionMessageListener: () => void
       onSerialActionMessage: (callback: (message: any) => void) => void
