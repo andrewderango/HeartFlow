@@ -71,6 +71,8 @@ function Dashboard(): JSX.Element {
   const [recoveryTimeError, setRecoveryTimeError] = useState<boolean>(false)
   const [activityThresholdError, setActivityThresholdError] = useState<boolean>(false)
   const [avDelayError, setAvDelayError] = useState<boolean>(false)
+  const [atrialSensitivityError, setAtrialSensitivityError] = useState<boolean>(false)
+  const [ventricularSensitivityError, setVentricularSensitivityError] = useState<boolean>(false)
 
   // have to convert the variables to state variables to force a rerender
   const [isAtriumDisabled, setIsAtriumDisabled] = useState<boolean>(false)
@@ -78,6 +80,8 @@ function Dashboard(): JSX.Element {
   const [isRateLimitDisabled, setIsRateLimitDisabled] = useState<boolean>(false)
   const [isRateFactorDisabled, setIsRateFactorDisabled] = useState<boolean>(false)
   const [isAvDelayDisabled, setIsAvDelayDisabled] = useState<boolean>(false)
+  const [isAtrialSensDisabled, setIsAtrialSensDisabled] = useState<boolean>(false)
+  const [isVentricularSensDisabled, setIsVentricularSensDisabled] = useState<boolean>(false)
   const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(true)
 
   const toggleRightSidebar = () => {
@@ -108,6 +112,8 @@ function Dashboard(): JSX.Element {
         currentMode !== 'VVIR',
     )
     setIsRateLimitDisabled(currentMode === 'OFF')
+    setIsAtrialSensDisabled(currentMode !== 'AAI' && currentMode !== 'AAIR' && currentMode !== 'DDDR' && currentMode !== 'DDD')
+    setIsVentricularSensDisabled(currentMode !== 'VVI' && currentMode !== 'VVIR' && currentMode !== 'DDDR' && currentMode !== 'DDD')
   }, [currentMode])
 
   // set up a timer to update the current time every second
@@ -159,6 +165,8 @@ function Dashboard(): JSX.Element {
     setRecoveryTimeError(false)
     setActivityThresholdError(false)
     setAvDelayError(false)
+    setAtrialSensitivityError(false)
+    setVentricularSensitivityError(false)
   }
 
   const normalizeInput = (value: string) => {
@@ -193,8 +201,11 @@ function Dashboard(): JSX.Element {
       name !== 'recoveryTime' &&
       name !== 'rateFactor' &&
       name !== 'avDelay' &&
-      !/^\d*\.?\d*$/.test(normalizedValue)
-    ) {
+      name !== 'atrialPW' &&
+      name !== 'ventriclePW' &&
+      name !== 'atrialRP' &&
+      name !== 'ventricleRP' &&
+      !/^\d*\.?\d*$/.test(normalizedValue)) {
       return
     }
 
@@ -222,7 +233,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { atrialPulseWidth: parseFloat(normalizedValue) || 0 },
+            settings: { atrialPulseWidth: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -231,7 +242,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { ventricularPulseWidth: parseFloat(normalizedValue) || 0 },
+            settings: { ventricularPulseWidth: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -240,7 +251,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { atrialRefractoryPeriod: parseFloat(normalizedValue) || 0 },
+            settings: { atrialRefractoryPeriod: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -249,7 +260,7 @@ function Dashboard(): JSX.Element {
           type: 'UPDATE_MODE_SETTINGS',
           payload: {
             mode: currentMode,
-            settings: { ventricularRefractoryPeriod: parseFloat(normalizedValue) || 0 },
+            settings: { ventricularRefractoryPeriod: parseInt(normalizedValue) || 0 },
           },
         })
         break
@@ -316,6 +327,24 @@ function Dashboard(): JSX.Element {
           },
         })
         break
+      case 'atrialSens':
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { atrialSensitivity: parseFloat(normalizedValue) || 0 },
+          },
+        })
+        break
+      case 'ventricularSens':
+        dispatch({
+          type: 'UPDATE_MODE_SETTINGS',
+          payload: {
+            mode: currentMode,
+            settings: { ventricularSensitivity: parseFloat(normalizedValue) || 0 },
+          },
+        })
+        break
       default:
         break
     }
@@ -337,6 +366,8 @@ function Dashboard(): JSX.Element {
     setRecoveryTimeError(false)
     setActivityThresholdError(false)
     setAvDelayError(false)
+    setAtrialSensitivityError(false)
+    setVentricularSensitivityError(false)
 
     // just set the values back to previous values based on the submitted mode
     switch (submittedMode) {
@@ -395,6 +426,7 @@ function Dashboard(): JSX.Element {
               atrialRefractoryPeriod: aaiSettings.settings?.atrialRefractoryPeriod ?? 0,
               lowerRateLimit: aaiSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: aaiSettings.settings?.upperRateLimit ?? 0,
+              atrialSensitivity: aaiSettings.settings?.atrialSensitivity ?? 0,
             },
           },
         })
@@ -415,6 +447,7 @@ function Dashboard(): JSX.Element {
               ventricularRefractoryPeriod: vviSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: vviSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: vviSettings.settings?.upperRateLimit ?? 0,
+              ventricularSensitivity: vviSettings.settings?.ventricularSensitivity
             },
           },
         })
@@ -487,6 +520,7 @@ function Dashboard(): JSX.Element {
               reactionTime: aairSettings.settings?.reactionTime ?? 0,
               recoveryTime: aairSettings.settings?.recoveryTime ?? 0,
               activityThreshold: aairSettings.settings?.activityThreshold ?? 4,
+              atrialSensitivity: aairSettings.settings?.atrialSensitivity ?? 0,
             },
           },
         })
@@ -511,6 +545,7 @@ function Dashboard(): JSX.Element {
               reactionTime: vvirSettings.settings?.reactionTime ?? 0,
               recoveryTime: vvirSettings.settings?.recoveryTime ?? 0,
               activityThreshold: vvirSettings.settings?.activityThreshold ?? 4,
+              ventricularSensitivity: vvirSettings.settings?.ventricularSensitivity ?? 0,
             },
           },
         })
@@ -539,6 +574,8 @@ function Dashboard(): JSX.Element {
               reactionTime: dddrSettings.settings?.reactionTime ?? 0,
               recoveryTime: dddrSettings.settings?.recoveryTime ?? 0,
               activityThreshold: dddrSettings.settings?.activityThreshold ?? 4,
+              atrialSensitivity: dddrSettings.settings?.atrialSensitivity ?? 0,
+              ventricularSensitivity: dddrSettings.settings?.ventricularSensitivity ?? 0,
             },
           },
         })
@@ -563,6 +600,8 @@ function Dashboard(): JSX.Element {
               lowerRateLimit: dddSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: dddSettings.settings?.upperRateLimit ?? 0,
               avDelay: dddSettings.settings?.avDelay ?? 0,
+              atrialSensitivity: dddSettings.settings?.atrialSensitivity ?? 0,
+              ventricularSensitivity: dddSettings.settings?.ventricularSensitivity ?? 0,
             },
           },
         })
@@ -605,6 +644,13 @@ function Dashboard(): JSX.Element {
         setUpperRateLimitError(true)
         isValid = false
       }
+
+      if (modes[currentMode].upperRateLimit < modes[currentMode].lowerRateLimit) {
+        addToast('Upper Rate Limit must be greater than or equal to Lower Rate Limit', 'error')
+        setUpperRateLimitError(true)
+        setLowerRateLimitError(true)
+        isValid = false
+      }
     }
     if (
       currentMode === 'AOO' ||
@@ -615,14 +661,14 @@ function Dashboard(): JSX.Element {
       currentMode === 'AAIR'
     ) {
       if (modes[currentMode].atrialAmplitude < 0.5 || modes[currentMode].atrialAmplitude > 5) {
-        addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
+        addToast('Atrium Amplitude must be between 0.5 and 5 V', 'error')
         setAtriumAmpError(true)
         isValid = false
       } else {
         setAtriumAmpError(false)
       }
-      if (modes[currentMode].atrialPulseWidth < 0.05 || modes[currentMode].atrialPulseWidth > 1.9) {
-        addToast('Atrial Pulse Width must be between 0.05 and 1.9 ms', 'error')
+      if (modes[currentMode].atrialPulseWidth < 1 || modes[currentMode].atrialPulseWidth > 30) {
+        addToast('Atrial Pulse Width must be between 1 and 30 ms', 'error')
         setAtrialPWError(true)
         isValid = false
       } else {
@@ -638,6 +684,16 @@ function Dashboard(): JSX.Element {
       } else {
         setAtrialRPError(false)
       }
+      if (
+        modes[currentMode].atrialRefractoryPeriod + modes[currentMode].atrialPulseWidth >=
+        60000 / modes[currentMode].upperRateLimit
+      ) {
+        addToast('ARP + APW must be less than 60000 / URL', 'error')
+        setAtrialRPError(true)
+        setAtrialPWError(true)
+        setUpperRateLimitError(true)
+        isValid = false
+      }
     }
     if (
       currentMode === 'VOO' ||
@@ -651,17 +707,17 @@ function Dashboard(): JSX.Element {
         modes[currentMode].ventricularAmplitude < 0.5 ||
         modes[currentMode].ventricularAmplitude > 5
       ) {
-        addToast('Ventricle Amplitude must be between 0.5 and 5 mV', 'error')
+        addToast('Ventricle Amplitude must be between 0.5 and 5 V', 'error')
         setVentricleAmpError(true)
         isValid = false
       } else {
         setVentricleAmpError(false)
       }
       if (
-        modes[currentMode].ventricularPulseWidth < 0.05 ||
-        modes[currentMode].ventricularPulseWidth > 1.9
+        modes[currentMode].ventricularPulseWidth < 1 ||
+        modes[currentMode].ventricularPulseWidth > 30
       ) {
-        addToast('Ventricular Pulse Width must be between 0.05 and 1.9 ms', 'error')
+        addToast('Ventricular Pulse Width must be between 1 and 30 ms', 'error')
         setVentriclePWError(true)
         isValid = false
       } else {
@@ -677,23 +733,27 @@ function Dashboard(): JSX.Element {
       } else {
         setVentricleRPError(false)
       }
+      if (
+        modes[currentMode].ventricularRefractoryPeriod + modes[currentMode].ventricularPulseWidth >=
+        60000 / modes[currentMode].upperRateLimit
+      ) {
+        addToast('VRP + VPW must be less than 60000 / URL', 'error')
+        setVentricleRPError(true)
+        setVentriclePWError(true)
+        setUpperRateLimitError(true)
+        isValid = false
+      }
     }
-    if (
-      currentMode === 'AOOR' ||
-      currentMode === 'VOOR' ||
-      currentMode === 'AAIR' ||
-      currentMode === 'VVIR' ||
-      currentMode === 'DDDR'
-    ) {
-      if (modes[currentMode].reactionTime < 10 || modes[currentMode].reactionTime > 50) {
-        addToast('Reaction Time must be between 10 and 50 s', 'error')
+    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
+      if (modes[currentMode].reactionTime < 1 || modes[currentMode].reactionTime > 50) {
+        addToast('Reaction Time must be between 1 and 50 s', 'error')
         setReactionTimeError(true)
         isValid = false
       } else {
         setReactionTimeError(false)
       }
-      if (modes[currentMode].recoveryTime < 10 || modes[currentMode].recoveryTime > 240) {
-        addToast('Recovery Time must be between 10 and 240 s', 'error')
+      if (modes[currentMode].recoveryTime < 1 || modes[currentMode].recoveryTime > 240) {
+        addToast('Recovery Time must be between 1 and 240 s', 'error')
         setRecoveryTimeError(true)
         isValid = false
       } else {
@@ -731,7 +791,24 @@ function Dashboard(): JSX.Element {
         setActivityThresholdError(false)
       }
     }
-
+    if ( currentMode === 'AAI' || currentMode === 'AAIR' || currentMode === 'DDDR' || currentMode === 'DDD' ) {
+      if (modes[currentMode].atrialSensitivity < 0 || modes[currentMode].atrialSensitivity > 5) {
+        addToast('Atrial Sensitivity must be between 0 and 5 V', 'error')
+        setAtrialSensitivityError(true)
+        isValid = false
+      } else {
+        setAtrialSensitivityError(false)
+      }
+    }
+    if ( currentMode === 'VVI' || currentMode === 'VVIR' || currentMode === 'DDDR' || currentMode === 'DDD' ) {
+      if (modes[currentMode].ventricularSensitivity < 0 || modes[currentMode].ventricularSensitivity > 5) {
+        addToast('Ventricular Sensitivity must be between 0 and 5 V', 'error')
+        setVentricularSensitivityError(true)
+        isValid = false
+      } else {
+        setVentricularSensitivityError(false)
+      }
+    }
     return isValid
   }
 
@@ -742,7 +819,19 @@ function Dashboard(): JSX.Element {
       return
     }
 
-    console.log('got past username check')
+    // reset error states
+    setAtriumAmpError(false)
+    setVentricleAmpError(false)
+    setAtrialPWError(false)
+    setVentriclePWError(false)
+    setAtrialRPError(false)
+    setVentricleRPError(false)
+    setLowerRateLimitError(false)
+    setUpperRateLimitError(false)
+    setRateFactorError(false)
+    setAvDelayError(false)
+    setAtrialSensitivityError(false)
+    setVentricularSensitivityError(false)
 
     // quit early if the input is not valid
     const isValid = validateInput()
@@ -763,6 +852,8 @@ function Dashboard(): JSX.Element {
     setUpperRateLimitError(false)
     setRateFactorError(false)
     setAvDelayError(false)
+    setAtrialSensitivityError(false)
+    setVentricularSensitivityError(false)
 
     // e.preventDefault()
     // based on selected mode, call the appropriate ipc channel with
@@ -813,7 +904,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].atrialPulseWidth !== 0 &&
           modes[currentMode].atrialRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0
+          modes[currentMode].upperRateLimit !== 0 &&
+          modes[currentMode].atrialSensitivity !== 0
         ) {
           window.api.setUser(username, 'AAI', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -821,6 +913,7 @@ function Dashboard(): JSX.Element {
             atrialRefractoryPeriod: modes[currentMode].atrialRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            atrialSensitivity: modes[currentMode].atrialSensitivity,
           })
         }
         setSubmittedMode('AAI')
@@ -832,7 +925,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularPulseWidth !== 0 &&
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
-          modes[currentMode].upperRateLimit !== 0
+          modes[currentMode].upperRateLimit !== 0 &&
+          modes[currentMode].ventricularSensitivity !== 0
         ) {
           window.api.setUser(username, 'VVI', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
@@ -840,6 +934,7 @@ function Dashboard(): JSX.Element {
             ventricularRefractoryPeriod: modes[currentMode].ventricularRefractoryPeriod,
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
+            ventricularSensitivity: modes[currentMode].ventricularSensitivity,
           })
         }
         setSubmittedMode('VVI')
@@ -909,7 +1004,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].rateFactor !== 0 &&
           modes[currentMode].reactionTime !== 0 &&
           modes[currentMode].recoveryTime !== 0 &&
-          modes[currentMode].activityThreshold !== 0
+          modes[currentMode].activityThreshold !== 0 &&
+          modes[currentMode].atrialSensitivity !== 0
         ) {
           window.api.setUser(username, 'AAIR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -921,6 +1017,7 @@ function Dashboard(): JSX.Element {
             reactionTime: modes[currentMode].reactionTime,
             recoveryTime: modes[currentMode].recoveryTime,
             activityThreshold: modes[currentMode].activityThreshold,
+            atrialSensitivity: modes[currentMode].atrialSensitivity,
           })
         }
         setSubmittedMode('AAIR')
@@ -936,7 +1033,8 @@ function Dashboard(): JSX.Element {
           modes[currentMode].rateFactor !== 0 &&
           modes[currentMode].reactionTime !== 0 &&
           modes[currentMode].recoveryTime !== 0 &&
-          modes[currentMode].activityThreshold !== 0
+          modes[currentMode].activityThreshold !== 0 &&
+          modes[currentMode].ventricularSensitivity !== 0
         ) {
           window.api.setUser(username, 'VVIR', {
             ventricularAmplitude: modes[currentMode].ventricularAmplitude,
@@ -948,6 +1046,7 @@ function Dashboard(): JSX.Element {
             reactionTime: modes[currentMode].reactionTime,
             recoveryTime: modes[currentMode].recoveryTime,
             activityThreshold: modes[currentMode].activityThreshold,
+            ventricularSensitivity: modes[currentMode].ventricularSensitivity,
           })
         }
         setSubmittedMode('VVIR')
@@ -967,7 +1066,9 @@ function Dashboard(): JSX.Element {
           modes[currentMode].avDelay !== 0 &&
           modes[currentMode].reactionTime !== 0 &&
           modes[currentMode].recoveryTime !== 0 &&
-          modes[currentMode].activityThreshold !== 0
+          modes[currentMode].activityThreshold !== 0 &&
+          modes[currentMode].atrialSensitivity !== 0 &&
+          modes[currentMode].ventricularSensitivity !== 0
         ) {
           window.api.setUser(username, 'DDDR', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -983,6 +1084,8 @@ function Dashboard(): JSX.Element {
             reactionTime: modes[currentMode].reactionTime,
             recoveryTime: modes[currentMode].recoveryTime,
             activityThreshold: modes[currentMode].activityThreshold,
+            atrialSensitivity: modes[currentMode].atrialSensitivity,
+            ventricularSensitivity: modes[currentMode].ventricularSensitivity,
           })
         }
         setSubmittedMode('DDDR')
@@ -998,7 +1101,9 @@ function Dashboard(): JSX.Element {
           modes[currentMode].ventricularRefractoryPeriod !== 0 &&
           modes[currentMode].lowerRateLimit !== 0 &&
           modes[currentMode].upperRateLimit !== 0 &&
-          modes[currentMode].avDelay !== 0
+          modes[currentMode].avDelay !== 0 &&
+          modes[currentMode].atrialSensitivity !== 0 &&
+          modes[currentMode].ventricularSensitivity !== 0
         ) {
           window.api.setUser(username, 'DDD', {
             atrialAmplitude: modes[currentMode].atrialAmplitude,
@@ -1010,6 +1115,8 @@ function Dashboard(): JSX.Element {
             lowerRateLimit: modes[currentMode].lowerRateLimit,
             upperRateLimit: modes[currentMode].upperRateLimit,
             avDelay: modes[currentMode].avDelay,
+            atrialSensitivity: modes[currentMode].atrialSensitivity,
+            ventricularSensitivity: modes[currentMode].ventricularSensitivity
           })
         }
         setSubmittedMode('DDD')
@@ -1077,6 +1184,8 @@ function Dashboard(): JSX.Element {
     modes[currentMode]?.reactionTime,
     modes[currentMode]?.recoveryTime,
     modes[currentMode]?.activityThreshold,
+    modes[currentMode]?.atrialSensitivity,
+    modes[currentMode]?.ventricularSensitivity,
     currentMode,
   ])
 
@@ -1136,6 +1245,7 @@ function Dashboard(): JSX.Element {
                   atrialRefractoryPeriod: settings?.atrialRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  atrialSensitivity: settings?.atrialSensitivity ?? 0,
                 },
               },
             })
@@ -1152,6 +1262,7 @@ function Dashboard(): JSX.Element {
                   ventricularRefractoryPeriod: settings?.ventricularRefractoryPeriod ?? 0,
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
+                  ventricularSensitivity: settings?.ventricularSensitivity ?? 0,
                 },
               },
             })
@@ -1212,6 +1323,7 @@ function Dashboard(): JSX.Element {
                   reactionTime: settings?.reactionTime ?? 0,
                   recoveryTime: settings?.recoveryTime ?? 0,
                   activityThreshold: settings?.activityThreshold ?? 4,
+                  atrialSensitivity: settings?.atrialSensitivity ?? 0,
                 },
               },
             })
@@ -1232,6 +1344,7 @@ function Dashboard(): JSX.Element {
                   reactionTime: settings?.reactionTime ?? 0,
                   recoveryTime: settings?.recoveryTime ?? 0,
                   activityThreshold: settings?.activityThreshold ?? 4,
+                  ventricularSensitivity: settings?.ventricularSensitivity ?? 0,
                 },
               },
             })
@@ -1256,6 +1369,8 @@ function Dashboard(): JSX.Element {
                   reactionTime: settings?.reactionTime ?? 0,
                   recoveryTime: settings?.recoveryTime ?? 0,
                   activityThreshold: settings?.activityThreshold ?? 4,
+                  atrialSensitivity: settings?.atrialSensitivity ?? 0,
+                  ventricularSensitivity: settings?.ventricularSensitivity ?? 0,
                 },
               },
             })
@@ -1276,6 +1391,8 @@ function Dashboard(): JSX.Element {
                   lowerRateLimit: settings?.lowerRateLimit ?? 0,
                   upperRateLimit: settings?.upperRateLimit ?? 0,
                   avDelay: settings?.avDelay ?? 0,
+                  atrialSensitivity: settings?.atrialSensitivity ?? 0,
+                  ventricularSensitivity: settings?.ventricularSensitivity ?? 0,
                 },
               },
             })
@@ -1308,6 +1425,8 @@ function Dashboard(): JSX.Element {
   //     ventricularRefractoryPeriod: 0,
   //     atrialAmplitude: 0,
   //     ventricularAmplitude: 0,
+  //     atrialSensitivity: 0,
+  //     ventricularSensitivity: 0,
   //     atrialPulseWidth: 0,
   //     ventricularPulseWidth: 0,
   //     atrialSensitivity: 0,
@@ -1362,11 +1481,15 @@ function Dashboard(): JSX.Element {
         recoveryTimeError={recoveryTimeError}
         activityThresholdError={activityThresholdError}
         avDelayError={avDelayError}
+        atrialSensError={atrialSensitivityError}
+        ventricularSensError={ventricularSensitivityError}
         isAtriumDisabled={isAtriumDisabled}
         isVentricleDisabled={isVentricleDisabled}
         isRateFactorDisabled={isRateFactorDisabled}
         isAvDelayDisabled={isAvDelayDisabled}
         isRateLimitDisabled={isRateLimitDisabled}
+        isAtrialSensDisabled={isAtrialSensDisabled}
+        isVentricularSensDisabled={isVentricularSensDisabled}
         telemetryStatus={telemetryStatus}
         currentMode={currentMode}
         modes={modes}

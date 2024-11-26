@@ -16,7 +16,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
   const { addToast } = useToast()
   const [currentTime, setCurrentTime] = useState(new Date())
 
-  console.log('connectionStatus:', connectionStatus)
+  // console.log('connectionStatus:', connectionStatus)
 
   useEffect(() => {
     const timer = setInterval(() => {
