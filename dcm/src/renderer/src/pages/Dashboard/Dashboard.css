@@ -607,6 +607,10 @@ h3 {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
+.electrogram-container * {
+  pointer-events: all !important;
+}
+
 .electrogram {
   margin-top: 15px;
 }

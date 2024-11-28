@@ -45,6 +45,14 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
         },
         [offscreenCanvas],
       )
+
+      workerRef.current.onmessage = (
+        e: MessageEvent<{ type: string; index: number; hidden: boolean }>,
+      ): void => {
+        if (e.data.type === 'legendClick') {
+          console.log(`Legend item ${e.data.index} clicked, hidden: ${e.data.hidden}`)
+        }
+      }
     }
 
     return (): void => {
@@ -60,12 +68,14 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
       workerRef.current.postMessage({
         series1,
         series2,
+        width,
+        height,
         xWidth: Math.max(series1.xWidth, series2 ? series2.xWidth : 0),
         yMin: Math.min(series1.yMin, series2 ? series2.yMin : 0),
         yMax: Math.max(series1.yMax, series2 ? series2.yMax : 0),
       })
     }
-  }, [series1, series2])
+  }, [series1, series2, width, height])
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>

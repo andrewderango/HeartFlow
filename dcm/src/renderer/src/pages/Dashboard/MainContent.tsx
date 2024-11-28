@@ -17,14 +17,12 @@ interface MainContentProps {
     | 'DDDR'
     | 'DDD'
     | null
-  telemetry: { heartRate: number }
   telemetryRate: number
   isRightSidebarVisible: boolean
 }
 
 const MainContent: React.FC<MainContentProps> = ({
   submittedMode,
-  telemetry,
   telemetryRate,
   isRightSidebarVisible,
 }) => {
@@ -37,6 +35,7 @@ const MainContent: React.FC<MainContentProps> = ({
   })
   const [isEgramHidden, setIsEgramHidden] = useState(false)
   const [rootTime, setRootTime] = useState(0)
+  const [heartRate, setHeartRate] = useState(0)
 
   useEffect(() => {
     const handleSerialDataMessage = (message: any): void => {
@@ -99,6 +98,31 @@ const MainContent: React.FC<MainContentProps> = ({
     }
   }, [])
 
+  // to calculate heart rate from series 1, look for peaks that dip below 0.2
+  // divide by time and multiply by 60 to get bpm
+  // smooth with EMA
+  useEffect(() => {
+    const series1Values = series1.map((point) => point.y)
+    const peaks: number[] = []
+    const smoothingFactor = 0.2
+    for (let i = 1; i < series1Values.length - 1; i++) {
+      if (
+        series1Values[i] < 0.2 &&
+        series1Values[i - 1] > series1Values[i] &&
+        series1Values[i + 1] > series1Values[i]
+      ) {
+        peaks.push(i)
+      }
+    }
+
+    const time = series1[series1.length - 1].x - series1[0].x
+    const currentHeartRate = (peaks.length / time) * 60
+    const smoothedHeartRate =
+      currentHeartRate * smoothingFactor +
+      (Number.isNaN(heartRate) ? 0 : heartRate) * (1 - smoothingFactor)
+    setHeartRate(Math.round(smoothedHeartRate))
+  }, [series1])
+
   return (
     <div className={`main-content ${isRightSidebarVisible ? '' : 'expanded'}`}>
       {isEgramHidden ? (
@@ -116,14 +140,14 @@ const MainContent: React.FC<MainContentProps> = ({
                 data: series1,
                 title: 'Atrium',
                 xWidth: NUM_POINTS,
-                yMin: -1,
+                yMin: 0,
                 yMax: 1,
               }}
               series2={{
                 data: series2,
                 title: 'Ventricle',
                 xWidth: NUM_POINTS,
-                yMin: -1,
+                yMin: 0,
                 yMax: 1,
               }}
               width={isRightSidebarVisible ? 550 : 900}
@@ -143,7 +167,7 @@ const MainContent: React.FC<MainContentProps> = ({
         </div>
         <div className="stat-box">
           <h3>Heart BPM</h3>
-          <p>{telemetry.heartRate}</p>
+          <p>{heartRate}</p>
         </div>
       </div>
     </div>

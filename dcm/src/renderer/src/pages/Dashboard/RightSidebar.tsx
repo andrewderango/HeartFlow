@@ -471,7 +471,10 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                 />
                 <label className={isAtrialSensDisabled ? 'disabled-label' : ''}>ASN</label>
                 {!isAtrialSensDisabled && (
-                  <button className="info-button" data-title={`${inputInfo.atrialSensitivity.name}: ${inputInfo.atrialSensitivity.range}`}>
+                  <button
+                    className="info-button"
+                    data-title={`${inputInfo.atrialSensitivity.name}: ${inputInfo.atrialSensitivity.range}`}
+                  >
                     <Info size={12} />
                   </button>
                 )}
@@ -501,9 +504,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div
-                className={`input-container quad ${ventriclePWError ? 'validation-error' : ''}`}
-              >
+              <div className={`input-container quad ${ventriclePWError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -524,9 +525,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div
-                className={`input-container quad ${ventricleRPError ? 'validation-error' : ''}`}
-              >
+              <div className={`input-container quad ${ventricleRPError ? 'validation-error' : ''}`}>
                 <input
                   type="number"
                   className="input-field"
@@ -549,18 +548,27 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
                   </button>
                 )}
               </div>
-              <div className={`input-container quad ${ventricularSensError ? 'validation-error' : ''}`}>
+              <div
+                className={`input-container quad ${ventricularSensError ? 'validation-error' : ''}`}
+              >
                 <input
                   type="number"
                   className="input-field"
                   onChange={handleInputChange}
                   disabled={isVentricularSensDisabled}
-                  value={isVentricularSensDisabled ? '' : (modes[currentMode]?.ventricularSensitivity ?? '')}
+                  value={
+                    isVentricularSensDisabled
+                      ? ''
+                      : (modes[currentMode]?.ventricularSensitivity ?? '')
+                  }
                   name="ventricularSens"
                 />
                 <label className={isVentricularSensDisabled ? 'disabled-label' : ''}>VSN</label>
                 {!isVentricularSensDisabled && (
-                  <button className="info-button" data-title={`${inputInfo.ventricularSensitivity.name}: ${inputInfo.ventricularSensitivity.range}`}>
+                  <button
+                    className="info-button"
+                    data-title={`${inputInfo.ventricularSensitivity.name}: ${inputInfo.ventricularSensitivity.range}`}
+                  >
                     <Info size={12} />
                   </button>
                 )}
