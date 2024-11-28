@@ -17,7 +17,7 @@ pm_serial: PacemakerMPSerial = None
 
 # todo: we need a way to send logs to frontend
 
-logging.basicConfig(level=logging.DEBUG, format="%(message)s")
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 main_logger = logging.getLogger("main")
 
 today = datetime.datetime.now()

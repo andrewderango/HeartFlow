@@ -3,11 +3,9 @@
 import { promises as fs } from 'fs'
 import * as argon2 from 'argon2'
 import * as path from 'path'
-import { usersFilePath } from '../common/constants'
+import { usersFilePath, parameterHistoryPath } from '../common/constants'
 import { createUser } from '../common/types'
 import type { PublicUser, User } from '../common/types'
-
-const parameterHistoryPath = path.join(__dirname, '../../parameterHistory.json')
 
 // ensure the users file exists
 // - if it does not exist, create it

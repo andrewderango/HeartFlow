@@ -3,7 +3,6 @@ import HideEgramData from '../../components/HideEgram/HideEgram'
 import LogoutButton from '../../components/LogOut/LogOut'
 import ConnectButton from '../../components/ConnectButton/ConnectButton'
 import useStore from '@renderer/store/mainStore'
-import { useToast } from '../../context/ToastContext'
 import heartflowLogo from '../../assets/heartflow.png'
 import { Cable, Unplug, RefreshCcw } from 'lucide-react'
 
@@ -12,11 +11,9 @@ interface LeftSidebarProps {
 }
 
 const LeftSidebar: React.FC<LeftSidebarProps> = ({ handleEgramHiding }) => {
-  const { username, serialNumber, connectionStatus, telemetryStatus } = useStore()
-  const { addToast } = useToast()
+  const { username, serialNumber, connectionStatus } = useStore()
   const [currentTime, setCurrentTime] = useState(new Date())
-
-  // console.log('connectionStatus:', connectionStatus)
+  const [beeping, setBeeping] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => {

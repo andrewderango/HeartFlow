@@ -8,3 +8,4 @@ import { app } from 'electron'
 // - if windows: %APPDATA%/dcm/users.json
 // - if mac: ~/Library/Application Support/dcm/users.json
 export const usersFilePath = join(app.getPath('userData'), 'users.json')
+export const parameterHistoryPath = join(app.getPath('userData'), 'parameterHistory.json')

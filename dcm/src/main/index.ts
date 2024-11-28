@@ -11,7 +11,7 @@ import {
   getSettingsForMode,
 } from './userService'
 import { establishWebsocket } from './websockets'
-import { usersFilePath } from '../common/constants'
+import { usersFilePath, parameterHistoryPath } from '../common/constants'
 import type {
   RegisterUserResponse,
   SetUserResponse,
@@ -24,8 +24,6 @@ import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 import { promises as fs } from 'fs'
 import { parse } from 'json2csv'
 import { WebSocket } from 'ws'
-
-const parameterHistoryPath = resolve(__dirname, '../../parameterHistory.json')
 
 let pythonProcess: ReturnType<typeof spawn> | null = null
 let ws: WebSocket | null = null

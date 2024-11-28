@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import pacemakerHeart from '../../assets/pacemaker-heart.png'
 import RealTimeChart from '../../components/RealTimeChart/RealTimeChart'
 import { useToast } from '@renderer/context/ToastContext'
+import useStore from '@renderer/store/mainStore'
 import type { ChartPoint } from 'src/common/types'
 
 interface MainContentProps {
@@ -43,6 +44,7 @@ const MainContent: React.FC<MainContentProps> = ({
     'nominal',
   )
   const { addToast } = useToast()
+  const { dispatch } = useStore()
 
   useEffect(() => {
     const handleSerialDataMessage = (message: any): void => {
@@ -160,6 +162,7 @@ const MainContent: React.FC<MainContentProps> = ({
       const newRateOfChange = smoothedHeartRate - heartRate
       setHeartRate(smoothedHeartRate)
       setRateOfChange(newRateOfChange)
+      dispatch({ type: 'UPDATE_TELEMETRY', payload: { heartRate: smoothedHeartRate } })
       setPrevHeartRateUpdateTime(Date.now())
 
       if (
