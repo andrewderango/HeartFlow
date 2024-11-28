@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import pacemakerHeart from '../../assets/pacemaker-heart.png'
 import RealTimeChart from '../../components/RealTimeChart/RealTimeChart'
+import { useToast } from '@renderer/context/ToastContext'
 import type { ChartPoint } from 'src/common/types'
 
 interface MainContentProps {
@@ -26,7 +27,7 @@ const MainContent: React.FC<MainContentProps> = ({
   telemetryRate,
   isRightSidebarVisible,
 }) => {
-  const NUM_POINTS = 1000
+  const NUM_POINTS = 5000
   const [series1, setSeries1] = useState<ChartPoint[]>(() => {
     return Array.from({ length: NUM_POINTS }, () => ({ x: 0, y: 0 }))
   })
@@ -36,6 +37,12 @@ const MainContent: React.FC<MainContentProps> = ({
   const [isEgramHidden, setIsEgramHidden] = useState(false)
   const [rootTime, setRootTime] = useState(0)
   const [heartRate, setHeartRate] = useState(0)
+  const [prevHeartRateUpdateTime, setPrevHeartRateUpdateTime] = useState(Date.now())
+  const [rateOfChange, setRateOfChange] = useState(0)
+  const [heartRateState, setHeartRateState] = useState<'nominal' | 'warning' | 'critical'>(
+    'nominal',
+  )
+  const { addToast } = useToast()
 
   useEffect(() => {
     const handleSerialDataMessage = (message: any): void => {
@@ -56,14 +63,10 @@ const MainContent: React.FC<MainContentProps> = ({
           const time = (baseTimestamp - rootTime) / 1000
 
           atrial.forEach((value: number, index: number) => {
-            if (index % 10 === 0) {
-              newSeries1.push({ x: time + index * 0.002, y: value })
-            }
+            newSeries1.push({ x: time + index * 0.002, y: value })
           })
           ventrical.forEach((value: number, index: number) => {
-            if (index % 10 === 0) {
-              newSeries2.push({ x: time + index * 0.002, y: value })
-            }
+            newSeries2.push({ x: time + index * 0.002, y: value })
           })
         })
 
@@ -98,30 +101,104 @@ const MainContent: React.FC<MainContentProps> = ({
     }
   }, [])
 
-  // to calculate heart rate from series 1, look for peaks that dip below 0.2
-  // divide by time and multiply by 60 to get bpm
-  // smooth with EMA
   useEffect(() => {
-    const series1Values = series1.map((point) => point.y)
-    const peaks: number[] = []
-    const smoothingFactor = 0.2
-    for (let i = 1; i < series1Values.length - 1; i++) {
+    if (Date.now() - prevHeartRateUpdateTime > 1500) {
+      const series1Values = series1.map((point) => point.y)
+      const series2Values = series2.map((point) => point.y)
+      const peaksSeries1: number[] = []
+      const peaksSeries2: number[] = []
+      const smoothingFactor = 0.5
+      const threshold = 0.25
+      let dipped = false
+
+      for (let i = 1; i < series1Values.length - 1; i++) {
+        if (
+          series1Values[i] < series1Values[i - 1] &&
+          series1Values[i] > series1Values[i + 1] &&
+          series1Values[i] < threshold
+        ) {
+          if (!dipped) {
+            peaksSeries1.push(i)
+            dipped = true
+          }
+        } else if (
+          series1Values[i] > series1Values[i - 1] &&
+          series1Values[i] < series1Values[i + 1] &&
+          series1Values[i] > threshold
+        ) {
+          dipped = false
+        }
+      }
+
+      for (let i = 1; i < series2Values.length - 1; i++) {
+        if (
+          series2Values[i] < series2Values[i - 1] &&
+          series2Values[i] > series2Values[i + 1] &&
+          series2Values[i] < threshold
+        ) {
+          if (!dipped) {
+            peaksSeries2.push(i)
+            dipped = true
+          }
+        } else if (
+          series2Values[i] > series2Values[i - 1] &&
+          series2Values[i] < series2Values[i + 1] &&
+          series2Values[i] > threshold
+        ) {
+          dipped = false
+        }
+      }
+
+      const time = series1[series1.length - 1].x - series1[0].x
+      const atrialHeartRate = (peaksSeries1.length / time) * 60
+      const ventricalHeartRate = (peaksSeries2.length / time) * 60
+      const currentHeartRate = Math.min(atrialHeartRate, ventricalHeartRate)
+      const smoothedHeartRate = Math.round(
+        currentHeartRate * smoothingFactor +
+          (Number.isNaN(heartRate) ? 0 : heartRate) * (1 - smoothingFactor),
+      )
+      const newRateOfChange = smoothedHeartRate - heartRate
+      setHeartRate(smoothedHeartRate)
+      setRateOfChange(newRateOfChange)
+      setPrevHeartRateUpdateTime(Date.now())
+
       if (
-        series1Values[i] < 0.2 &&
-        series1Values[i - 1] > series1Values[i] &&
-        series1Values[i + 1] > series1Values[i]
+        (heartRate < 35 || rateOfChange < -10) &&
+        !Number.isNaN(heartRate) &&
+        rateOfChange !== 0
       ) {
-        peaks.push(i)
+        if (heartRateState !== 'critical') {
+          setHeartRateState('critical')
+        }
+      } else if (rateOfChange < -5 && !Number.isNaN(heartRate) && rateOfChange !== 0) {
+        if (heartRateState !== 'warning') {
+          setHeartRateState('warning')
+        }
+      } else {
+        if (heartRateState !== 'nominal') {
+          setHeartRateState('nominal')
+        }
       }
     }
+  }, [series1, series2, heartRate, prevHeartRateUpdateTime, rateOfChange, heartRateState])
 
-    const time = series1[series1.length - 1].x - series1[0].x
-    const currentHeartRate = (peaks.length / time) * 60
-    const smoothedHeartRate =
-      currentHeartRate * smoothingFactor +
-      (Number.isNaN(heartRate) ? 0 : heartRate) * (1 - smoothingFactor)
-    setHeartRate(Math.round(smoothedHeartRate))
-  }, [series1])
+  useEffect(() => {
+    if (heartRateState === 'critical') {
+      addToast('Heart rate is critically low', 'error')
+    } else if (heartRateState === 'warning') {
+      addToast('Heart rate is low', 'error')
+    }
+  }, [heartRateState])
+
+  const getHeartRateClass = (): string => {
+    if (heartRateState === 'critical') {
+      return 'stat-box critical'
+    } else if (heartRateState === 'warning') {
+      return 'stat-box warning'
+    } else {
+      return 'stat-box'
+    }
+  }
 
   return (
     <div className={`main-content ${isRightSidebarVisible ? '' : 'expanded'}`}>
@@ -165,9 +242,11 @@ const MainContent: React.FC<MainContentProps> = ({
           <h3>Telemetry Rate</h3>
           <p>{telemetryRate} Hz</p>
         </div>
-        <div className="stat-box">
+        <div className={getHeartRateClass()}>
           <h3>Heart BPM</h3>
-          <p>{heartRate}</p>
+          <p>
+            {Number.isNaN(heartRate) || heartRate >= 200 || heartRate <= 15 ? '---' : heartRate}
+          </p>
         </div>
       </div>
     </div>

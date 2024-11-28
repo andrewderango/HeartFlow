@@ -49,7 +49,6 @@ export async function establishWebsocket(
     try {
       const jsonString = data.toString()
       const message = JSON.parse(jsonString)
-      console.log('Received message:', message)
     } catch (error) {
       console.error('Error parsing message:', error)
     }
@@ -70,7 +69,6 @@ export async function establishWebsocket(
             status: message.status,
             ...(message.message && { message: message.message }),
           }
-          console.log('Sending serial connection status:', response)
           mainWindow.webContents.send('serial-connection', response)
           break
         }
@@ -82,7 +80,6 @@ export async function establishWebsocket(
             status: message.status,
             ...(message.message && { message: message.message }),
           }
-          console.log('Sending serial action status:', response)
           mainWindow.webContents.send('serial-action', response)
           break
         }
@@ -92,7 +89,6 @@ export async function establishWebsocket(
             dataType: 'egram',
             data: message.data,
           }
-          console.log('Sending serial data:', response)
           mainWindow.webContents.send('serial-data', response)
           break
         }
@@ -101,7 +97,6 @@ export async function establishWebsocket(
             type: 'error',
             error: message.error,
           }
-          console.error('Sending serial error:', response)
           mainWindow.webContents.send('serial-error', response)
           break
         }
