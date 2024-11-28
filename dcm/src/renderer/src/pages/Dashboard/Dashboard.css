@@ -607,6 +607,10 @@ h3 {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
+.electrogram-container * {
+  pointer-events: all !important;
+}
+
 .electrogram {
   margin-top: 15px;
 }
@@ -620,11 +624,13 @@ h3 {
 .stat-box {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
+  border: 2px solid transparent;
   padding: 20px;
   text-align: center;
   color: white;
   width: 30%;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.3s;
 }
 
 .stat-box h3 {
@@ -637,6 +643,34 @@ h3 {
 .stat-box p {
   font-size: 32px;
   font-weight: bold;
+}
+
+@keyframes yellow-flash {
+  0%,
+  100% {
+    border-color: rgba(255, 255, 0, 0.3);
+  }
+  50% {
+    border-color: rgba(255, 255, 0, 0.6);
+  }
+}
+
+@keyframes red-flash {
+  0%,
+  100% {
+    border-color: rgba(255, 0, 0, 0.3);
+  }
+  50% {
+    border-color: rgba(255, 0, 0, 0.6);
+  }
+}
+
+.stat-box.warning {
+  animation: yellow-flash 1s infinite;
+}
+
+.stat-box.critical {
+  animation: red-flash 1s infinite;
 }
 
 .view-toggle {

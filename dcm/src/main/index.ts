@@ -19,7 +19,6 @@ import type {
   ModeSettingResponse,
   PacemakerParameters,
 } from '../common/types'
-import { join, resolve } from 'path'
 import * as path from 'path'
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 import { promises as fs } from 'fs'
@@ -296,7 +295,7 @@ ipcMain.handle('send_parameters', async (_, parameters: PacemakerParameters) => 
       parametersToSend['mode'] = 111
       break
     case 'VVI':
-      parametersToSend['mode'] = 211
+      parametersToSend['mode'] = 221
       break
     case 'AOOR':
       parametersToSend['mode'] = 109
@@ -308,7 +307,7 @@ ipcMain.handle('send_parameters', async (_, parameters: PacemakerParameters) => 
       parametersToSend['mode'] = 120
       break
     case 'VVIR':
-      parametersToSend['mode'] = 220
+      parametersToSend['mode'] = 230
       break
     case 'DDD':
       parametersToSend['mode'] = 33

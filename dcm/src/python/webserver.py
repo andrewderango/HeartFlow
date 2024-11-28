@@ -10,13 +10,14 @@ from SerialMP import PacemakerMPSerial, PMPSerialMsgType, PMParameters
 # setup some globals
 reconnect_fail: asyncio.Event = asyncio.Event()
 first_connection: asyncio.Event = asyncio.Event()
+global_pm_id: int = None
 pm_serial: PacemakerMPSerial = None
 
 # -- logging setup --
 
 # todo: we need a way to send logs to frontend
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
+logging.basicConfig(level=logging.DEBUG, format="%(message)s")
 main_logger = logging.getLogger("main")
 
 today = datetime.datetime.now()
@@ -50,6 +51,7 @@ async def _reconnect(websocket):
     global first_connection
     global pm_serial
     global main_logger
+    global global_pm_id
 
     while True:
         if (
@@ -65,7 +67,7 @@ async def _reconnect(websocket):
             try:
                 pm_serial.close()
                 pm_serial = PacemakerMPSerial(baudrate=112500, msg_size=82)
-                pm_serial.set_pm_id(12697)
+                pm_serial.set_pm_id(global_pm_id)
                 res = pm_serial.search_and_connect(mode="reconnect")
 
                 if res.status == PMPSerialMsgType.SUCCESS:
@@ -84,14 +86,15 @@ async def _reconnect(websocket):
                     )
 
             except Exception as e:
-                main_logger.error(f"[RECONNECT] Error: {e}")
-                reconnect_fail.set()
-                pm_serial.close()
-                pm_serial = None
-                first_connection.set()
-                await websocket.send(
-                    json.dumps({"type": "reconnect", "status": "failed"})
-                )
+                # main_logger.error(f"[RECONNECT] Error: {e}")
+                # reconnect_fail.set()
+                # pm_serial.close()
+                # pm_serial = None
+                # first_connection.set()
+                # await websocket.send(
+                #     json.dumps({"type": "reconnect", "status": "failed"})
+                # )
+                continue
 
         await asyncio.sleep(0.1)
 
@@ -101,6 +104,7 @@ async def _consumer_handler(websocket):
     global main_logger
     global reconnect_fail
     global first_connection
+    global global_pm_id
 
     async for message in websocket:
         data = json.loads(message)
@@ -108,6 +112,7 @@ async def _consumer_handler(websocket):
         if data["type"] == "initialize":
             if first_connection.is_set():
                 pm_id = data.get("pm_id", None)
+                global_pm_id = pm_id
 
                 if not pm_id:
                     main_logger.error("[MAIN] No pacemaker ID provided")

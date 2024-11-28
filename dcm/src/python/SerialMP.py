@@ -364,6 +364,8 @@ class PacemakerMPSerial:
                     req = bytearray(82)
                     req[0] = msg_id
                     req[1] = 0x01
+                    sw_val = [b'H', b'e', b'a', b'r', b't', b'F', b'l', b'o', b'w']
+                    req[2:11] = struct.pack("<" + "c" * 9, *sw_val)
 
                     logger.debug(
                         f"[search_and_connect] Attempting reconnect handshake on port: {port}"

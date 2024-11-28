@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useStore from '@renderer/store/mainStore'
 import { useToast } from '../../context/ToastContext'
-import { Activity, HardDriveUpload, ClipboardX, Info, XCircle } from 'lucide-react'
 import LeftSidebar from './LeftSidebar'
 import RightSidebar from './RightSidebar'
 import MainContent from './MainContent'
@@ -112,8 +111,18 @@ function Dashboard(): JSX.Element {
         currentMode !== 'VVIR',
     )
     setIsRateLimitDisabled(currentMode === 'OFF')
-    setIsAtrialSensDisabled(currentMode !== 'AAI' && currentMode !== 'AAIR' && currentMode !== 'DDDR' && currentMode !== 'DDD')
-    setIsVentricularSensDisabled(currentMode !== 'VVI' && currentMode !== 'VVIR' && currentMode !== 'DDDR' && currentMode !== 'DDD')
+    setIsAtrialSensDisabled(
+      currentMode !== 'AAI' &&
+        currentMode !== 'AAIR' &&
+        currentMode !== 'DDDR' &&
+        currentMode !== 'DDD',
+    )
+    setIsVentricularSensDisabled(
+      currentMode !== 'VVI' &&
+        currentMode !== 'VVIR' &&
+        currentMode !== 'DDDR' &&
+        currentMode !== 'DDD',
+    )
   }, [currentMode])
 
   // set up a timer to update the current time every second
@@ -205,7 +214,8 @@ function Dashboard(): JSX.Element {
       name !== 'ventriclePW' &&
       name !== 'atrialRP' &&
       name !== 'ventricleRP' &&
-      !/^\d*\.?\d*$/.test(normalizedValue)) {
+      !/^\d*\.?\d*$/.test(normalizedValue)
+    ) {
       return
     }
 
@@ -447,7 +457,7 @@ function Dashboard(): JSX.Element {
               ventricularRefractoryPeriod: vviSettings.settings?.ventricularRefractoryPeriod ?? 0,
               lowerRateLimit: vviSettings.settings?.lowerRateLimit ?? 0,
               upperRateLimit: vviSettings.settings?.upperRateLimit ?? 0,
-              ventricularSensitivity: vviSettings.settings?.ventricularSensitivity
+              ventricularSensitivity: vviSettings.settings?.ventricularSensitivity,
             },
           },
         })
@@ -744,7 +754,13 @@ function Dashboard(): JSX.Element {
         isValid = false
       }
     }
-    if (currentMode === 'AOOR' || currentMode === 'VOOR' || currentMode === 'AAIR' || currentMode === 'VVIR' || currentMode === 'DDDR') {
+    if (
+      currentMode === 'AOOR' ||
+      currentMode === 'VOOR' ||
+      currentMode === 'AAIR' ||
+      currentMode === 'VVIR' ||
+      currentMode === 'DDDR'
+    ) {
       if (modes[currentMode].reactionTime < 1 || modes[currentMode].reactionTime > 50) {
         addToast('Reaction Time must be between 1 and 50 s', 'error')
         setReactionTimeError(true)
@@ -791,7 +807,12 @@ function Dashboard(): JSX.Element {
         setActivityThresholdError(false)
       }
     }
-    if ( currentMode === 'AAI' || currentMode === 'AAIR' || currentMode === 'DDDR' || currentMode === 'DDD' ) {
+    if (
+      currentMode === 'AAI' ||
+      currentMode === 'AAIR' ||
+      currentMode === 'DDDR' ||
+      currentMode === 'DDD'
+    ) {
       if (modes[currentMode].atrialSensitivity < 0 || modes[currentMode].atrialSensitivity > 5) {
         addToast('Atrial Sensitivity must be between 0 and 5 V', 'error')
         setAtrialSensitivityError(true)
@@ -800,8 +821,16 @@ function Dashboard(): JSX.Element {
         setAtrialSensitivityError(false)
       }
     }
-    if ( currentMode === 'VVI' || currentMode === 'VVIR' || currentMode === 'DDDR' || currentMode === 'DDD' ) {
-      if (modes[currentMode].ventricularSensitivity < 0 || modes[currentMode].ventricularSensitivity > 5) {
+    if (
+      currentMode === 'VVI' ||
+      currentMode === 'VVIR' ||
+      currentMode === 'DDDR' ||
+      currentMode === 'DDD'
+    ) {
+      if (
+        modes[currentMode].ventricularSensitivity < 0 ||
+        modes[currentMode].ventricularSensitivity > 5
+      ) {
         addToast('Ventricular Sensitivity must be between 0 and 5 V', 'error')
         setVentricularSensitivityError(true)
         isValid = false
@@ -1116,7 +1145,7 @@ function Dashboard(): JSX.Element {
             upperRateLimit: modes[currentMode].upperRateLimit,
             avDelay: modes[currentMode].avDelay,
             atrialSensitivity: modes[currentMode].atrialSensitivity,
-            ventricularSensitivity: modes[currentMode].ventricularSensitivity
+            ventricularSensitivity: modes[currentMode].ventricularSensitivity,
           })
         }
         setSubmittedMode('DDD')
@@ -1455,7 +1484,6 @@ function Dashboard(): JSX.Element {
       {/* Main Content */}
       <MainContent
         submittedMode={submittedMode}
-        telemetry={telemetry}
         telemetryRate={telemetryRate}
         isRightSidebarVisible={isRightSidebarVisible}
       />
@@ -1463,7 +1491,6 @@ function Dashboard(): JSX.Element {
       {/* Right Sidebar */}
       <RightSidebar
         showHelp={showHelp}
-        toggleHelp={toggleHelp}
         handleModeSelect={handleModeSelect}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
