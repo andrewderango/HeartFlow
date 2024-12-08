@@ -1,2 +1,0 @@
-3a4
-> /dev/tty.usbmodem0000001234561
