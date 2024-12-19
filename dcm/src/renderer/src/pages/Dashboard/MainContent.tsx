@@ -32,25 +32,36 @@ const MainContent: React.FC<MainContentProps> = ({
   const [series2, setSeries2] = useState<ChartPoint[]>([])
   const [isEgramHidden, setIsEgramHidden] = useState(false)
   let time = 0
+  const period = 60 // assuming 1 second period for simplicity
+  const scaler = 0.1
 
   useEffect(() => {
     const interval = setInterval(() => {
-      time += 1
-      const cosVal = 50 * Math.cos(5 * time * (Math.PI / 180))
-      const newVal1 = Math.max(-100, Math.min(100, cosVal))
+      time += (1/scaler)
+      const heartBeat = (t: number) => {
+        const amplitude = 20
+        const noise = Math.random() * 10 - 5
+        if (t % period < 5) {
+          return amplitude + noise
+        } else if (t % period < 10) {
+          return -amplitude + noise
+        } else {
+          return noise
+        }
+      }
 
-      const sinVal = 50 * Math.sin(5 * time * (Math.PI / 180))
-      const newVal2 = Math.max(-100, Math.min(100, sinVal))
+      const newVal1 = heartBeat(time*scaler)
+      const newVal2 = heartBeat(time*scaler + period / 2) // phase shift for second series
 
       setSeries1((prev) => {
-        const newVals = [...prev, { x: time, y: newVal1 }]
+        const newVals = [...prev, { x: time / 1000, y: newVal1 }]
         if (newVals.length > 300) {
           newVals.shift()
         }
         return newVals
       })
       setSeries2((prev) => {
-        const newVals = [...prev, { x: time, y: newVal2 }]
+        const newVals = [...prev, { x: time / 1000, y: newVal2 }]
         if (newVals.length > 300) {
           newVals.shift()
         }
@@ -90,15 +101,15 @@ const MainContent: React.FC<MainContentProps> = ({
                 data: series1,
                 title: 'Atrium',
                 xWidth: 100,
-                yMin: -100,
-                yMax: 100,
+                yMin: -50,
+                yMax: 50,
               }}
               series2={{
                 data: series2,
                 title: 'Ventricle',
                 xWidth: 100,
-                yMin: -100,
-                yMax: 100,
+                yMin: -50,
+                yMax: 50,
               }}
               width={isRightSidebarVisible ? 550 : 900}
               height={500}

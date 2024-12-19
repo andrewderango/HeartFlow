@@ -73,7 +73,7 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
                 max: series1.data.length > 0 ? series1.data[series1.data.length - 1].x : xWidth,
                 title: {
                   display: true,
-                  text: 'Time (s)',
+                  text: 'Time (ms)',
                   color: 'rgba(255, 255, 255, 0.6)',
                 },
                 ticks: {
