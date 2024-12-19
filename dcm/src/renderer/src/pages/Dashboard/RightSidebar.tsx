@@ -98,8 +98,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const { addToast } = useToast()
 
   const inputInfo = {
-    atriumAmp: { name: 'Atrium Amplitude', range: '0.5 - 5 mV' },
-    ventricleAmp: { name: 'Ventricle Amplitude', range: '0.5 - 5 mV' },
+    atriumAmp: { name: 'Atrium Amplitude', range: '0.5 - 10 mV' },
+    ventricleAmp: { name: 'Ventricle Amplitude', range: '0.5 - 25 mV' },
     atrialPW: { name: 'Atrial Pulse Width', range: '0.05 - 1.9 ms' },
     ventriclePW: { name: 'Ventricular Pulse Width', range: '0.05 - 1.9 ms' },
     atrialRP: { name: 'Atrial Refractory Period', range: '150 - 500 ms' },

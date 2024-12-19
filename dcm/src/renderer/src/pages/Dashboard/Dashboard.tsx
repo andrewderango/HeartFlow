@@ -621,8 +621,8 @@ function Dashboard(): JSX.Element {
       currentMode === 'AOOR' ||
       currentMode === 'AAIR'
     ) {
-      if (modes[currentMode].atrialAmplitude < 0.5 || modes[currentMode].atrialAmplitude > 5) {
-        addToast('Atrium Amplitude must be between 0.5 and 5 mV', 'error')
+      if (modes[currentMode].atrialAmplitude < 0.5 || modes[currentMode].atrialAmplitude > 10) {
+        addToast('Atrium Amplitude must be between 0.5 and 10 mV', 'error')
         setAtriumAmpError(true)
         isValid = false
       } else {
@@ -656,9 +656,9 @@ function Dashboard(): JSX.Element {
     ) {
       if (
         modes[currentMode].ventricularAmplitude < 0.5 ||
-        modes[currentMode].ventricularAmplitude > 5
+        modes[currentMode].ventricularAmplitude > 25
       ) {
-        addToast('Ventricle Amplitude must be between 0.5 and 5 mV', 'error')
+        addToast('Ventricle Amplitude must be between 0.5 and 25 mV', 'error')
         setVentricleAmpError(true)
         isValid = false
       } else {

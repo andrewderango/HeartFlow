@@ -76,7 +76,17 @@
   width: 550px;
   height: auto;
   padding: 10px;
+  animation: realisticBeat 2s infinite;
+  margin-bottom: 32.5px !important;
 }
+
+/* .pacemaker-heart-stop {
+  display: block;
+  margin: 41.75px auto;
+  width: 550px;
+  height: auto;
+  padding: 10px;
+} */
 
 .sidebar {
   width: 20%;
