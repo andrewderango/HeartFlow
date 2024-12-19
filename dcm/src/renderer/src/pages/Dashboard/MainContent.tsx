@@ -31,8 +31,10 @@ const MainContent: React.FC<MainContentProps> = ({
   const [series1, setSeries1] = useState<ChartPoint[]>([])
   const [series2, setSeries2] = useState<ChartPoint[]>([])
   const [isEgramHidden, setIsEgramHidden] = useState(false)
+  const [bpm, setBpm] = useState(telemetry.heartRate)
   let time = 0
-  const period = 60
+  let period = 60
+  let atriumType = 0
   // const scaler = 0.05
   const scaler = 0.04775
 
@@ -42,7 +44,11 @@ const MainContent: React.FC<MainContentProps> = ({
       const atrialHeartBeat = (t: number) => {
         const split = t % period
         if (split < 6) {
-          return -0.642222*split**2 + 3.85333*split + (Math.random() * 1.5 - 1.5/2)
+          if (atriumType === 0) {
+            return -0.642222*split**2 + 3.85333*split + (Math.random() * 1.5 - 1.5/2)
+          } else {
+            return -1.11111*split**2 + 6.66667*split + (Math.random() * 2 - 2/2)
+          }
         } else if (split < 20) {
           return 0.0540816*(split)**2 - 1.40612*(split) + 6.4898 + (Math.random() * 0.75 - 0.75/2)
         } else {
@@ -104,6 +110,30 @@ const MainContent: React.FC<MainContentProps> = ({
     }
   }, [])
 
+  useEffect(() => {
+    const handleChangePeriod = (event: CustomEvent) => {
+      period = event.detail;
+    };
+
+    window.addEventListener('changePeriod', handleChangePeriod);
+
+    return () => {
+      window.removeEventListener('changePeriod', handleChangePeriod);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleChangeAtriumType = (event: CustomEvent) => {
+      atriumType = event.detail;
+    };
+
+    window.addEventListener('changeAtriumType', handleChangeAtriumType);
+
+    return () => {
+      window.removeEventListener('changeAtriumType', handleChangeAtriumType);
+    };
+  }, []);
+
   return (
     <div className={`main-content ${isRightSidebarVisible ? '' : 'expanded'}`}>
       {isEgramHidden ? (
@@ -149,7 +179,7 @@ const MainContent: React.FC<MainContentProps> = ({
         </div>
         <div className="stat-box">
           <h3>Heart BPM</h3>
-          <p>{telemetry.heartRate}</p>
+          <p>{Math.round(bpm)}</p>
         </div>
       </div>
     </div>

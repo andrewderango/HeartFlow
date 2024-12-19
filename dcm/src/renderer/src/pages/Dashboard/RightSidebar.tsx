@@ -63,7 +63,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   showHelp,
   handleModeSelect,
   handleInputChange,
-  handleSubmit,
   handleDiscard,
   atriumAmpError,
   ventricleAmpError,
@@ -93,6 +92,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
   const [menuOpen, setMenuOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const [activityThreshold, setActivityThreshold] = useState(modes[currentMode]?.activityThreshold ?? 1)
+  const [submitCount, setSubmitCount] = useState(0)
   const menuRef = useRef<HTMLDivElement>(null)
   const helpRef = useRef<HTMLDivElement>(null)
   const { addToast } = useToast()
@@ -196,6 +196,20 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
       addToast(result.message ?? 'An unknown error occurred', 'error')
     }
   }
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setSubmitCount((prevCount) => {
+      const newCount = prevCount + 1;
+      if (newCount === 1) {
+        window.dispatchEvent(new CustomEvent('changePeriod', { detail: 30 }));
+      } else if (newCount === 2) {
+        window.dispatchEvent(new CustomEvent('changePeriod', { detail: 60 }));
+      } else if (newCount === 3) {
+        window.dispatchEvent(new CustomEvent('changeAtriumType', { detail: 1 }));
+      }
+      return newCount;
+    });
+  };
 
   return (
     <div className={`right-sidebar ${isVisible ? 'visible' : 'hidden'}`}>

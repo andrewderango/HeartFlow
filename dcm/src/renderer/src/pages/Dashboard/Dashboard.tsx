@@ -53,6 +53,7 @@ function Dashboard(): JSX.Element {
   >(null)
 
   const [telemetryRate, _setTelemetryRate] = useState<number>(500)
+  const [submitCount, setSubmitCount] = useState(0)
 
   // these states are for the error handling of the input fields
   // if an error is true, the input field will have a red border
@@ -1027,6 +1028,21 @@ function Dashboard(): JSX.Element {
         console.log('Invalid mode')
         break
     }
+
+    setSubmitCount(prevCount => {
+      const newCount = prevCount + 1;
+      let newPeriod;
+      if (newCount === 1) {
+        newPeriod = 30;
+      } else if (newCount === 2) {
+        newPeriod = 60;
+      } else if (newCount === 3) {
+        newPeriod = 60;
+        window.dispatchEvent(new CustomEvent('changeAtriumType', { detail: 1 }));
+      }
+      window.dispatchEvent(new CustomEvent('changePeriod', { detail: newPeriod }));
+      return newCount;
+    });
 
     addToast('Settings sent and saved', 'success')
     dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })
