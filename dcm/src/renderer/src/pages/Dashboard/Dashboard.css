@@ -67,6 +67,7 @@
   height: auto;
   padding: 10px;
   animation: realisticBeat 2s infinite;
+  margin-bottom: 32.5px !important;
 }
 
 .pacemaker-heart-stop {
@@ -594,7 +595,7 @@ h3 {
 .stats-container {
   display: flex;
   justify-content: space-around;
-  margin-top: 35px;
+  margin-top: 26px;
 }
 
 .stat-box {

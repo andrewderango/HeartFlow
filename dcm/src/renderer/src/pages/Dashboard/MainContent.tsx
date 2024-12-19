@@ -133,6 +133,7 @@ const MainContent: React.FC<MainContentProps> = ({
               }}
               width={isRightSidebarVisible ? 550 : 900}
               height={500}
+              xAxisFormatter={(value) => value.toFixed(1)}
             />
           </div>
         </div>

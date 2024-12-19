@@ -20,9 +20,16 @@ interface RealTimeChartProps {
   }
   width: number
   height: number
+  xAxisFormatter?: (value: number) => string
 }
 
-const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, height }) => {
+const RealTimeChart: React.FC<RealTimeChartProps> = ({
+  series1,
+  series2,
+  width,
+  height,
+  xAxisFormatter = (value) => value.toString(),
+}) => {
   const chartRef = useRef<HTMLCanvasElement>(null)
   const chartInstanceRef = useRef<Chart | null>(null)
   const [hiddenDatasets, setHiddenDatasets] = useState<number[]>([])
@@ -78,6 +85,7 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({ series1, series2, width, 
                 },
                 ticks: {
                   color: 'rgba(255, 255, 255, 0.6)',
+                  callback: xAxisFormatter,
                 },
               },
               y: {

@@ -267,7 +267,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           </div>
 
           <div className="header-with-help">
-            <h3>Continuous Parameters</h3>
+            <h3>Pacing Parameters</h3>
             {/* <button className="help-button" onClick={() => setHelpOpen(!helpOpen)}>
               <Info size={14} />
             </button> */}

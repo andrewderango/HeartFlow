@@ -285,7 +285,7 @@ const useStore = create<
     },
   },
   telemetry: {
-    heartRate: 0,
+    heartRate: 60,
   },
   connectionStatus: 'DISCONNECTED',
   telemetryStatus: 'OFF',
