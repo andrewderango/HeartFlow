@@ -32,6 +32,7 @@ const MainContent: React.FC<MainContentProps> = ({
   const [series2, setSeries2] = useState<ChartPoint[]>([])
   const [isEgramHidden, setIsEgramHidden] = useState(false)
   const [bpm, setBpm] = useState(telemetry.heartRate)
+  const [targetBpm, setTargetBpm] = useState(telemetry.heartRate)
   let time = 0
   let period = 60
   let atriumType = 0
@@ -99,6 +100,21 @@ const MainContent: React.FC<MainContentProps> = ({
   }, [])
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      setBpm((prevBpm) => {
+        if (prevBpm < targetBpm) {
+          return Math.min(prevBpm + 1, targetBpm);
+        } else if (prevBpm > targetBpm) {
+          return Math.max(prevBpm - 1, targetBpm);
+        }
+        return prevBpm;
+      });
+    }, 40);
+
+    return () => clearInterval(interval);
+  }, [targetBpm]);
+
+  useEffect(() => {
     const handleHideEgram = () => {
       setIsEgramHidden((prev) => !prev)
     }
@@ -113,7 +129,7 @@ const MainContent: React.FC<MainContentProps> = ({
   useEffect(() => {
     const handleChangePeriod = (event: CustomEvent) => {
       period = event.detail;
-      setBpm(-2 * period + 180);
+      setTargetBpm(-2 * period + 180);
     };
 
     window.addEventListener('changePeriod', handleChangePeriod);
