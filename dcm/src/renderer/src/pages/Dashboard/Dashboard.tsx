@@ -1029,6 +1029,10 @@ function Dashboard(): JSX.Element {
         break
     }
 
+    addToast('Settings sent and saved', 'success')
+    dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })
+    dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
+
     setSubmitCount(prevCount => {
       const newCount = prevCount + 1;
       let newPeriod;
@@ -1043,10 +1047,6 @@ function Dashboard(): JSX.Element {
       window.dispatchEvent(new CustomEvent('changePeriod', { detail: newPeriod }));
       return newCount;
     });
-
-    addToast('Settings sent and saved', 'success')
-    dispatch({ type: 'UPDATE_TELEMETRY_STATUS', payload: 'ON' })
-    dispatch({ type: 'UPDATE_CONNECTION_STATUS', payload: 'CONNECTED' })
   }
 
   // effect hook to check if the input fields are filled
