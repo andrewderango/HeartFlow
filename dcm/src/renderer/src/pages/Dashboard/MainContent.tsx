@@ -113,6 +113,7 @@ const MainContent: React.FC<MainContentProps> = ({
   useEffect(() => {
     const handleChangePeriod = (event: CustomEvent) => {
       period = event.detail;
+      setBpm(-2 * period + 180);
     };
 
     window.addEventListener('changePeriod', handleChangePeriod);
