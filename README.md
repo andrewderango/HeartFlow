@@ -13,6 +13,8 @@ HeartFlow is an advanced pacemaker system designed to deliver precise cardiac pa
 
 The desktop application is the user interface that allows operators to control the pacemaker and monitor real-time telemetry data. Built using Electron, the app integrates React and TypeScript for the frontend, providing a modern and responsive UI. On the backend, Electron, Node.js, and Python handle the communication with the pacemaker, processing and visualizing data sent over the serial connection. The serial communication is handled by spinning up a webserver to create asynchronous Python processes which interact with the frontend.
 
+<img width="1198" alt="Screenshot 2024-12-21 at 7 59 03 PM" src="https://github.com/user-attachments/assets/f1258f39-d416-46d1-a3ea-addcec325d12" />
+
 ### Key Features
 - **Control Pacemaker Settings**: Adjust the mode and 15+ pacing parameters in real-time.
 - **Electrogram Visualization**: Display the real-time electrogram, providing insights into the heart's activity.
