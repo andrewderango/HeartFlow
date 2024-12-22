@@ -5,7 +5,7 @@ import datetime
 import asyncio
 import json
 from websockets.asyncio.server import serve
-from SerialMP import PacemakerMPSerial, PMPSerialMsgType, PMParameters
+from dcm.src.serial.python.SerialMP import PacemakerMPSerial, PMPSerialMsgType, PMParameters
 
 # setup some globals
 reconnect_fail: asyncio.Event = asyncio.Event()
@@ -14,8 +14,6 @@ global_pm_id: int = None
 pm_serial: PacemakerMPSerial = None
 
 # -- logging setup --
-
-# todo: we need a way to send logs to frontend
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 main_logger = logging.getLogger("main")
